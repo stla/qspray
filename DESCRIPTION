@@ -11,6 +11,7 @@ Description: Symbolic calculation and evaluation of multivariate
 License: GPL-3
 URL: https://github.com/stla/qspray
 BugReports: https://github.com/stla/qspray/issues
+SystemRequirements: C++ 17, gmp, mpfr
 Imports: 
     gmp,
     methods,
