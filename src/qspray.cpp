@@ -114,11 +114,11 @@ Rcpp::List retval(const qspray& S) {  // used to return a list to R
   // an empty spray object.
 
   if(S.size() == 0) {
-    return Rcpp::List::create(Rcpp::Named("index") = R_NilValue,
-                              Rcpp::Named("value") = R_NilValue);
+    return Rcpp::List::create(Rcpp::Named("powers") = R_NilValue,
+                              Rcpp::Named("coeffs") = R_NilValue);
   } else {
-    return Rcpp::List::create(Rcpp::Named("index") = makeindex(S),
-                              Rcpp::Named("value") = makevalue(S));
+    return Rcpp::List::create(Rcpp::Named("powers") = makeindex(S),
+                              Rcpp::Named("coeffs") = makevalue(S));
   }
 }
 
@@ -254,19 +254,20 @@ qspray unit() {
 Rcpp::List qspray_power(const Rcpp::List& Powers,
                         const Rcpp::StringVector& coeffs,
                         unsigned int n) {
-  qspray out = unit();
-
-  if(n == 0) {
-    return retval(out);
-  } else {
+  qspray out;
+  if(n >= 1) {
     const qspray S = prepare(Powers, coeffs);
     if(n == 1) {
-      return retval(S);
+      out = S;
     } else {
+      out = unit();
       for(; n > 0; n--) {
         out = prod(S, out);
       }
     }
+  } else {
+    out = unit();
   }
+  
   return retval(out);
 }
