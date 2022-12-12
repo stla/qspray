@@ -55,7 +55,7 @@ powers simplifyPowers(powers pows) {
 qspray prepare(const Rcpp::List Powers, const Rcpp::StringVector coeffs) {
   qspray S;
   powers spows;
-  signed int i, j;
+  signed int i;
 
   for(i = 0; i < Powers.size(); i++) {
     Rcpp::IntegerVector Exponents = Powers(i);
@@ -79,7 +79,7 @@ qspray prepare(const Rcpp::List Powers, const Rcpp::StringVector coeffs) {
   return S;
 }
 
-Rcpp::List makeindex(const qspray S) {  // returns the list of powers
+Rcpp::List makepowers(const qspray S) {  // returns the list of powers
   Rcpp::List Powers(S.size());
   powers pows;
   unsigned int row = 0, col = 0;
@@ -96,7 +96,7 @@ Rcpp::List makeindex(const qspray S) {  // returns the list of powers
   return Powers;
 }
 
-Rcpp::StringVector makevalue(const qspray S) {  // returns coefficients
+Rcpp::StringVector makecoeffs(const qspray S) {  // returns coefficients
   Rcpp::StringVector Coeffs(S.size());
   unsigned int i = 0;
   qspray::const_iterator it;
@@ -117,8 +117,8 @@ Rcpp::List retval(const qspray& S) {  // used to return a list to R
     return Rcpp::List::create(Rcpp::Named("powers") = R_NilValue,
                               Rcpp::Named("coeffs") = R_NilValue);
   } else {
-    return Rcpp::List::create(Rcpp::Named("powers") = makeindex(S),
-                              Rcpp::Named("coeffs") = makevalue(S));
+    return Rcpp::List::create(Rcpp::Named("powers") = makepowers(S),
+                              Rcpp::Named("coeffs") = makecoeffs(S));
   }
 }
 
@@ -141,6 +141,27 @@ Rcpp::List qspray_add(const Rcpp::List& Powers1,
   for(it = S2.begin(); it != S2.end(); ++it) {
     pows = it->first;
     S1[pows] += S2[pows];
+    if(S1[pows] == 0) {
+      S1.erase(pows);
+    }
+  }
+
+  return retval(S1);
+}
+
+// [[Rcpp::export]]
+Rcpp::List qspray_subtract(const Rcpp::List& Powers1,
+                           const Rcpp::StringVector& coeffs1,
+                           const Rcpp::List& Powers2,
+                           const Rcpp::StringVector& coeffs2) {
+  qspray::const_iterator it;
+  powers pows;
+  qspray S1 = prepare(Powers1, coeffs1);
+  qspray S2 = prepare(Powers2, coeffs2);
+
+  for(it = S2.begin(); it != S2.end(); ++it) {
+    pows = it->first;
+    S1[pows] -= S2[pows];
     if(S1[pows] == 0) {
       S1.erase(pows);
     }
@@ -268,6 +289,6 @@ Rcpp::List qspray_power(const Rcpp::List& Powers,
   } else {
     out = unit();
   }
-  
+
   return retval(out);
 }
