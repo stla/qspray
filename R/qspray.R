@@ -5,6 +5,16 @@
 #' @include qspray.R
 NULL
 
+#' Title
+#'
+#' @param M xx
+#'
+#' @return xx
+#' @export
+detQ <- function(M) {
+  detQ_rcpp(M)
+}
+
 setClass(
   "qspray",
   slots = c(powers = "list", coeffs = "character")

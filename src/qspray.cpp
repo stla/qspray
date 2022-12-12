@@ -1,10 +1,13 @@
 #include <CGAL/Gmpq.h>
 #include <CGAL/Gmpz.h>
-#include <Rcpp.h>
+#include <RcppEigen.h>
 #include "gmp.h"
+
+#define CGAL_EIGEN3_ENABLED 1
 
 typedef std::vector<signed int> powers;
 typedef CGAL::Gmpq gmpq;
+typedef Eigen::Matrix<gmpq, Eigen::Dynamic, Eigen::Dynamic> QMatrix;
 
 class PowersHasher {
  public:
@@ -34,6 +37,19 @@ std::string q2str(gmpq r) {
   delete[] cnumer;
   delete[] cdenom;
   return snumer + "/" + sdenom;
+}
+
+// [[Rcpp::export]]
+Rcpp::String detQ_rcpp(Rcpp::CharacterMatrix M) {
+  const int n = M.ncol();
+  QMatrix Mq(n, n);
+  for(int i = 0; i< n; i++) {
+    for(int j =0; j<n; j++) {
+      Mq(i,j) = gmpq(Rcpp::as<std::string>(M(i,j)));
+    }
+  }
+  gmpq d = Mq.determinant();
+  return q2str(d);
 }
 
 powers simplifyPowers(powers pows) {

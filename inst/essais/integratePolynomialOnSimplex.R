@@ -40,8 +40,7 @@ integratePolynomialonSimplex <- function(P, S) {
     coef <- coef * prod(factorialZ(powers))
     s <- s + coef / prod((n+1L):(n+d))
   }
-  #abs(det(B)) 
-  s / factorialZ(n)
+  abs(as.bigq(detQ(as.character(B)))) *  s / factorialZ(n)
 }
 
 
