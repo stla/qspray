@@ -43,9 +43,9 @@ std::string q2str(gmpq r) {
 Rcpp::String detQ_rcpp(Rcpp::CharacterMatrix M) {
   const int n = M.ncol();
   QMatrix Mq(n, n);
-  for(int i = 0; i< n; i++) {
-    for(int j =0; j<n; j++) {
-      Mq(i,j) = gmpq(Rcpp::as<std::string>(M(i,j)));
+  for(int i = 0; i < n; i++) {
+    for(int j = 0; j < n; j++) {
+      Mq(i, j) = gmpq(Rcpp::as<std::string>(M(i, j)));
     }
   }
   gmpq d = Mq.determinant();

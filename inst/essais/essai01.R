@@ -33,7 +33,7 @@ qspray <- function(powers, coeffs) {
   if(length(powers) != length(coeffs)) {
     stop("`powers` and `coeffs` must have the same length.")
   }
-  out <- list("powers" = powers, "coeffs" = as.character(coeffs))
+  out <- qspray_maker(powers, as.character(coeffs))
   class(out) <- "qspray"
   out
 }
