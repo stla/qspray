@@ -4,6 +4,7 @@
 #include "gmp.h"
 
 typedef std::vector<signed int> powers;
+typedef CGAL::Gmpq gmpq;
 
 class PowersHasher {
  public:
@@ -17,9 +18,9 @@ class PowersHasher {
   }
 };
 
-typedef std::unordered_map<powers, CGAL::Gmpq, PowersHasher> qspray;
+typedef std::unordered_map<powers, gmpq, PowersHasher> qspray;
 
-std::string q2str(CGAL::Gmpq r) {
+std::string q2str(gmpq r) {
   CGAL::Gmpz numer = r.numerator();
   CGAL::Gmpz denom = r.denominator();
   size_t n = mpz_sizeinbase(numer.mpz(), 10) + 2;
@@ -53,27 +54,21 @@ powers simplifyPowers(powers pows) {
 
 qspray prepare(const Rcpp::List Powers, const Rcpp::StringVector coeffs) {
   qspray S;
-  // powers pows;
   powers spows;
   signed int i, j;
-  qspray::iterator it;
 
   for(i = 0; i < Powers.size(); i++) {
     Rcpp::IntegerVector Exponents = Powers(i);
-    CGAL::Gmpq coeff(Rcpp::as<std::string>(coeffs(i)));
+    gmpq coeff(Rcpp::as<std::string>(coeffs(i)));
     if(coeff != 0) {
-      // pows.clear();
       powers pows(Exponents.begin(), Exponents.end());
-      // for(j = 0; j < Exponents.size(); j++) {
-      //   pows.push_back(Exponents(j));
-      // }
       spows = simplifyPowers(pows);
       S[spows] += coeff;
     }
-  }  // i loop closes
+  }
 
   // Now remove zero entries:
-  it = S.begin();
+  qspray::iterator it = S.begin();
   while(it != S.end()) {
     if(it->second == 0) {
       it = S.erase(it);  //  in C++11, erase() returns *next* iterator
@@ -81,13 +76,11 @@ qspray prepare(const Rcpp::List Powers, const Rcpp::StringVector coeffs) {
       ++it;  // else just increment the iterator
     }
   }
-  return (S);
+  return S;
 }
 
-Rcpp::List makeindex(
-    const qspray S) {  // takes a spray, returns the matrix of indices
-  const unsigned int ncol = S.begin()->first.size();
-  Rcpp::List out(S.size());  // index
+Rcpp::List makeindex(const qspray S) {  // returns the list of powers
+  Rcpp::List Powers(S.size());
   powers pows;
   unsigned int row = 0, col = 0;
 
@@ -98,21 +91,19 @@ Rcpp::List makeindex(
     for(auto ci = pows.begin(); ci != pows.end(); ++ci) {
       Exponents(col++) = *ci;
     }
-    out(row++) = Exponents;
+    Powers(row++) = Exponents;
   }
-  return (out);
+  return Powers;
 }
 
-Rcpp::StringVector makevalue(const qspray S) {  // takes a spray, returns data
-  Rcpp::StringVector out(S.size());             // data
+Rcpp::StringVector makevalue(const qspray S) {  // returns coefficients
+  Rcpp::StringVector Coeffs(S.size());
   unsigned int i = 0;
-  qspray::const_iterator it;  // it iterates through a sparse array
-
+  qspray::const_iterator it;
   for(it = S.begin(); it != S.end(); ++it) {
-    out(i++) = q2str(it->second);  // initialize-and-fill is more efficient than
-                                   // out.push_back(it->second)
+    Coeffs(i++) = q2str(it->second);
   }
-  return (out);
+  return Coeffs;
 }
 
 Rcpp::List retval(const qspray& S) {  // used to return a list to R
@@ -142,18 +133,14 @@ Rcpp::List qspray_add(const Rcpp::List& Powers1,
                       const Rcpp::StringVector& coeffs1,
                       const Rcpp::List& Powers2,
                       const Rcpp::StringVector& coeffs2) {
-  qspray S1, S2;              // basic idea is S1 = S1+S2;
-  qspray::const_iterator it;  // it iterates through a sparse array
+  qspray::const_iterator it;
   powers pows;
+  qspray S1 = prepare(Powers1, coeffs1);
+  qspray S2 = prepare(Powers2, coeffs2);
 
-  S1 = prepare(Powers1, coeffs1);
-  S2 = prepare(Powers2, coeffs2);
-
-  // the "meat" of this function, namely S1=S1+S2 (S1 += S2):
   for(it = S2.begin(); it != S2.end(); ++it) {
     pows = it->first;
-    S1[pows] +=
-        S2[pows];  // S1 to be returned.  NB: S1 may have increased in size.
+    S1[pows] += S2[pows];
     if(S1[pows] == 0) {
       S1.erase(pows);
     }
@@ -184,28 +171,24 @@ qspray prod(const qspray S1, const qspray S2) {
   powers powssum;
   unsigned int i;
 
-  // the "meat" of this function:  Sout=S1*S2
   for(it1 = S1.begin(); it1 != S1.end(); ++it1) {
-    const CGAL::Gmpq r1 = it1->second;
+    const gmpq r1 = it1->second;
     if(r1 != 0) {
       powers pows1 = it1->first;
       for(it2 = S2.begin(); it2 != S2.end(); ++it2) {
-        const CGAL::Gmpq r2 = it2->second;
+        const gmpq r2 = it2->second;
         if(r2 != 0) {
           powers pows2 = it2->first;
           harmonize(pows1, pows2);
           powssum.clear();
           for(i = 0; i < pows1.size(); i++) {
-            powssum.push_back(pows1[i] + pows2[i]);  // meat 1: powers add
+            powssum.push_back(pows1[i] + pows2[i]);
           }
           Sout[powssum] += r1 * r2;
-        }  // meat 2: coefficients multiply
+        }
       }
     }
   }
-  //    for(spray::iterator it=S3.begin(); it != S3.end(); ++it){
-  //    if(it->second ==0){S3.erase(it);}
-  // }
 
   return Sout;
 }
@@ -225,4 +208,65 @@ void test() {
   Rcpp::Rcout << pows.size();
   powers spows = simplifyPowers(pows);
   Rcpp::Rcout << spows.size();
+}
+
+// [[Rcpp::export]]
+bool qspray_equality(const Rcpp::List& Powers1,
+                     const Rcpp::StringVector& coeffs1,
+                     const Rcpp::List& Powers2,
+                     const Rcpp::StringVector& coeffs2) {
+  powers pows;
+  qspray::const_iterator it;
+  qspray S1 = prepare(Powers1, coeffs1);
+  qspray S2 = prepare(Powers2, coeffs2);
+
+  if(S1.size() != S2.size()) {
+    return false;
+  }
+
+  for(it = S1.begin(); it != S1.end(); ++it) {
+    pows = it->first;
+    if(S1[pows] != S2[pows]) {
+      return false;
+    } else {
+      S2.erase(pows);
+    }
+  }
+  // at this point, S1[v] == S2[v] for every index 'v' of S1;  S1\subseteq S2.
+  // We need to check that every element of S2 has been accounted for:
+
+  if(S2.empty()) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+qspray unit() {
+  qspray out;
+  powers pows(0);
+  gmpq one(1);
+  out[pows] = one;
+  return out;
+}
+
+// [[Rcpp::export]]
+Rcpp::List qspray_power(const Rcpp::List& Powers,
+                        const Rcpp::StringVector& coeffs,
+                        unsigned int n) {
+  qspray out = unit();
+
+  if(n == 0) {
+    return retval(out);
+  } else {
+    const qspray S = prepare(Powers, coeffs);
+    if(n == 1) {
+      return retval(S);
+    } else {
+      for(; n > 0; n--) {
+        out = prod(S, out);
+      }
+    }
+  }
+  return retval(out);
 }
