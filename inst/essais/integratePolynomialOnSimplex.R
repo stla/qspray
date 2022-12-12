@@ -1,7 +1,7 @@
 library(qspray)
 library(gmp)
 
-integratePolynomialonSimplex <- function(P, S) {
+integratePolynomialOnSimplex <- function(P, S) {
   n <- ncol(S)
   v <- t(S[n+1L, ])
   B <- t(S[1L:n, ]) - do.call(function(...) cbind(...), replicate(n, v))
@@ -60,4 +60,4 @@ v4 <- c(3, 2, 1)
 S <- as.bigq(rbind(v1, v2, v3, v4))
 
 # integral
-integratePolynomialonSimplex(P, S)
+integratePolynomialOnSimplex(P, S)

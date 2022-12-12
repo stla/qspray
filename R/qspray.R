@@ -35,6 +35,13 @@ qspray_from_list <- function(qspray_as_list) {
   }
 }
 
+#' Title
+#'
+#' @param powers ss
+#' @param coeffs ss
+#'
+#' @return xx
+#' @export
 qsprayMaker <- function(powers, coeffs) {
   stopifnot(is.list(powers))
   check_powers <- all(vapply(powers, isExponents, FUN.VALUE = logical(1L)))
@@ -61,15 +68,40 @@ lone <- function(n) {
   stopifnot(isNonnegativeInteger(n))
   powers <- integer(n)
   powers[n] <- 1L
-  new("qspray", powers = list(powers), coeffs = "1/1")
+  new("qspray", powers = list(powers), coeffs = "1")
 }
+
+
+#' Title
+#'
+#' @param qspray xx
+#' @param values xx
+#'
+#' @return xx
+#' @export
+evalQspray <- function(qspray, values) {
+  powers <- qspray@powers
+  coeffs <- as.bigq(qspray@coeffs)
+  values <- as.bigq(values)
+  out <- as.bigq(0L)
+  for(i in seq_along(powers)) {
+    exponents <- powers[[i]]
+    term <- as.bigq(1L)
+    for(j in seq_along(exponents)) {
+      term <- term * values[j]^exponents[j]
+    }
+    out <- out + coeffs[i] * term
+  }
+  out
+}
+
 
 as_qspray_string <- function(x) {
   stopifnot(isFraction(x))
   new("qspray", powers = list(integer(0L)), coeffs = x)
 }
 
-as_qspray_bigq <- function(x) {
+as_qspray_gmp <- function(x) {
   new("qspray", powers = list(integer(0L)), coeffs = as.character(x))
 }
 
@@ -134,12 +166,12 @@ qspray_arith_character <- function(e1, e2) {
   )
 }
 
-qspray_arith_bigq <- function(e1, e2) {
+qspray_arith_gmp <- function(e1, e2) {
   switch(
     .Generic,
-    "+" = e1 + as_qspray_bigq(e2),
-    "-" = e1 - as_qspray_bigq(e2),
-    "*" = e1 * as_qspray_bigq(e2),
+    "+" = e1 + as_qspray_gmp(e2),
+    "-" = e1 - as_qspray_gmp(e2),
+    "*" = e1 * as_qspray_gmp(e2),
     stop(gettextf(
       "Binary operator %s not defined for qspray objects.", dQuote(.Generic)
     ))
@@ -171,12 +203,12 @@ character_arith_qspray <- function(e1, e2) {
   )
 }
 
-bigq_arith_qspray <- function(e1, e2) {
+gmp_arith_qspray <- function(e1, e2) {
   switch(
     .Generic,
-    "+" = as_qspray_bigq(e1) + e2,
-    "-" = as_qspray_bigq(e1) - e2,
-    "*" = as_qspray_bigq(e1) * e2,
+    "+" = as_qspray_gmp(e1) + e2,
+    "-" = as_qspray_gmp(e1) - e2,
+    "*" = as_qspray_gmp(e1) * e2,
     stop(gettextf(
       "Binary operator %s not defined for qspray objects.", dQuote(.Generic)
     ))
@@ -210,7 +242,13 @@ setMethod(
 setMethod(
   "Arith", 
   signature(e1 = "qspray", e2 = "bigq"), 
-  qspray_arith_bigq
+  qspray_arith_gmp
+)
+
+setMethod(
+  "Arith", 
+  signature(e1 = "qspray", e2 = "bigz"), 
+  qspray_arith_gmp
 )
 
 setMethod(
@@ -222,7 +260,13 @@ setMethod(
 setMethod(
   "Arith", 
   signature(e1 = "bigq", e2 = "qspray"), 
-  bigq_arith_qspray
+  gmp_arith_qspray
+)
+
+setMethod(
+  "Arith", 
+  signature(e1 = "bigz", e2 = "qspray"), 
+  gmp_arith_qspray
 )
 
 setMethod(
