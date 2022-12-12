@@ -4,18 +4,18 @@ library(gmp)
 integratePolynomialonSimplex <- function(P, S) {
   n <- ncol(S)
   v <- t(S[n+1L, ])
-  B <- t(S[1L:n, ]) - cbind(v, v, v)
+  B <- t(S[1L:n, ]) - do.call(function(...) cbind(...), replicate(n, v))
   gens <- lapply(1L:n, function(i) lone(i))
   newvars <- vector("list", n)
   for(i in 1L:n) {
-    newvar <- as.character(v[i])
+    newvar <- v[i]
     Bi <- B[i, ]
     for(j in 1L:n) {
       newvar <- newvar + Bi[j] * gens[[j]]
     }
     newvars[[i]] <- newvar
   }
-  Q <- "0/1"
+  Q <- "0"
   exponents <- P@powers
   coeffs    <- P@coeffs 
   for(i in 1L:length(exponents)) {
@@ -49,7 +49,7 @@ x <- lone(1)
 y <- lone(2)
 z <- lone(3)
 # polynomial
-P <- x^4 + y + "2/1"*x*y^2 - "3/1"*z
+P <- x^4 + y + 2*x*y^2 - "3"*z
 
 # simplex (tetrahedron) vertices
 v1 <- c(1, 1, 1)

@@ -1,7 +1,7 @@
 #' @useDynLib qspray, .registration=TRUE
 #' @importFrom Rcpp evalCpp
 #' @importFrom methods setMethod setClass new
-#' @importFrom gmp as.bigq
+#' @importFrom gmp as.bigq factorialZ
 #' @include qspray.R
 NULL
 
@@ -73,6 +73,11 @@ as_qspray_bigq <- function(x) {
   new("qspray", powers = list(integer(0L)), coeffs = as.character(x))
 }
 
+as_qspray_integer <- function(x) {
+  stopifnot(isInteger(x))
+  new("qspray", powers = list(integer(0L)), coeffs = as.character(x))
+}
+
 #' @name qspray-unary
 #' @title Unary operators for qspray objects
 #' @description Unary operators for qspray objects.
@@ -141,6 +146,19 @@ qspray_arith_bigq <- function(e1, e2) {
   )
 }
 
+qspray_arith_numeric <- function(e1, e2) {
+  switch(
+    .Generic,
+    "+" = e1 + as_qspray_integer(e2),
+    "-" = e1 - as_qspray_integer(e2),
+    "*" = e1 * as_qspray_integer(e2),
+    "^" = qspray_from_list(qsprayPower(e1, e2)),
+    stop(gettextf(
+      "Binary operator %s not defined for qspray objects.", dQuote(.Generic)
+    ))
+  )
+}
+
 character_arith_qspray <- function(e1, e2) {
   switch(
     .Generic,
@@ -165,10 +183,12 @@ bigq_arith_qspray <- function(e1, e2) {
   )
 }
 
-qspray_arith_numeric <- function(e1, e2) {
+numeric_arith_qspray <- function(e1, e2) {
   switch(
     .Generic,
-    "^" = qspray_from_list(qsprayPower(e1, e2)),
+    "+" = as_qspray_integer(e1) + e2,
+    "-" = as_qspray_integer(e1) - e2,
+    "*" = as_qspray_integer(e1) * e2,
     stop(gettextf(
       "Binary operator %s not defined for qspray objects.", dQuote(.Generic)
     ))
@@ -209,4 +229,10 @@ setMethod(
   "Arith", 
   signature(e1 = "qspray", e2 = "numeric"), 
   qspray_arith_numeric
+)
+
+setMethod(
+  "Arith", 
+  signature(e1 = "numeric", e2 = "qspray"), 
+  numeric_arith_qspray
 )
