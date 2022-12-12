@@ -23,15 +23,15 @@ isFraction <- function(x) {
     return(FALSE)
   }
   nd <- strsplit(x, "/")[[1L]]
-  if(nd != 2L) {
+  if(length(nd) != 2L) {
     FALSE
   } else {
     n <- nd[1L]
-    if(!grepl("^\\-*\\d+$")) {
+    if(!grepl("^\\-*\\d+$", n)) {
       FALSE
     } else {
       d <- nd[2L]
-      if(!grepl("^\\d+$") || grepl("^0+$")) {
+      if(!grepl("^\\d+$", d) || grepl("^0+$", d)) {
         FALSE
       } else {
         TRUE

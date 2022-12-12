@@ -11,10 +11,18 @@ setClass(
 )
 
 qspray_from_list <- function(qspray_as_list) {
-  new(
-    "qspray", 
-    powers = qspray_as_list[["powers"]], coeffs = qspray_as_list[["coeffs"]]
-  )
+  powers <- qspray_as_list[["powers"]]
+  if(is.null(powers)) {
+    new(
+      "qspray", 
+      powers = list(integer(0L)), coeffs = "0/1"
+    )
+  } else {
+    new(
+      "qspray", 
+      powers = powers, coeffs = qspray_as_list[["coeffs"]]
+    )
+  }
 }
 
 qsprayMaker <- function(powers, coeffs) {
@@ -33,20 +41,27 @@ qsprayMaker <- function(powers, coeffs) {
   qspray_from_list(qspray_maker(powers, as.character(coeffs)))
 }
 
+#' Title
+#'
+#' @param n xx
+#'
+#' @return xx
+#' @export
 lone <- function(n) {
-  stopifnot(isNonNegativeInteger(n))
+  stopifnot(isNonnegativeInteger(n))
   powers <- integer(n)
   powers[n] <- 1L
   new("qspray", powers = list(powers), coeffs = "1/1")
 }
 
 as.qspray <- function(x) {
+  stopifnot(isFraction(x))
   new("qspray", powers = list(integer(0L)), coeffs = x)
 }
 
 #' @name qspray-unary
-#' @title Unary operators for lazy vectors
-#' @description Unary operators for lazy vectors.
+#' @title Unary operators for qspray objects
+#' @description Unary operators for qspray objects.
 #' @aliases +,qspray,missing-method -,qspray,missing-method
 #' @param e1 object of class \code{qspray}
 #' @param e2 nothing
