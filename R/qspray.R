@@ -27,7 +27,8 @@ showQspray <- function(qspray) {
   signs <- c(ifelse(plus[-1L], " + ", " - "), "")
   abscoeffs <- as.character(abs(coeffs))
   terms <- paste0(
-    ifelse(abscoeffs == "1", "", abscoeffs), "x^(", powers, ")"
+    ifelse(abscoeffs == "1", "", paste0(abscoeffs, "*")), 
+    "x^(", powers, ")"
   )
   leader <- if(plus[1L]) "" else "-"
   paste0(c(leader, c(rbind(terms, signs))), collapse = "")
