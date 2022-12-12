@@ -22,7 +22,7 @@ isFraction <- function(x) {
   if(!is.character(x) || length(x) != 1L) {
     return(FALSE)
   }
-  if(grepl("^\\-*\\d+$", n)) {
+  if(grepl("^\\-*\\d+$", x)) {
     return(TRUE)
   }
   nd <- strsplit(x, "/")[[1L]]

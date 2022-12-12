@@ -1,0 +1,54 @@
+---
+title: "The 'qspray' package"
+output: github_document
+---
+
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/stla/qspray/workflows/R-CMD-check/badge.svg)](https://github.com/stla/qspray/actions)
+<!-- badges: end -->
+
+*R package for multivariate polynomials with rational coefficients.*
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, collapse = TRUE)
+```
+
+```{r}
+library(qspray)
+```
+
+Define a polynomial:
+
+```{r}
+x <- lone(1); y <- lone(2); z <- lone(3)
+pol <- 4*x^2 + "1/2"*y - 5*x*y*z
+pol
+```
+
+Some arithmetic on this polynomial:
+
+```{r}
+-pol
+2 * pol
+# TODO: pol / 2
+"5/3" * pol
+pol + 5
+pol - "2/5"
+pol^2
+```
+
+Two polynomials can be added and multiplied:
+
+```{r}
+pol1 <- pol
+pol2 <- pol
+pol1 + pol2
+pol1 - pol2
+pol1 * pol2
+```
+
+Use `evalQspray` to evaluate a polynomial for some values of the variables:
+
+```{r}
+evalQspray(pol, c("1", "2", "3/2"))
+```
