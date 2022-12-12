@@ -280,3 +280,53 @@ setMethod(
   signature(e1 = "numeric", e2 = "qspray"), 
   numeric_arith_qspray
 )
+
+#' Title
+#'
+#' @param P xx
+#' @param S xx
+#'
+#' @return xx
+#' @export
+integratePolynomialOnSimplex <- function(P, S) {
+  S <- as.bigq(S)
+  n <- ncol(S)
+  v <- t(S[n+1L, ])
+  B <- t(S[1L:n, ]) - do.call(function(...) cbind(...), replicate(n, v))
+  gens <- lapply(1L:n, function(i) lone(i))
+  newvars <- vector("list", n)
+  for(i in 1L:n) {
+    newvar <- v[i]
+    Bi <- B[i, ]
+    for(j in 1L:n) {
+      newvar <- newvar + Bi[j] * gens[[j]]
+    }
+    newvars[[i]] <- newvar
+  }
+  Q <- as.bigz(0L)
+  exponents <- P@powers
+  coeffs    <- P@coeffs 
+  for(i in 1L:length(exponents)) {
+    powers <- exponents[[i]]
+    term <- as.bigz(1L)
+    for(j in 1L:length(powers)) {
+      term <- term * newvars[[j]]^powers[j] 
+    }
+    Q <- Q + coeffs[i] * term
+  }
+  s <- as.bigq(0L)
+  exponents <- Q@powers
+  coeffs    <- Q@coeffs 
+  for(i in 1L:length(exponents)) {
+    coef <- as.bigq(coeffs[i])
+    powers <- exponents[[i]]
+    d <- sum(powers)
+    if(d == 0L) {
+      s <- s + coef
+      next
+    }
+    coef <- coef * prod(factorialZ(powers))
+    s <- s + coef / prod((n+1L):(n+d))
+  }
+  abs(as.bigq(detQ(as.character(B)))) *  s / factorialZ(n)
+}
