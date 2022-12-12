@@ -33,6 +33,13 @@ showQspray <- function(qspray) {
   paste0(c(leader, c(rbind(terms, signs))), collapse = "")
 }
 
+setMethod(
+  "show", "qspray", 
+  function(object) {
+    cat(showQspray(object), "\n")
+  }
+)
+
 qspray_from_list <- function(qspray_as_list) {
   powers <- qspray_as_list[["powers"]]
   if(is.null(powers)) {
