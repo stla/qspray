@@ -324,12 +324,12 @@ integratePolynomialOnSimplex <- function(P, S) {
     }
     newvars[[i]] <- newvar
   }
-  Q <- as.bigz(0L)
+  Q <- as.bigq(0L)
   exponents <- P@powers
   coeffs    <- P@coeffs 
   for(i in 1L:length(exponents)) {
     powers <- exponents[[i]]
-    term <- as.bigz(1L)
+    term <- as.bigq(1L)
     for(j in 1L:length(powers)) {
       term <- term * newvars[[j]]^powers[j] 
     }

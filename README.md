@@ -60,3 +60,27 @@ evalQspray(pol, c("1", "2", "3/2"))
 ## Big Rational ('bigq') :
 ## [1] -10
 ```
+
+The package also provides a function which returns the exact value of
+the integral of a polynomial with rational coefficients over a simplex
+with rational vertices:
+
+``` r
+# variables
+x <- lone(1)
+y <- lone(2)
+z <- lone(3)
+# polynomial
+P <- x^4 + y + 2*x*y^2 - 3*z
+# simplex (tetrahedron) vertices
+v1 <- c(1, 1, 1)
+v2 <- c(2, 2, 3)
+v3 <- c(3, 4, 5)
+v4 <- c(3, 2, 1)
+# simplex
+S <- rbind(v1, v2, v3, v4)
+# integral
+integratePolynomialOnSimplex(P, S)
+## Big Rational ('bigq') :
+## [1] 1387/42
+```
