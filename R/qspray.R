@@ -54,9 +54,13 @@ lone <- function(n) {
   new("qspray", powers = list(powers), coeffs = "1/1")
 }
 
-as.qspray <- function(x) {
+as_qspray_string <- function(x) {
   stopifnot(isFraction(x))
   new("qspray", powers = list(integer(0L)), coeffs = x)
+}
+
+as_qspray_bigq <- function(x) {
+  new("qspray", powers = list(integer(0L)), coeffs = as.character(x))
 }
 
 #' @name qspray-unary
@@ -106,9 +110,21 @@ qsprayPower <- function(qspray, n) {
 qspray_arith_character <- function(e1, e2) {
   switch(
     .Generic,
-    "+" = e1 + as.qspray(e2),
-    "-" = e1 - as.qspray(e2),
-    "*" = e1 * as.qspray(e2),
+    "+" = e1 + as_qspray_string(e2),
+    "-" = e1 - as_qspray_string(e2),
+    "*" = e1 * as_qspray_string(e2),
+    stop(gettextf(
+      "Binary operator %s not defined for qspray objects.", dQuote(.Generic)
+    ))
+  )
+}
+
+qspray_arith_bigq <- function(e1, e2) {
+  switch(
+    .Generic,
+    "+" = e1 + as_qspray_bigq(e2),
+    "-" = e1 - as_qspray_bigq(e2),
+    "*" = e1 * as_qspray_bigq(e2),
     stop(gettextf(
       "Binary operator %s not defined for qspray objects.", dQuote(.Generic)
     ))
@@ -118,9 +134,21 @@ qspray_arith_character <- function(e1, e2) {
 character_arith_qspray <- function(e1, e2) {
   switch(
     .Generic,
-    "+" = as.qspray(e1) + e2,
-    "-" = as.qspray(e1) - e2,
-    "*" = as.qspray(e1) * e2,
+    "+" = as_qspray_string(e1) + e2,
+    "-" = as_qspray_string(e1) - e2,
+    "*" = as_qspray_string(e1) * e2,
+    stop(gettextf(
+      "Binary operator %s not defined for qspray objects.", dQuote(.Generic)
+    ))
+  )
+}
+
+bigq_arith_qspray <- function(e1, e2) {
+  switch(
+    .Generic,
+    "+" = as_qspray_bigq(e1) + e2,
+    "-" = as_qspray_bigq(e1) - e2,
+    "*" = as_qspray_bigq(e1) * e2,
     stop(gettextf(
       "Binary operator %s not defined for qspray objects.", dQuote(.Generic)
     ))
@@ -151,8 +179,20 @@ setMethod(
 
 setMethod(
   "Arith", 
+  signature(e1 = "qspray", e2 = "bigq"), 
+  qspray_arith_bigq
+)
+
+setMethod(
+  "Arith", 
   signature(e1 = "character", e2 = "qspray"), 
   character_arith_qspray
+)
+
+setMethod(
+  "Arith", 
+  signature(e1 = "bigq", e2 = "qspray"), 
+  bigq_arith_qspray
 )
 
 setMethod(
