@@ -20,12 +20,25 @@ setClass(
   slots = c(powers = "list", coeffs = "character")
 )
 
+showQspray <- function(qspray) {
+  powers <- vapply(qspray@powers, toString, FUN.VALUE = character(1L))
+  coeffs <- as.bigq(qspray@coeffs)
+  plus <- vapply(coeffs, function(x) x >= 0, FUN.VALUE = logical(1L))
+  signs <- c(ifelse(plus[-1L], " + ", " - "), "")
+  abscoeffs <- as.character(abs(coeffs))
+  terms <- paste0(
+    ifelse(abscoeffs == "1", "", abscoeffs), "x^(", powers, ")"
+  )
+  leader <- if(plus[1L]) "" else "-"
+  paste0(c(leader, c(rbind(terms, signs))), collapse = "")
+}
+
 qspray_from_list <- function(qspray_as_list) {
   powers <- qspray_as_list[["powers"]]
   if(is.null(powers)) {
     new(
       "qspray", 
-      powers = list(integer(0L)), coeffs = "0/1"
+      powers = list(integer(0L)), coeffs = "0"
     )
   } else {
     new(
@@ -39,6 +52,7 @@ qspray_from_list <- function(qspray_as_list) {
 #'
 #' @param powers ss
 #' @param coeffs ss
+#'
 #'
 #' @return xx
 #' @export
