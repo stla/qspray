@@ -21,7 +21,7 @@ Returns the exact value of the integral of a multivariate
   rational coordinates.
 }
 \examples{
-x <- lone(1); y <- lone(2)
+x <- qlone(1); y <- qlone(2)
 P <- x/2 + x*y
 S <- rbind(c("0", "0"), c("1", "0"), c("1", "1")) # a triangle
 integratePolynomialOnSimplex(P, S)

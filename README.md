@@ -18,10 +18,10 @@ library(qspray)
 
 The easiest way to define a multivariate polynomial with **qspray** is
 to start by introducing the generating variables with the help of the
-`lone` function and then to combine them with arithmetic operations:
+`qlone` function and then to combine them with arithmetic operations:
 
 ``` r
-x <- lone(1); y <- lone(2); z <- lone(3)
+x <- qlone(1); y <- qlone(2); z <- qlone(3)
 pol <- 4*x^2 + "1/2"*y - 5*x*y*z
 pol
 ## -5*x^(1, 1, 1) + 4*x^(2) + 1/2*x^(0, 1)
@@ -83,7 +83,7 @@ with rational vertices:
 
 ``` r
 # variables
-x <- lone(1); y <- lone(2); z <- lone(3)
+x <- qlone(1); y <- qlone(2); z <- qlone(3)
 # polynomial
 P <- x^4 + y + 2*x*y^2 - 3*z
 # simplex (tetrahedron) vertices

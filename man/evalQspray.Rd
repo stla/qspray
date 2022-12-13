@@ -23,7 +23,7 @@ Evaluation of the multivariate polynomial represented by a
   \code{qspray} object.
 }
 \examples{
-x <- lone(1); y <- lone(2)
+x <- qlone(1); y <- qlone(2)
 P <- 2*x + "1/2"*y
 evalQspray(P, c("2", "5/2", "99999")) # "99999" will be ignored
 }

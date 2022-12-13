@@ -133,8 +133,8 @@ qsprayMaker <- function(powers, coeffs, string = NULL) {
 #' @return A \code{qspray} object.
 #' @export
 #' @examples 
-#' lone(2)
-lone <- function(n) {
+#' qlone(2)
+qlone <- function(n) {
   stopifnot(isNonnegativeInteger(n))
   powers <- integer(n)
   powers[n] <- 1L
@@ -154,7 +154,7 @@ lone <- function(n) {
 #' @return A \code{bigq} number if \code{exact=TRUE}, a double number otherwise.
 #' @export
 #' @examples 
-#' x <- lone(1); y <- lone(2)
+#' x <- qlone(1); y <- qlone(2)
 #' P <- 2*x + "1/2"*y
 #' evalQspray(P, c("2", "5/2", "99999")) # "99999" will be ignored
 evalQspray <- function(qspray, values, exact = TRUE) {
@@ -458,7 +458,7 @@ setMethod(
 #' @return A \code{bigq} number, the exact value of the integral.
 #' @export
 #' @examples 
-#' x <- lone(1); y <- lone(2)
+#' x <- qlone(1); y <- qlone(2)
 #' P <- x/2 + x*y
 #' S <- rbind(c("0", "0"), c("1", "0"), c("1", "1")) # a triangle
 #' integratePolynomialOnSimplex(P, S)
@@ -475,7 +475,7 @@ integratePolynomialOnSimplex <- function(P, S) {
   S <- as.bigq(S)
   v <- t(S[n+1L, ])
   B <- t(S[1L:n, ]) - do.call(function(...) cbind(...), replicate(n, v))
-  gens <- lapply(1L:n, function(i) lone(i))
+  gens <- lapply(1L:n, function(i) qlone(i))
   newvars <- vector("list", n)
   for(i in 1L:n) {
     newvar <- v[i]
