@@ -531,3 +531,33 @@ MSFpoly <- function(m, lambda){
   coeffs <- rep("1", n)
   qsprayMaker(powers, coeffs)
 }
+
+#' @title Elementary symmetric function
+#' @description Returns an elementary symmetric function as a polynomial.
+#'
+#' @param m integer, the number of variables
+#' @param lambda an integer partition, given as a vector of decreasing
+#'   positive integers
+#'
+#' @return A \code{qspray} object.
+#' @importFrom DescTools Permn
+#' @export
+#'
+#' @examples
+#' ESFpoly(3, c(3,1))
+ESFpoly <- function(m, lambda){
+  stopifnot(isNonnegativeInteger(m), isPartition(lambda))
+  lambda <- lambda[lambda > 0]
+  if(any(lambda > m)) return(as.qspray(0))
+  out <- 1
+  for(k in seq_along(lambda)){
+    kappa <- integer(m)
+    kappa[seq_len(lambda[k])] <- rep(1L, lambda[k])
+    perms <- Permn(kappa)
+    n <- nrow(perms)
+    powers <- lapply(1L:n, function(i) perms[i, ])
+    ek <- qsprayMaker(powers = powers, coeffs = rep("1", n))
+    out <- out * ek
+  }
+  out
+}
