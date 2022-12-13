@@ -89,7 +89,7 @@ qsprayMaker <- function(powers, coeffs) {
     stop("Invalid `powers` list.")
   }
   powers <- lapply(powers, as.integer)
-  if(isCoeffs(coeffs)) {
+  if(!isCoeffs(coeffs)) {
     stop("Invalid `coeffs` vector.")
   }
   if(length(powers) != length(coeffs)) {

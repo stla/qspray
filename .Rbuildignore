@@ -2,3 +2,4 @@
 ^\.Rproj\.user$
 ^inst/trash$
 ^inst/essais$
+^README\.Rmd$
