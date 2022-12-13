@@ -424,6 +424,21 @@ setMethod(
   numeric_arith_qspray
 )
 
+setMethod(
+  "Compare",
+  signature(e1 = "qspray", e2 = "qspray"),
+  function(e1, e2) {
+    switch(
+      .Generic,
+      "==" = qspray_equality(e1@powers, e1@coeffs, e2@powers, e2@coeffs),
+      "!=" = !qspray_equality(e1@powers, e1@coeffs, e2@powers, e2@coeffs),
+      stop(gettextf(
+        "Comparison operator %s not defined for qspray objects.", dQuote(.Generic)
+      ))
+    )
+  }
+)
+
 #' @title Integral of a multivariate polynomial over a simplex
 #' @description Returns the exact value of the integral of a multivariate 
 #'   polynomial with rational coefficients over a simplex whose vertices have 
