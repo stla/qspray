@@ -163,6 +163,13 @@ qlone <- function(n) {
 #' evalQspray(P, c("2", "5/2", "99999")) # "99999" will be ignored
 evalQspray <- function(qspray, values_re, values_im = NULL) {
   powers <- qspray@powers
+  if(length(powers) == 0L) {
+    return(as.bigq(0L))
+  }
+  n <- max(lengths(powers))
+  if(length(values_re) < n) {
+    stop("Insufficient number of values.")
+  }
   values_re <- as.character(values_re)
   check <- all(vapply(values_re, isFraction, logical(1L)))
   if(!check) {
