@@ -8,11 +8,16 @@ The ‘qspray’ package
 
 *R package for multivariate polynomials with rational coefficients.*
 
+This package is strongly inspired by Robin Hankin’s **spray** package.
+The C++ implementations are very similar.
+
 ``` r
 library(qspray)
 ```
 
-Define a polynomial:
+The easiest way to define a multivariate polynomial with **qspray** is
+to start by introducing the generating variables with the help of the
+`lone` function and then to combine them with arithmetic operations:
 
 ``` r
 x <- lone(1); y <- lone(2); z <- lone(3)
@@ -67,9 +72,7 @@ with rational vertices:
 
 ``` r
 # variables
-x <- lone(1)
-y <- lone(2)
-z <- lone(3)
+x <- lone(1); y <- lone(2); z <- lone(3)
 # polynomial
 P <- x^4 + y + 2*x*y^2 - 3*z
 # simplex (tetrahedron) vertices
