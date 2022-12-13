@@ -52,10 +52,10 @@ Rcpp::String detQ_rcpp(Rcpp::CharacterMatrix M) {
   return q2str(d);
 }
 
-powers simplifyPowers(powers pows) {
+void simplifyPowers(powers& pows) {
   int n = pows.size();
   if(n == 0) {
-    return pows;
+    return;
   }
   n--;
   powers::iterator it = pows.end();
@@ -65,7 +65,6 @@ powers simplifyPowers(powers pows) {
     zero = pows[n--] == 0;
   }
   pows.erase(it, pows.end());
-  return pows;
 }
 
 qspray prepare(const Rcpp::List Powers, const Rcpp::StringVector coeffs) {
@@ -78,8 +77,8 @@ qspray prepare(const Rcpp::List Powers, const Rcpp::StringVector coeffs) {
     gmpq coeff(Rcpp::as<std::string>(coeffs(i)));
     if(coeff != 0) {
       powers pows(Exponents.begin(), Exponents.end());
-      spows = simplifyPowers(pows);
-      S[spows] += coeff;
+      simplifyPowers(pows);
+      S[pows] += coeff;
     }
   }
 
@@ -221,6 +220,7 @@ qspray prod(const qspray S1, const qspray S2) {
           for(i = 0; i < pows1.size(); i++) {
             powssum.push_back(pows1[i] + pows2[i]);
           }
+          simplifyPowers(pows1); simplifyPowers(pows2);
           Sout[powssum] += r1 * r2;
         }
       }
@@ -243,8 +243,8 @@ void test() {
   powers pows = {1};
   growPowers(pows, pows.size(), 4);
   Rcpp::Rcout << pows.size();
-  powers spows = simplifyPowers(pows);
-  Rcpp::Rcout << spows.size();
+  simplifyPowers(pows);
+  Rcpp::Rcout << pows.size();
 }
 
 // [[Rcpp::export]]
