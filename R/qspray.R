@@ -33,6 +33,9 @@ setClass(
 )
 
 showQspray <- function(qspray) {
+  if(length(qspray@coeffs) == 0L) {
+    return("0")
+  }
   powers <- vapply(qspray@powers, toString, FUN.VALUE = character(1L))
   coeffs <- as.bigq(qspray@coeffs)
   plus <- vapply(coeffs, function(x) x >= 0, FUN.VALUE = logical(1L))
@@ -58,7 +61,7 @@ qspray_from_list <- function(qspray_as_list) {
   if(is.null(powers)) {
     new(
       "qspray", 
-      powers = list(integer(0L)), coeffs = "0"
+      powers = list(), coeffs = character(0L)
     )
   } else {
     new(
@@ -191,16 +194,28 @@ evalQspray <- function(qspray, values_re, values_im = NULL) {
 
 as.qspray.character <- function(x) {
   stopifnot(isFraction(x))
-  new("qspray", powers = list(integer(0L)), coeffs = x)
+  if(as.bigq(x) == 0L) {
+    new("qspray", powers = list(), coeffs = character(0L))
+  } else {
+    new("qspray", powers = list(integer(0L)), coeffs = x)
+  }
 }
 
 as_qspray_gmp <- function(x) {
-  new("qspray", powers = list(integer(0L)), coeffs = as.character(x))
+  if(x == 0L) {
+    new("qspray", powers = list(), coeffs = character(0L))
+  } else {
+    new("qspray", powers = list(integer(0L)), coeffs = as.character(x))
+  }
 }
 
 as.qspray.numeric <- function(x) {
   stopifnot(isInteger(x))
-  new("qspray", powers = list(integer(0L)), coeffs = as.character(x))
+  if(x == 0L) {
+    new("qspray", powers = list(), coeffs = character(0L))
+  } else {
+    new("qspray", powers = list(integer(0L)), coeffs = as.character(x))
+  }
 }
 
 setGeneric(
