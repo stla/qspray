@@ -7,7 +7,7 @@
 NULL
 
 #' @title Determinant of a rational matrix
-#' @description Determinant of a square matrix with rational coefficients.
+#' @description Determinant of a square matrix with rational entries.
 #'
 #' @param M a square matrix such that each entry of \code{as.character(M)} is 
 #'   a quoted integer or a quoted fraction

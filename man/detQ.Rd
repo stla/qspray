@@ -14,7 +14,7 @@ a quoted integer or a quoted fraction}
 A quoted rational number representing the determinant.
 }
 \description{
-Determinant of a square matrix with rational coefficients.
+Determinant of a square matrix with rational entries.
 }
 \examples{
 M <- cbind(c("1/2", "3"), c("5/3", "-2/7"))
