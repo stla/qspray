@@ -1,7 +1,7 @@
 #' @useDynLib qspray, .registration=TRUE
 #' @importFrom Rcpp evalCpp
 #' @importFrom methods setMethod setClass new
-#' @importFrom gmp as.bigq factorialZ
+#' @importFrom gmp as.bigq factorialZ asNumeric
 #' @importFrom purrr transpose
 #' @include qspray.R
 NULL
@@ -146,28 +146,35 @@ lone <- function(n) {
 #'   \code{qspray} object.
 #'
 #' @param qspray a \code{qspray} object
-#' @param values vector of values, such that each element of 
-#'   \code{as.character(values)} is a quoted integer or a quoted fraction
+#' @param values vector of values; if \code{exact=TRUE}, each element of 
+#'   \code{as.character(values)} must be quoted integer or a quoted fraction, 
+#'   otherwise \code{values} must be a numeric vector
+#' @param exact Boolean, whether to use \strong{gmp} arithmetic
 #'
-#' @return A \code{bigq} number.
+#' @return A \code{bigq} number if \code{exact=TRUE}, a double number otherwise.
 #' @export
 #' @examples 
 #' x <- lone(1); y <- lone(2)
 #' P <- 2*x + "1/2"*y
 #' evalQspray(P, c("2", "5/2", "99999")) # "99999" will be ignored
-evalQspray <- function(qspray, values) {
+evalQspray <- function(qspray, values, exact = TRUE) {
   powers <- qspray@powers
   coeffs <- as.bigq(qspray@coeffs)
-  values <- as.character(values)
-  check <- all(vapply(values, isFraction, logical(1L)))
-  if(!check) {
-    stop("Invalid vector `values`.")
+  if(exact) {
+    values <- as.character(values)
+    check <- all(vapply(values, isFraction, logical(1L)))
+    if(!check) {
+      stop("Invalid vector `values`.")
+    }
+    values <- as.bigq(values)
+  } else {
+    stopifnot(is.numeric(values))
+    coeffs <- asNumeric(coeffs)
   }
-  values <- as.bigq(values)
-  out <- as.bigq(0L)
+  out <- 0
   for(i in seq_along(powers)) {
     exponents <- powers[[i]]
-    term <- as.bigq(1L)
+    term <- 1
     for(j in seq_along(exponents)) {
       term <- term * values[j]^exponents[j]
     }
