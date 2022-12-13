@@ -35,7 +35,7 @@ Some arithmetic on this polynomial:
 ```{r}
 -pol
 2 * pol
-# TODO: pol / 2
+pol / 2
 "5/3" * pol
 pol + 5
 pol - "2/5"

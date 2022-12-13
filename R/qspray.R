@@ -182,8 +182,9 @@ qspray_arith_character <- function(e1, e2) {
     "+" = e1 + as_qspray_string(e2),
     "-" = e1 - as_qspray_string(e2),
     "*" = e1 * as_qspray_string(e2),
+    "/" = e1 * as_qspray_string(paste0("1/", e2)),
     stop(gettextf(
-      "Binary operator %s not defined for qspray objects.", dQuote(.Generic)
+      "Binary operator %s not defined for these two objects.", dQuote(.Generic)
     ))
   )
 }
@@ -194,6 +195,7 @@ qspray_arith_gmp <- function(e1, e2) {
     "+" = e1 + as_qspray_gmp(e2),
     "-" = e1 - as_qspray_gmp(e2),
     "*" = e1 * as_qspray_gmp(e2),
+    "/" = e1 / as.character(e2),
     stop(gettextf(
       "Binary operator %s not defined for qspray objects.", dQuote(.Generic)
     ))
@@ -206,6 +208,7 @@ qspray_arith_numeric <- function(e1, e2) {
     "+" = e1 + as_qspray_integer(e2),
     "-" = e1 - as_qspray_integer(e2),
     "*" = e1 * as_qspray_integer(e2),
+    "/" = e1 / as.character(e2),
     "^" = qspray_from_list(qsprayPower(e1, e2)),
     stop(gettextf(
       "Binary operator %s not defined for qspray objects.", dQuote(.Generic)
