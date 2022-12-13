@@ -5,14 +5,25 @@
 #' @include qspray.R
 NULL
 
-#' Title
+#' @title Determinant of a rational matrix
+#' @description Determinant of a square matrix with rational coefficients.
 #'
-#' @param M xx
+#' @param M a square matrix such that each entry of \code{as.character(M)} is 
+#'   a quoted integer or a quoted fraction
 #'
-#' @return xx
+#' @return A quoted rational number representing the determinant. 
 #' @export
+#' @examples 
+#' M <- cbind(c("1/2", "3"), c("5/3", "-2/7"))
+#' detQ(M)
 detQ <- function(M) {
-  detQ_rcpp(M)
+  stopifnot(nrow(M) == ncol(M))
+  M <- as.character(M)
+  check <- all(vapply(M, isFraction, logical(1L)))
+  if(!check) {
+    stop("Invalid matrix `M`.")
+  }
+  detQ_rcpp(as.character(M))
 }
 
 setClass(
@@ -56,14 +67,21 @@ qspray_from_list <- function(qspray_as_list) {
   }
 }
 
-#' Title
+#' @title Make a 'qspray' object
+#' @description Make a \code{qspray} object from a list of exponents and a 
+#'   vector of coefficients.
 #'
-#' @param powers ss
-#' @param coeffs ss
+#' @param powers list of positive integer vectors
+#' @param coeffs a vector such that each element of \code{as.character(coeffs)} 
+#'   is a quoted integer or a quoted fraction; it must have the same length 
+#'   as the \code{powers} list
 #'
-#'
-#' @return xx
+#' @return A \code{qspray} object.
 #' @export
+#' @examples 
+#' powers <- list(c(1, 1), c(0, 2))
+#' coeffs <- c("1/2", "4")
+#' qsprayMaker(powers, coeffs)
 qsprayMaker <- function(powers, coeffs) {
   stopifnot(is.list(powers))
   check_powers <- all(vapply(powers, isExponents, FUN.VALUE = logical(1L)))
@@ -80,12 +98,15 @@ qsprayMaker <- function(powers, coeffs) {
   qspray_from_list(qspray_maker(powers, as.character(coeffs)))
 }
 
-#' Title
+#' @title Polynomial variable
+#' @description Create a polynomial variable.
 #'
-#' @param n xx
+#' @param n nonnegative integer, the index of the variable
 #'
-#' @return xx
+#' @return A \code{qspray} object.
 #' @export
+#' @examples 
+#' lone(2)
 lone <- function(n) {
   stopifnot(isNonnegativeInteger(n))
   powers <- integer(n)
@@ -93,17 +114,28 @@ lone <- function(n) {
   new("qspray", powers = list(powers), coeffs = "1")
 }
 
-
-#' Title
+#' @title Evaluate a 'qspray' object
+#' @description Evaluation of the multivariate polynomial represented by a 
+#'   \code{qspray} object.
 #'
-#' @param qspray xx
-#' @param values xx
+#' @param qspray a \code{qspray} object
+#' @param values vector of values, such that each element of 
+#'   \code{as.character(values)} is a quoted integer or a quoted fraction
 #'
-#' @return xx
+#' @return A \code{bigq} number.
 #' @export
+#' @examples 
+#' x <- lone(1); y <- lone(2)
+#' P <- 2*x + "1/2"*y
+#' evalQspray(P, c("2", "5/2", "99999")) # "99999" will be ignored
 evalQspray <- function(qspray, values) {
   powers <- qspray@powers
   coeffs <- as.bigq(qspray@coeffs)
+  values <- as.character(values)
+  check <- all(vapply(values, isFraction, logical(1L)))
+  if(!check) {
+    stop("Invalid vector `values`.")
+  }
   values <- as.bigq(values)
   out <- as.bigq(0L)
   for(i in seq_along(powers)) {
@@ -116,7 +148,6 @@ evalQspray <- function(qspray, values) {
   }
   out
 }
-
 
 as.qspray.character <- function(x) {
   stopifnot(isFraction(x))
@@ -142,16 +173,17 @@ setGeneric(
 #' @aliases as.qspray,character-method as.qspray,qspray-method as.qspray,numeric-method as.qspray,bigz-method as.qspray,bigq-method
 #' @exportMethod as.qspray
 #' @docType methods
-#' @title Coercion to a qspray
+#' @title Coercion to a 'qspray' object
 #'
-#' @param x a \code{qspray} object or an object yielding an integer or a 
-#'   fraction after an application of \code{as.character}
+#' @param x a \code{qspray} object or an object yielding a quoted integer or a 
+#'   quoted fraction after an application of \code{as.character}
 #'
 #' @return A \code{qspray} object.
 #' @export
 #'
 #' @examples
-#' x
+#' as.qspray(2)
+#' as.qspray("1/3")
 setMethod(
   "as.qspray", "character",
   function(x) {
@@ -365,16 +397,33 @@ setMethod(
   numeric_arith_qspray
 )
 
-#' Title
+#' @title Integral of a multivariate polynomial over a simplex
+#' @description Returns the exact value of the integral of a multivariate 
+#'   polynomial with rational coefficients over a simplex whose vertices have 
+#'   rational coordinates.
 #'
-#' @param P xx
-#' @param S xx
+#' @param P a \code{qspray} object
+#' @param S the simplex, a \code{(n+1)xn} matrix such that each entry of the  
+#'   matrix \code{as.character(S)} is a quoted integer or a quoted fraction
 #'
-#' @return xx
+#' @return A \code{bigq} number, the exact value of the integral.
 #' @export
+#' @examples 
+#' x <- lone(1); y <- lone(2)
+#' P <- x/2 + x*y
+#' S <- rbind(c("0", "0"), c("1", "0"), c("1", "1")) # a triangle
+#' integratePolynomialOnSimplex(P, S)
 integratePolynomialOnSimplex <- function(P, S) {
-  S <- as.bigq(S)
+  S <- as.character(S)
+  check <- all(vapply(S, isFraction, logical(1L)))
+  if(!check) {
+    stop("Invalid entries in the matrix `S`.")
+  }
   n <- ncol(S)
+  if(nrow(S) != n+1L) {
+    stop("The matrix `S` does not represent a simplex.")
+  }
+  S <- as.bigq(S)
   v <- t(S[n+1L, ])
   B <- t(S[1L:n, ]) - do.call(function(...) cbind(...), replicate(n, v))
   gens <- lapply(1L:n, function(i) lone(i))
