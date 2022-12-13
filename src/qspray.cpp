@@ -7,7 +7,20 @@
 
 typedef std::vector<signed int> powers;
 typedef CGAL::Gmpq gmpq;
+typedef std::complex<gmpq> qcplx;
 typedef Eigen::Matrix<gmpq, Eigen::Dynamic, Eigen::Dynamic> QMatrix;
+
+qcplx qxpow(qcplx z, unsigned k) {
+  qcplx result(gmpq("1"), gmpq("0"));
+  while(k) {
+    if(k & 1) {
+      result *= z;
+    }
+    k >>= 1;
+    z *= z;
+  }
+  return result;
+}
 
 class PowersHasher {
  public:
@@ -62,7 +75,7 @@ void simplifyPowers(powers& pows) {
   bool zero = pows[n] == 0;
   while(zero && n >= 0) {
     it--;
-    n--;  
+    n--;
     zero = pows[n] == 0;
   }
   if(n == -1) {
@@ -109,8 +122,43 @@ qspray makeQspray(const Rcpp::List Powers, const Rcpp::StringVector coeffs) {
     powers pows(Exponents.begin(), Exponents.end());
     S[pows] = coeff;
   }
-  
+
   return S;
+}
+
+// [[Rcpp::export]]
+Rcpp::StringVector evalQxspray(const Rcpp::List Powers,
+                               const Rcpp::StringVector coeffs,
+                               const Rcpp::StringVector v_re,
+                               const Rcpp::StringVector v_im) {
+  qspray S = makeQspray(Powers, coeffs);
+
+  std::vector<qcplx> v;
+  int n = v_re.size();
+  v.reserve(n);
+  for(int i = 0; i < n; i++) {
+    qcplx vi(gmpq(Rcpp::as<std::string>(v_re(i))),
+             gmpq(Rcpp::as<std::string>(v_im(i))));
+    v.emplace_back(vi);
+  }
+
+  powers pows;
+  gmpq coef;
+
+  qcplx result(gmpq("0"), gmpq("0"));
+
+  for(auto it = S.begin(); it != S.end(); ++it) {
+    pows = it->first;
+    coef = it->second;
+    qcplx term(gmpq("1"), gmpq("0"));
+    int i = 0;
+    for(auto ci = pows.begin(); ci != pows.end(); ++ci) {
+      term *= qxpow(v[i++], *ci);
+    }
+    result += coef * term;
+  }
+
+  return Rcpp::StringVector::create(q2str(result.real()), q2str(result.imag()));
 }
 
 Rcpp::List makepowers(const qspray S) {  // returns the list of powers
@@ -239,7 +287,8 @@ qspray prod(const qspray S1, const qspray S2) {
           for(i = 0; i < pows1.size(); i++) {
             powssum.push_back(pows1[i] + pows2[i]);
           }
-          simplifyPowers(pows1); simplifyPowers(pows2);
+          simplifyPowers(pows1);
+          simplifyPowers(pows2);
           Sout[powssum] += r1 * r2;
         }
       }
@@ -254,13 +303,14 @@ Rcpp::List qspray_mult(const Rcpp::List& Powers1,
                        const Rcpp::StringVector& coeffs1,
                        const Rcpp::List& Powers2,
                        const Rcpp::StringVector& coeffs2) {
-  return retval(prod(makeQspray(Powers1, coeffs1), makeQspray(Powers2, coeffs2)));
+  return retval(
+      prod(makeQspray(Powers1, coeffs1), makeQspray(Powers2, coeffs2)));
 }
 
 // [[Rcpp::export]]
 void test() {
   std::complex<gmpq> z(gmpq("1/2"), gmpq("2"));
-  Rcpp::Rcout << z*z;
+  Rcpp::Rcout << z * z;
   powers pows = {0};
   growPowers(pows, pows.size(), 4);
   Rcpp::Rcout << pows.size();

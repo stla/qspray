@@ -146,31 +146,36 @@ qlone <- function(n) {
 #'   \code{qspray} object.
 #'
 #' @param qspray a \code{qspray} object
-#' @param values vector of values; if \code{exact=TRUE}, each element of 
-#'   \code{as.character(values)} must be quoted integer or a quoted fraction, 
-#'   otherwise \code{values} must be a numeric vector
-#' @param exact Boolean, whether to use \strong{gmp} arithmetic
+#' @param values_re vector of the real parts of the values; each element of 
+#'   \code{as.character(values_re)} must be quoted integer or a quoted fraction
+#' @param values_im vector of the imaginary parts of the values; each element of 
+#'   \code{as.character(values_im)} must be quoted integer or a quoted fraction
 #'
-#' @return A \code{bigq} number if \code{exact=TRUE}, a double number otherwise.
+#' @return A \code{bigq} number if \code{values_im=NULL}, a pair of \code{bigq} 
+#'   numbers otherwise: the real part and the imaginary part of the result.
 #' @export
 #' @examples 
 #' x <- qlone(1); y <- qlone(2)
 #' P <- 2*x + "1/2"*y
 #' evalQspray(P, c("2", "5/2", "99999")) # "99999" will be ignored
-evalQspray <- function(qspray, values, exact = TRUE) {
+evalQspray <- function(qspray, values_re, values_im = NULL) {
   powers <- qspray@powers
-  coeffs <- as.bigq(qspray@coeffs)
-  if(exact) {
-    values <- as.character(values)
-    check <- all(vapply(values, isFraction, logical(1L)))
-    if(!check) {
-      stop("Invalid vector `values`.")
-    }
-    values <- as.bigq(values)
-  } else {
-    stopifnot(is.numeric(values))
-    coeffs <- asNumeric(coeffs)
+  values_re <- as.character(values_re)
+  check <- all(vapply(values_re, isFraction, logical(1L)))
+  if(!check) {
+    stop("Invalid vector `values_re`.")
   }
+  if(!is.null(values_im)) {
+    stopifnot(length(values_re) == length(values_im))
+    values_im <- as.character(values_im)
+    check <- all(vapply(values_im, isFraction, logical(1L)))
+    if(!check) {
+      stop("Invalid vector `values_im`.")
+    }
+    return(evalQxspray(qspray@powers, qspray@coeffs, values_re, values_im))
+  }
+  coeffs <- as.bigq(qspray@coeffs)
+  values <- as.bigq(values_re)
   out <- 0
   for(i in seq_along(powers)) {
     exponents <- powers[[i]]

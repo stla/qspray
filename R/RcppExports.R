@@ -5,6 +5,10 @@ detQ_rcpp <- function(M) {
     .Call(`_qspray_detQ_rcpp`, M)
 }
 
+evalQxspray <- function(Powers, coeffs, v_re, v_im) {
+    .Call(`_qspray_evalQxspray`, Powers, coeffs, v_re, v_im)
+}
+
 qspray_maker <- function(Powers, coeffs) {
     .Call(`_qspray_qspray_maker`, Powers, coeffs)
 }

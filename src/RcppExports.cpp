@@ -22,6 +22,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// evalQxspray
+Rcpp::StringVector evalQxspray(const Rcpp::List Powers, const Rcpp::StringVector coeffs, const Rcpp::StringVector v_re, const Rcpp::StringVector v_im);
+RcppExport SEXP _qspray_evalQxspray(SEXP PowersSEXP, SEXP coeffsSEXP, SEXP v_reSEXP, SEXP v_imSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::List >::type Powers(PowersSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::StringVector >::type coeffs(coeffsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::StringVector >::type v_re(v_reSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::StringVector >::type v_im(v_imSEXP);
+    rcpp_result_gen = Rcpp::wrap(evalQxspray(Powers, coeffs, v_re, v_im));
+    return rcpp_result_gen;
+END_RCPP
+}
 // qspray_maker
 Rcpp::List qspray_maker(const Rcpp::List& Powers, const Rcpp::StringVector& coeffs);
 RcppExport SEXP _qspray_qspray_maker(SEXP PowersSEXP, SEXP coeffsSEXP) {
@@ -115,6 +129,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_qspray_detQ_rcpp", (DL_FUNC) &_qspray_detQ_rcpp, 1},
+    {"_qspray_evalQxspray", (DL_FUNC) &_qspray_evalQxspray, 4},
     {"_qspray_qspray_maker", (DL_FUNC) &_qspray_qspray_maker, 2},
     {"_qspray_qspray_add", (DL_FUNC) &_qspray_qspray_add, 4},
     {"_qspray_qspray_subtract", (DL_FUNC) &_qspray_qspray_subtract, 4},

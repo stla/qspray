@@ -4,19 +4,20 @@
 \alias{evalQspray}
 \title{Evaluate a 'qspray' object}
 \usage{
-evalQspray(qspray, values, exact = TRUE)
+evalQspray(qspray, values_re, values_im = NULL)
 }
 \arguments{
 \item{qspray}{a \code{qspray} object}
 
-\item{values}{vector of values; if \code{exact=TRUE}, each element of 
-\code{as.character(values)} must be quoted integer or a quoted fraction, 
-otherwise \code{values} must be a numeric vector}
+\item{values_re}{vector of the real parts of the values; each element of 
+\code{as.character(values_re)} must be quoted integer or a quoted fraction}
 
-\item{exact}{Boolean, whether to use \strong{gmp} arithmetic}
+\item{values_im}{vector of the imaginary parts of the values; each element of 
+\code{as.character(values_im)} must be quoted integer or a quoted fraction}
 }
 \value{
-A \code{bigq} number if \code{exact=TRUE}, a double number otherwise.
+A \code{bigq} number if \code{values_im=NULL}, a pair of \code{bigq} 
+  numbers otherwise: the real part and the imaginary part of the result.
 }
 \description{
 Evaluation of the multivariate polynomial represented by a 
