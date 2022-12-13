@@ -2,6 +2,7 @@
 #' @importFrom Rcpp evalCpp
 #' @importFrom methods setMethod setClass new
 #' @importFrom gmp as.bigq factorialZ
+#' @importFrom purrr transpose
 #' @include qspray.R
 NULL
 
@@ -67,6 +68,23 @@ qspray_from_list <- function(qspray_as_list) {
   }
 }
 
+stringToQspray <- function(p){
+  stopifnot(isString(p))
+  p <- gsub("\\)\\s*-\\s*(\\d*/*\\d*)\\s*", ")+-\\1", p)
+  p <- gsub("^-\\s*x", "-1x", trimws(p, "left"))
+  terms <- strsplit(p, "+", fixed = TRUE)[[1L]]
+  csts <- !grepl("x", terms)
+  terms[csts] <- paste0(terms[csts], "x^(0")
+  ss <- transpose(strsplit(terms, "x^(", fixed = TRUE))
+  coeffs <- trimws(unlist(ss[[1L]], recursive = FALSE))
+  coeffs[coeffs == ""] <- "1"
+  powers <- sub(")", "", unlist(ss[[2L]], recursive = FALSE), fixed = TRUE)
+  powers <- lapply(strsplit(powers, ","), as.integer)
+  list(
+    "powers" = powers, "coeffs" = coeffs
+  )
+}
+
 #' @title Make a 'qspray' object
 #' @description Make a \code{qspray} object from a list of exponents and a 
 #'   vector of coefficients.
@@ -75,6 +93,9 @@ qspray_from_list <- function(qspray_as_list) {
 #' @param coeffs a vector such that each element of \code{as.character(coeffs)} 
 #'   is a quoted integer or a quoted fraction; it must have the same length 
 #'   as the \code{powers} list
+#' @param string if not \code{NULL}, this argument takes precedence over 
+#'   \code{powers} and \code{vertices}; it must be a string representing a 
+#'   multivariate polynomial; see the example
 #'
 #' @return A \code{qspray} object.
 #' @export
@@ -82,7 +103,13 @@ qspray_from_list <- function(qspray_as_list) {
 #' powers <- list(c(1, 1), c(0, 2))
 #' coeffs <- c("1/2", "4")
 #' qsprayMaker(powers, coeffs)
-qsprayMaker <- function(powers, coeffs) {
+#' qsprayMaker(string = "1/2 x^(1, 1) + 4 x^(0, 2)")
+qsprayMaker <- function(powers, coeffs, string = NULL) {
+  if(!is.null(string)) {
+    List <- stringToQspray(string)
+    powers <- List[["powers"]]
+    coeffs <- List[["coeffs"]]
+  } 
   stopifnot(is.list(powers))
   check_powers <- all(vapply(powers, isExponents, FUN.VALUE = logical(1L)))
   if(!check_powers) {
@@ -442,7 +469,7 @@ integratePolynomialOnSimplex <- function(P, S) {
   for(i in 1L:length(exponents)) {
     powers <- exponents[[i]]
     term <- as.bigq(1L)
-    for(j in 1L:length(powers)) {
+    for(j in seq_along(powers)) {
       term <- term * newvars[[j]]^powers[j] 
     }
     Q <- Q + coeffs[i] * term

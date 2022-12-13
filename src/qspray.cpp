@@ -59,12 +59,17 @@ void simplifyPowers(powers& pows) {
   }
   n--;
   powers::iterator it = pows.end();
-  bool zero = pows[n--] == 0;
+  bool zero = pows[n] == 0;
   while(zero && n >= 0) {
     it--;
-    zero = pows[n--] == 0;
+    n--;  
+    zero = pows[n] == 0;
   }
-  pows.erase(it, pows.end());
+  if(n == -1) {
+    pows = {};
+  } else {
+    pows.erase(it, pows.end());
+  }
 }
 
 qspray prepare(const Rcpp::List Powers, const Rcpp::StringVector coeffs) {
@@ -240,7 +245,7 @@ Rcpp::List qspray_mult(const Rcpp::List& Powers1,
 
 // [[Rcpp::export]]
 void test() {
-  powers pows = {1};
+  powers pows = {0};
   growPowers(pows, pows.size(), 4);
   Rcpp::Rcout << pows.size();
   simplifyPowers(pows);

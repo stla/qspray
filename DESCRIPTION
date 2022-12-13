@@ -15,6 +15,7 @@ SystemRequirements: C++ 17, gmp, mpfr
 Imports: 
     gmp,
     methods,
+    purrr,
     Rcpp (>= 1.0.9)
 LinkingTo: 
     Rcpp,

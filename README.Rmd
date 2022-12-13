@@ -31,6 +31,14 @@ pol <- 4*x^2 + "1/2"*y - 5*x*y*z
 pol
 ```
 
+Or maybe you prefer to define the polynomial by giving it as a string:
+
+```{r}
+qsprayMaker(string = "4 x^(2) + 1/2 x^(0, 1) - 5 x^(1, 1, 1)")
+```
+
+As you want, but this method is not highly robust.
+
 Some arithmetic on this polynomial:
 
 ```{r}

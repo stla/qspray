@@ -27,6 +27,15 @@ pol
 ## -5*x^(1, 1, 1) + 4*x^(2) + 1/2*x^(0, 1)
 ```
 
+Or maybe you prefer to define the polynomial by giving it as a string:
+
+``` r
+qsprayMaker(string = "4 x^(2) + 1/2 x^(0, 1) - 5 x^(1, 1, 1)")
+## -5*x^(1, 1, 1) + 1/2*x^(0, 1) + 4*x^(2)
+```
+
+As you want, but this method is not highly robust.
+
 Some arithmetic on this polynomial:
 
 ``` r
