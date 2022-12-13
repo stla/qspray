@@ -18,12 +18,12 @@ NULL
 #' detQ(M)
 detQ <- function(M) {
   stopifnot(nrow(M) == ncol(M))
-  M <- as.character(M)
+  storage.mode(M) <- "character"
   check <- all(vapply(M, isFraction, logical(1L)))
   if(!check) {
     stop("Invalid matrix `M`.")
   }
-  detQ_rcpp(as.character(M))
+  detQ_rcpp(M)
 }
 
 setClass(
@@ -414,7 +414,7 @@ setMethod(
 #' S <- rbind(c("0", "0"), c("1", "0"), c("1", "1")) # a triangle
 #' integratePolynomialOnSimplex(P, S)
 integratePolynomialOnSimplex <- function(P, S) {
-  S <- as.character(S)
+  storage.mode(S) <- "character"
   check <- all(vapply(S, isFraction, logical(1L)))
   if(!check) {
     stop("Invalid entries in the matrix `S`.")
