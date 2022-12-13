@@ -172,7 +172,8 @@ evalQspray <- function(qspray, values_re, values_im = NULL) {
     if(!check) {
       stop("Invalid vector `values_im`.")
     }
-    return(evalQxspray(qspray@powers, qspray@coeffs, values_re, values_im))
+    result <- evalQxspray(qspray@powers, qspray@coeffs, values_re, values_im)
+    return(as.bigq(result))
   }
   coeffs <- as.bigq(qspray@coeffs)
   values <- as.bigq(values_re)
