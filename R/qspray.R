@@ -490,3 +490,29 @@ integratePolynomialOnSimplex <- function(P, S) {
   }
   abs(as.bigq(detQ(as.character(B)))) *  s / factorialZ(n)
 }
+
+#' @title Monomial symmetric function
+#' @description Returns a monomial symmetric function as a polynomial.
+#'
+#' @param m integer, the number of variables
+#' @param lambda an integer partition, given as a vector of decreasing
+#'   positive integers
+#'
+#' @return A \code{qspray} object.
+#' @importFrom DescTools Permn
+#' @export
+#'
+#' @examples
+#' MSFpoly(3, c(3,1))
+MSFpoly <- function(m, lambda){
+  stopifnot(isNonnegativeInteger(m), isPartition(lambda))
+  lambda <- lambda[lambda > 0]
+  if(length(lambda) > m) return(as.qspray(0))
+  kappa <- numeric(m)
+  kappa[seq_along(lambda)] <- lambda
+  perms <- Permn(kappa)
+  n <- nrow(perms)
+  powers <- lapply(1L:n, function(i) perms[i, ])
+  coeffs <- rep("1", n)
+  qsprayMaker(powers, coeffs)
+}

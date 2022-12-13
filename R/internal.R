@@ -47,3 +47,9 @@ isExponents <- function(x) {
 isCoeffs <- function(x) {
   all(vapply(as.character(x), isFraction, FUN.VALUE = logical(1L)))
 }
+
+isPartition <- function(lambda){
+  length(lambda) == 0L || 
+    all(vapply(lambda, isPositiveInteger, FUN.VALUE = logical(1L))) && 
+    all(diff(lambda) <= 0)
+}
