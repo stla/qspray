@@ -18,10 +18,11 @@ isFraction <- function(x) {
   if(!is.character(x) || length(x) != 1L) {
     return(FALSE)
   }
+  x <- trimws(x)
   if(grepl("^\\-*\\d+$", x)) {
     return(TRUE)
   }
-  nd <- strsplit(x, "/")[[1L]]
+  nd <- trimws(strsplit(x, "/")[[1L]])
   if(length(nd) != 2L) {
     FALSE
   } else {
