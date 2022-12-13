@@ -118,7 +118,7 @@ evalQspray <- function(qspray, values) {
 }
 
 
-as_qspray_string <- function(x) {
+as.qspray.character <- function(x) {
   stopifnot(isFraction(x))
   new("qspray", powers = list(integer(0L)), coeffs = x)
 }
@@ -127,10 +127,69 @@ as_qspray_gmp <- function(x) {
   new("qspray", powers = list(integer(0L)), coeffs = as.character(x))
 }
 
-as_qspray_integer <- function(x) {
+as.qspray.numeric <- function(x) {
   stopifnot(isInteger(x))
   new("qspray", powers = list(integer(0L)), coeffs = as.character(x))
 }
+
+setGeneric(
+  "as.qspray", function(x) {
+    NULL
+  }
+)
+
+#' @name as.qspray
+#' @aliases as.qspray,character-method as.qspray,qspray-method as.qspray,numeric-method as.qspray,bigz-method as.qspray,bigq-method
+#' @exportMethod as.qspray
+#' @docType methods
+#' @title Coercion to a qspray
+#'
+#' @param x a \code{qspray} object or an object yielding an integer or a 
+#'   fraction after an application of \code{as.character}
+#'
+#' @return A \code{qspray} object.
+#' @export
+#'
+#' @examples
+#' x
+setMethod(
+  "as.qspray", "character",
+  function(x) {
+    as.qspray.character(x)
+  }
+)
+
+#' @rdname as.qspray
+setMethod(
+  "as.qspray", "qspray",
+  function(x) {
+    x
+  }
+)
+
+#' @rdname as.qspray
+setMethod(
+  "as.qspray", "numeric",
+  function(x) {
+    as.qspray.numeric(x)
+  }
+)
+
+#' @rdname as.qspray
+setMethod(
+  "as.qspray", "bigz",
+  function(x) {
+    as_qspray_gmp(x)
+  }
+)
+
+#' @rdname as.qspray
+setMethod(
+  "as.qspray", "bigq",
+  function(x) {
+    as_qspray_gmp(x)
+  }
+)
 
 #' @name qspray-unary
 #' @title Unary operators for qspray objects
@@ -179,10 +238,10 @@ qsprayPower <- function(qspray, n) {
 qspray_arith_character <- function(e1, e2) {
   switch(
     .Generic,
-    "+" = e1 + as_qspray_string(e2),
-    "-" = e1 - as_qspray_string(e2),
-    "*" = e1 * as_qspray_string(e2),
-    "/" = e1 * as_qspray_string(paste0("1/", e2)),
+    "+" = e1 + as.qspray.character(e2),
+    "-" = e1 - as.qspray.character(e2),
+    "*" = e1 * as.qspray.character(e2),
+    "/" = e1 * as.qspray.character(paste0("1/", e2)),
     stop(gettextf(
       "Binary operator %s not defined for these two objects.", dQuote(.Generic)
     ))
@@ -205,9 +264,9 @@ qspray_arith_gmp <- function(e1, e2) {
 qspray_arith_numeric <- function(e1, e2) {
   switch(
     .Generic,
-    "+" = e1 + as_qspray_integer(e2),
-    "-" = e1 - as_qspray_integer(e2),
-    "*" = e1 * as_qspray_integer(e2),
+    "+" = e1 + as.qspray.numeric(e2),
+    "-" = e1 - as.qspray.numeric(e2),
+    "*" = e1 * as.qspray.numeric(e2),
     "/" = e1 / as.character(e2),
     "^" = qspray_from_list(qsprayPower(e1, e2)),
     stop(gettextf(
@@ -219,9 +278,9 @@ qspray_arith_numeric <- function(e1, e2) {
 character_arith_qspray <- function(e1, e2) {
   switch(
     .Generic,
-    "+" = as_qspray_string(e1) + e2,
-    "-" = as_qspray_string(e1) - e2,
-    "*" = as_qspray_string(e1) * e2,
+    "+" = as.qspray.character(e1) + e2,
+    "-" = as.qspray.character(e1) - e2,
+    "*" = as.qspray.character(e1) * e2,
     stop(gettextf(
       "Binary operator %s not defined for qspray objects.", dQuote(.Generic)
     ))
@@ -243,9 +302,9 @@ gmp_arith_qspray <- function(e1, e2) {
 numeric_arith_qspray <- function(e1, e2) {
   switch(
     .Generic,
-    "+" = as_qspray_integer(e1) + e2,
-    "-" = as_qspray_integer(e1) - e2,
-    "*" = as_qspray_integer(e1) * e2,
+    "+" = as.qspray.numeric(e1) + e2,
+    "-" = as.qspray.numeric(e1) - e2,
+    "*" = as.qspray.numeric(e1) * e2,
     stop(gettextf(
       "Binary operator %s not defined for qspray objects.", dQuote(.Generic)
     ))
