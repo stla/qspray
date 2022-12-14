@@ -17,7 +17,8 @@ Imports:
     gmp,
     methods,
     purrr,
-    Rcpp (>= 1.0.9)
+    Rcpp (>= 1.0.9),
+    Ryacas
 LinkingTo: 
     Rcpp,
     RcppCGAL,
@@ -29,3 +30,4 @@ Collate:
     'RcppExports.R'
     'internal.R'
     'qspray.R'
+    'yacas.R'
