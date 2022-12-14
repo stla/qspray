@@ -67,6 +67,19 @@ Use `evalQspray` to evaluate a polynomial for some values of the variables:
 evalQspray(pol, c("1", "2", "3/2"))
 ```
 
+Alternatively, you can convert the polynomial to a function:
+
+```{r}
+f <- as.function(pol)
+f("1", "2", "3/2")
+```
+
+You can pass the strings you want as the arguments of this functions:
+
+```{r}
+f("x", "y", "z")
+```
+
 The package also provides a function which returns the exact value of the 
 integral of a polynomial with rational coefficients over a simplex with 
 rational vertices:

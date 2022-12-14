@@ -77,6 +77,21 @@ evalQspray(pol, c("1", "2", "3/2"))
 ## [1] -10
 ```
 
+Alternatively, you can convert the polynomial to a function:
+
+``` r
+f <- as.function(pol)
+f("1", "2", "3/2")
+## [1] "-10"
+```
+
+You can pass the strings you want as the arguments of this functions:
+
+``` r
+f("x", "y", "z")
+## [1] "(8*x^2-10*x*y*z+y)/2"
+```
+
 The package also provides a function which returns the exact value of
 the integral of a polynomial with rational coefficients over a simplex
 with rational vertices:
