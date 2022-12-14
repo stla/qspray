@@ -17,6 +17,7 @@ A quoted rational number representing the determinant.
 Determinant of a square matrix with rational entries.
 }
 \examples{
+library(qspray)
 M <- cbind(c("1/2", "3"), c("5/3", "-2/7"))
 detQ(M)
 }

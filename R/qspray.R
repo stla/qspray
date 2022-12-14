@@ -15,6 +15,7 @@ NULL
 #' @return A quoted rational number representing the determinant. 
 #' @export
 #' @examples 
+#' library(qspray)
 #' M <- cbind(c("1/2", "3"), c("5/3", "-2/7"))
 #' detQ(M)
 detQ <- function(M) {
@@ -319,7 +320,7 @@ qspray_arith_qspray <- function(e1, e2) {
       qspray_mult(e1@powers, e1@coeffs, e2@powers, e2@coeffs)
     ),
     stop(gettextf(
-      "Binary operator %s not defined for lazy vectors.", dQuote(.Generic)
+      "Binary operator %s not defined for qspray objects.", dQuote(.Generic)
     ))
   )
 }
@@ -350,7 +351,7 @@ qspray_arith_gmp <- function(e1, e2) {
     "*" = e1 * as_qspray_gmp(e2),
     "/" = e1 / as.character(e2),
     stop(gettextf(
-      "Binary operator %s not defined for qspray objects.", dQuote(.Generic)
+      "Binary operator %s not defined for these two objects.", dQuote(.Generic)
     ))
   )
 }
@@ -364,7 +365,7 @@ qspray_arith_numeric <- function(e1, e2) {
     "/" = e1 / as.character(e2),
     "^" = qspray_from_list(qsprayPower(e1, e2)),
     stop(gettextf(
-      "Binary operator %s not defined for qspray objects.", dQuote(.Generic)
+      "Binary operator %s not defined for these two objects.", dQuote(.Generic)
     ))
   )
 }
@@ -376,7 +377,7 @@ character_arith_qspray <- function(e1, e2) {
     "-" = as.qspray.character(e1) - e2,
     "*" = as.qspray.character(e1) * e2,
     stop(gettextf(
-      "Binary operator %s not defined for qspray objects.", dQuote(.Generic)
+      "Binary operator %s not defined for these two objects.", dQuote(.Generic)
     ))
   )
 }
@@ -388,7 +389,7 @@ gmp_arith_qspray <- function(e1, e2) {
     "-" = as_qspray_gmp(e1) - e2,
     "*" = as_qspray_gmp(e1) * e2,
     stop(gettextf(
-      "Binary operator %s not defined for qspray objects.", dQuote(.Generic)
+      "Binary operator %s not defined for these two objects.", dQuote(.Generic)
     ))
   )
 }
@@ -400,7 +401,7 @@ numeric_arith_qspray <- function(e1, e2) {
     "-" = as.qspray.numeric(e1) - e2,
     "*" = as.qspray.numeric(e1) * e2,
     stop(gettextf(
-      "Binary operator %s not defined for qspray objects.", dQuote(.Generic)
+      "Binary operator %s not defined for these two objects.", dQuote(.Generic)
     ))
   )
 }
@@ -486,6 +487,7 @@ setMethod(
 #' @return A \code{bigq} number, the exact value of the integral.
 #' @export
 #' @examples 
+#' library(qspray)
 #' x <- qlone(1); y <- qlone(2)
 #' P <- x/2 + x*y
 #' S <- rbind(c("0", "0"), c("1", "0"), c("1", "1")) # a triangle
@@ -553,8 +555,9 @@ integratePolynomialOnSimplex <- function(P, S) {
 #' @export
 #'
 #' @examples
-#' MSFpoly(3, c(3,1))
-MSFpoly <- function(m, lambda){
+#' library(qspray)
+#' MSFpoly(3, c(3, 1))
+MSFpoly <- function(m, lambda) {
   stopifnot(isNonnegativeInteger(m), isPartition(lambda))
   lambda <- lambda[lambda > 0]
   if(length(lambda) > m) return(as.qspray(0))
@@ -579,13 +582,14 @@ MSFpoly <- function(m, lambda){
 #' @export
 #'
 #' @examples
-#' ESFpoly(3, c(3,1))
-ESFpoly <- function(m, lambda){
+#' library(qspray)
+#' ESFpoly(3, c(3, 1))
+ESFpoly <- function(m, lambda) {
   stopifnot(isNonnegativeInteger(m), isPartition(lambda))
   lambda <- lambda[lambda > 0]
   if(any(lambda > m)) return(as.qspray(0))
   out <- 1
-  for(k in seq_along(lambda)){
+  for(k in seq_along(lambda)) {
     kappa <- integer(m)
     kappa[seq_len(lambda[k])] <- rep(1L, lambda[k])
     perms <- Permn(kappa)

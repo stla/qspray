@@ -19,5 +19,6 @@ A \code{qspray} object.
 Returns a monomial symmetric function as a polynomial.
 }
 \examples{
-MSFpoly(3, c(3,1))
+library(qspray)
+MSFpoly(3, c(3, 1))
 }

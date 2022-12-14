@@ -19,5 +19,6 @@ A \code{qspray} object.
 Returns an elementary symmetric function as a polynomial.
 }
 \examples{
-ESFpoly(3, c(3,1))
+library(qspray)
+ESFpoly(3, c(3, 1))
 }
