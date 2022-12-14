@@ -280,17 +280,20 @@ qspray prod(const qspray S1, const qspray S2) {
           powssum.clear();
           if(n1 < n2) {
             powers gpows = growPowers(pows1, n1, n2);
+            powssum.reserve(n2);
             for(i = 0; i < n2; i++) {
-              powssum.push_back(gpows[i] + pows2[i]);
+              powssum.emplace_back(gpows[i] + pows2[i]);
             }
           } else if(n1 > n2) {
             powers gpows = growPowers(pows2, n2, n1);
+            powssum.reserve(n1);
             for(i = 0; i < n1; i++) {
-              powssum.push_back(pows1[i] + gpows[i]);
+              powssum.emplace_back(pows1[i] + gpows[i]);
             }
           } else {
+            powssum.reserve(n1);
             for(i = 0; i < n1; i++) {
-              powssum.push_back(pows1[i] + pows2[i]);
+              powssum.emplace_back(pows1[i] + pows2[i]);
             }
           }
           Sout[powssum] += r1 * r2;
