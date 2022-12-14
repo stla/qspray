@@ -4,3 +4,4 @@
 ^inst/essais$
 ^README\.Rmd$
 ^\.github$
+^cran-comments\.md$
