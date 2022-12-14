@@ -87,10 +87,8 @@ void simplifyPowers(powers& pows) {
 
 qspray prepare(const Rcpp::List Powers, const Rcpp::StringVector coeffs) {
   qspray S;
-  powers spows;
-  signed int i;
 
-  for(i = 0; i < Powers.size(); i++) {
+  for(signed int i = 0; i < Powers.size(); i++) {
     Rcpp::IntegerVector Exponents = Powers(i);
     gmpq coeff(Rcpp::as<std::string>(coeffs(i)));
     if(coeff != 0) {
@@ -99,7 +97,6 @@ qspray prepare(const Rcpp::List Powers, const Rcpp::StringVector coeffs) {
       S[pows] += coeff;
     }
   }
-
   // Now remove zero entries:
   qspray::iterator it = S.begin();
   while(it != S.end()) {
@@ -109,12 +106,12 @@ qspray prepare(const Rcpp::List Powers, const Rcpp::StringVector coeffs) {
       ++it;  // else just increment the iterator
     }
   }
+  
   return S;
 }
 
 qspray makeQspray(const Rcpp::List Powers, const Rcpp::StringVector coeffs) {
   qspray S;
-  powers spows;
 
   for(int i = 0; i < Powers.size(); i++) {
     Rcpp::IntegerVector Exponents = Powers(i);
@@ -216,10 +213,10 @@ Rcpp::List qspray_add(const Rcpp::List& Powers1,
                       const Rcpp::List& Powers2,
                       const Rcpp::StringVector& coeffs2) {
   qspray::const_iterator it;
-  powers pows;
   qspray S1 = makeQspray(Powers1, coeffs1);
   qspray S2 = makeQspray(Powers2, coeffs2);
-
+  powers pows;
+  
   for(it = S2.begin(); it != S2.end(); ++it) {
     pows = it->first;
     S1[pows] += S2[pows];
@@ -237,10 +234,10 @@ Rcpp::List qspray_subtract(const Rcpp::List& Powers1,
                            const Rcpp::List& Powers2,
                            const Rcpp::StringVector& coeffs2) {
   qspray::const_iterator it;
-  powers pows;
   qspray S1 = makeQspray(Powers1, coeffs1);
   qspray S2 = makeQspray(Powers2, coeffs2);
-
+  powers pows;
+  
   for(it = S2.begin(); it != S2.end(); ++it) {
     pows = it->first;
     S1[pows] -= S2[pows];
@@ -252,43 +249,50 @@ Rcpp::List qspray_subtract(const Rcpp::List& Powers1,
   return retval(S1);
 }
 
-void growPowers(powers& pows, signed int m, signed int n) {
+powers growPowers(powers pows, signed int m, signed int n) {
+  powers gpows;
+  gpows.reserve(n);
+  for(signed int i = 0; i < m; i++) {
+    gpows.emplace_back(pows[i]);
+  }
   for(signed int i = m; i < n; i++) {
-    pows.push_back(0);
+    gpows.emplace_back(0);
   }
-}
-
-void harmonize(powers& pows1, powers& pows2) {
-  signed int n1 = pows1.size();
-  signed int n2 = pows2.size();
-  if(n1 < n2) {
-    growPowers(pows1, n1, n2);
-  } else {
-    growPowers(pows2, n2, n1);
-  }
+  return gpows;
 }
 
 qspray prod(const qspray S1, const qspray S2) {
   qspray Sout;
   qspray::const_iterator it1, it2;
   powers powssum;
-  unsigned int i;
+  signed int i;
 
   for(it1 = S1.begin(); it1 != S1.end(); ++it1) {
     const gmpq r1 = it1->second;
     if(r1 != 0) {
       powers pows1 = it1->first;
+      signed int n1 = pows1.size();
       for(it2 = S2.begin(); it2 != S2.end(); ++it2) {
         const gmpq r2 = it2->second;
         if(r2 != 0) {
           powers pows2 = it2->first;
-          harmonize(pows1, pows2);
+          signed int n2 = pows2.size();
           powssum.clear();
-          for(i = 0; i < pows1.size(); i++) {
-            powssum.push_back(pows1[i] + pows2[i]);
+          if(n1 < n2) {
+            powers gpows = growPowers(pows1, n1, n2);
+            for(i = 0; i < n2; i++) {
+              powssum.push_back(gpows[i] + pows2[i]);
+            }
+          } else if(n1 > n2) {
+            powers gpows = growPowers(pows2, n2, n1);
+            for(i = 0; i < n1; i++) {
+              powssum.push_back(pows1[i] + gpows[i]);
+            }
+          } else {
+            for(i = 0; i < n1; i++) {
+              powssum.push_back(pows1[i] + pows2[i]);
+            }
           }
-          simplifyPowers(pows1);
-          simplifyPowers(pows2);
           Sout[powssum] += r1 * r2;
         }
       }
@@ -342,7 +346,6 @@ bool qspray_equality(const Rcpp::List& Powers1,
   }
   // at this point, S1[v] == S2[v] for every index 'v' of S1;  S1\subseteq S2.
   // We need to check that every element of S2 has been accounted for:
-
   if(S2.empty()) {
     return true;
   } else {
