@@ -1,3 +1,5 @@
+/* Original code by Robin Hankin */
+
 #include <CGAL/Gmpq.h>
 #include <CGAL/Gmpz.h>
 #include <RcppEigen.h>

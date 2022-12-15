@@ -2,16 +2,18 @@ Type: Package
 Package: qspray
 Title: Multivariate Polynomials with Rational Coefficients
 Version: 0.1.0
-Authors@R: 
-    person("Stéphane", "Laurent", , "laurent_step@outlook.fr", role = c("aut", "cre"))
+Authors@R: c(
+    person("Stéphane", "Laurent", , "laurent_step@outlook.fr", role = c("aut", "cre")),
+    person("Robin", "Hankin", role = c("ctb", "cph"),
+           comment = "author of the 'spray' package, which strongly inspired this package")
+  )
 Maintainer: Stéphane Laurent <laurent_step@outlook.fr>
 Description: Symbolic calculation and evaluation of multivariate
-    polynomials with rational coefficients. This package is strongly 
+    polynomials with rational coefficients. This package is strongly
     inspired by the 'spray' package.
 License: GPL-3
 URL: https://github.com/stla/qspray
 BugReports: https://github.com/stla/qspray/issues
-SystemRequirements: C++ 17, gmp, mpfr
 Imports: 
     DescTools,
     gmp,
@@ -20,12 +22,13 @@ Imports:
     Rcpp (>= 1.0.9),
     Ryacas
 LinkingTo: 
+    BH,
     Rcpp,
     RcppCGAL,
-    RcppEigen,
-    BH
+    RcppEigen
 Encoding: UTF-8
 RoxygenNote: 7.2.3
+SystemRequirements: C++ 17, gmp, mpfr
 Collate: 
     'RcppExports.R'
     'internal.R'
