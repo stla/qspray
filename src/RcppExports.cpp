@@ -90,15 +90,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// test
-void test();
-RcppExport SEXP _qspray_test() {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    test();
-    return R_NilValue;
-END_RCPP
-}
 // qspray_equality
 bool qspray_equality(const Rcpp::List& Powers1, const Rcpp::StringVector& coeffs1, const Rcpp::List& Powers2, const Rcpp::StringVector& coeffs2);
 RcppExport SEXP _qspray_qspray_equality(SEXP Powers1SEXP, SEXP coeffs1SEXP, SEXP Powers2SEXP, SEXP coeffs2SEXP) {
@@ -134,7 +125,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_qspray_qspray_add", (DL_FUNC) &_qspray_qspray_add, 4},
     {"_qspray_qspray_subtract", (DL_FUNC) &_qspray_qspray_subtract, 4},
     {"_qspray_qspray_mult", (DL_FUNC) &_qspray_qspray_mult, 4},
-    {"_qspray_test", (DL_FUNC) &_qspray_test, 0},
     {"_qspray_qspray_equality", (DL_FUNC) &_qspray_qspray_equality, 4},
     {"_qspray_qspray_power", (DL_FUNC) &_qspray_qspray_power, 3},
     {NULL, NULL, 0}

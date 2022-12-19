@@ -3,6 +3,7 @@
 #include <CGAL/Gmpq.h>
 #include <CGAL/Gmpz.h>
 #include <RcppEigen.h>
+#include <complex.h>
 #include "gmp.h"
 
 #define CGAL_EIGEN3_ENABLED 1
@@ -12,14 +13,24 @@ typedef CGAL::Gmpq gmpq;
 typedef std::complex<gmpq> qcplx;
 typedef Eigen::Matrix<gmpq, Eigen::Dynamic, Eigen::Dynamic> QMatrix;
 
+qcplx qxmult(qcplx z1, qcplx z2) {
+  gmpq r1 = z1.real();
+  gmpq i1 = z1.imag();
+  gmpq r2 = z2.real();
+  gmpq i2 = z2.imag();
+  qcplx result(r1*r2 - i1*i2, r1*i2+r2*i1);
+  return result;
+}
+
+
 qcplx qxpow(qcplx z, unsigned k) {
   qcplx result(gmpq("1"), gmpq("0"));
   while(k) {
     if(k & 1) {
-      result *= z;
+      result = qxmult(result, z);
     }
     k >>= 1;
-    z *= z;
+    z = qxmult(z, z);
   }
   return result;
 }
@@ -149,12 +160,12 @@ Rcpp::StringVector evalQxspray(const Rcpp::List Powers,
   for(auto it = S.begin(); it != S.end(); ++it) {
     pows = it->first;
     coef = it->second;
-    qcplx term(gmpq("1"), gmpq("0"));
+    qcplx term(coef, gmpq("0"));
     int i = 0;
     for(auto ci = pows.begin(); ci != pows.end(); ++ci) {
-      term *= qxpow(v[i++], *ci);
+      term = qxmult(term, qxpow(v[i++], *ci));
     }
-    result += coef * term;
+    result += term;
   }
 
   return Rcpp::StringVector::create(q2str(result.real()), q2str(result.imag()));
@@ -314,17 +325,6 @@ Rcpp::List qspray_mult(const Rcpp::List& Powers1,
                        const Rcpp::StringVector& coeffs2) {
   return retval(
       prod(makeQspray(Powers1, coeffs1), makeQspray(Powers2, coeffs2)));
-}
-
-// [[Rcpp::export]]
-void test() {
-  std::complex<gmpq> z(gmpq("1/2"), gmpq("2"));
-  Rcpp::Rcout << z * z;
-  powers pows = {0};
-  growPowers(pows, pows.size(), 4);
-  Rcpp::Rcout << pows.size();
-  simplifyPowers(pows);
-  Rcpp::Rcout << pows.size();
 }
 
 // [[Rcpp::export]]

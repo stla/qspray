@@ -25,10 +25,6 @@ qspray_mult <- function(Powers1, coeffs1, Powers2, coeffs2) {
     .Call(`_qspray_qspray_mult`, Powers1, coeffs1, Powers2, coeffs2)
 }
 
-test <- function() {
-    invisible(.Call(`_qspray_test`))
-}
-
 qspray_equality <- function(Powers1, coeffs1, Powers2, coeffs2) {
     .Call(`_qspray_qspray_equality`, Powers1, coeffs1, Powers2, coeffs2)
 }
