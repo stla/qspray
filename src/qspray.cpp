@@ -1,18 +1,15 @@
-/* Original code by Robin Hankin */
+/* Based on original code by Robin Hankin */
 
-#include <CGAL/Gmpq.h>
-#include <CGAL/Gmpz.h>
 #include <RcppEigen.h>
+#include <boost/multiprecision/gmp.hpp>
 #include <complex.h>
-#include "gmp.h"
-
-#define CGAL_EIGEN3_ENABLED 1
-
-typedef std::vector<signed int> powers;
-typedef CGAL::Gmpq gmpq;
-typedef std::complex<gmpq> qcplx;
+typedef std::vector<signed int>                             powers;
+typedef boost::multiprecision::mpq_rational                 gmpq;
+typedef boost::multiprecision::mpz_int                      gmpi;
+typedef std::complex<gmpq>                                  qcplx;
 typedef Eigen::Matrix<gmpq, Eigen::Dynamic, Eigen::Dynamic> QMatrix;
 
+// -------------------------------------------------------------------------- //
 qcplx qxmult(qcplx z1, qcplx z2) {
   gmpq r1 = z1.real();
   gmpq i1 = z1.imag();
@@ -23,6 +20,7 @@ qcplx qxmult(qcplx z1, qcplx z2) {
 }
 
 
+// -------------------------------------------------------------------------- //
 qcplx qxpow(qcplx z, unsigned k) {
   qcplx result(gmpq("1"), gmpq("0"));
   while(k) {
@@ -35,6 +33,8 @@ qcplx qxpow(qcplx z, unsigned k) {
   return result;
 }
 
+
+// -------------------------------------------------------------------------- //
 class PowersHasher {
  public:
   size_t operator()(const powers& exponents) const {
@@ -49,22 +49,34 @@ class PowersHasher {
 
 typedef std::unordered_map<powers, gmpq, PowersHasher> qspray;
 
+
+// -------------------------------------------------------------------------- //
 std::string q2str(gmpq r) {
-  CGAL::Gmpz numer = r.numerator();
-  CGAL::Gmpz denom = r.denominator();
-  size_t n = mpz_sizeinbase(numer.mpz(), 10) + 2;
-  size_t d = mpz_sizeinbase(denom.mpz(), 10) + 2;
+  const gmpi numer = boost::multiprecision::numerator(r);
+  const gmpi denom = boost::multiprecision::denominator(r);
+  mpz_t p;
+  mpz_init(p);
+  mpz_set(p, numer.backend().data());
+  mpz_t q;
+  mpz_init(q);
+  mpz_set(q, denom.backend().data());
+  const size_t n = mpz_sizeinbase(p, 10) + 2;
+  const size_t d = mpz_sizeinbase(q, 10) + 2;
   char* cnumer = new char[n];
   char* cdenom = new char[d];
-  cnumer = mpz_get_str(cnumer, 10, numer.mpz());
-  cdenom = mpz_get_str(cdenom, 10, denom.mpz());
+  cnumer = mpz_get_str(cnumer, 10, p);
+  cdenom = mpz_get_str(cdenom, 10, q);
   std::string snumer = cnumer;
   std::string sdenom = cdenom;
   delete[] cnumer;
   delete[] cdenom;
+  mpz_clear(p);
+  mpz_clear(q);
   return snumer + "/" + sdenom;
 }
 
+
+// -------------------------------------------------------------------------- //
 // [[Rcpp::export]]
 Rcpp::String detQ_rcpp(Rcpp::CharacterMatrix M) {
   const int n = M.ncol();
@@ -78,6 +90,8 @@ Rcpp::String detQ_rcpp(Rcpp::CharacterMatrix M) {
   return q2str(d);
 }
 
+
+// -------------------------------------------------------------------------- //
 void simplifyPowers(powers& pows) {
   int n = pows.size();
   if(n == 0) {
@@ -98,6 +112,8 @@ void simplifyPowers(powers& pows) {
   }
 }
 
+
+// -------------------------------------------------------------------------- //
 qspray prepare(const Rcpp::List Powers, const Rcpp::StringVector coeffs) {
   qspray S;
 
@@ -123,6 +139,8 @@ qspray prepare(const Rcpp::List Powers, const Rcpp::StringVector coeffs) {
   return S;
 }
 
+
+// -------------------------------------------------------------------------- //
 qspray makeQspray(const Rcpp::List Powers, const Rcpp::StringVector coeffs) {
   qspray S;
 
@@ -136,6 +154,8 @@ qspray makeQspray(const Rcpp::List Powers, const Rcpp::StringVector coeffs) {
   return S;
 }
 
+
+// -------------------------------------------------------------------------- //
 // [[Rcpp::export]]
 Rcpp::StringVector evalQxspray(const Rcpp::List Powers,
                                const Rcpp::StringVector coeffs,
@@ -171,6 +191,8 @@ Rcpp::StringVector evalQxspray(const Rcpp::List Powers,
   return Rcpp::StringVector::create(q2str(result.real()), q2str(result.imag()));
 }
 
+
+// -------------------------------------------------------------------------- //
 Rcpp::List makepowers(const qspray S) {  // returns the list of powers
   Rcpp::List Powers(S.size());
   powers pows;
@@ -188,6 +210,8 @@ Rcpp::List makepowers(const qspray S) {  // returns the list of powers
   return Powers;
 }
 
+
+// -------------------------------------------------------------------------- //
 Rcpp::StringVector makecoeffs(const qspray S) {  // returns coefficients
   Rcpp::StringVector Coeffs(S.size());
   unsigned int i = 0;
@@ -198,6 +222,8 @@ Rcpp::StringVector makecoeffs(const qspray S) {  // returns coefficients
   return Coeffs;
 }
 
+
+// -------------------------------------------------------------------------- //
 Rcpp::List retval(const qspray& S) {  // used to return a list to R
 
   // In this function, returning a zero-row matrix results in a
@@ -214,12 +240,16 @@ Rcpp::List retval(const qspray& S) {  // used to return a list to R
   }
 }
 
+
+// -------------------------------------------------------------------------- //
 // [[Rcpp::export]]
 Rcpp::List qspray_maker(const Rcpp::List& Powers,
                         const Rcpp::StringVector& coeffs) {
   return retval(prepare(Powers, coeffs));
 }
 
+
+// -------------------------------------------------------------------------- //
 // [[Rcpp::export]]
 Rcpp::List qspray_add(const Rcpp::List& Powers1,
                       const Rcpp::StringVector& coeffs1,
@@ -241,6 +271,8 @@ Rcpp::List qspray_add(const Rcpp::List& Powers1,
   return retval(S1);
 }
 
+
+// -------------------------------------------------------------------------- //
 // [[Rcpp::export]]
 Rcpp::List qspray_subtract(const Rcpp::List& Powers1,
                            const Rcpp::StringVector& coeffs1,
@@ -262,6 +294,8 @@ Rcpp::List qspray_subtract(const Rcpp::List& Powers1,
   return retval(S1);
 }
 
+
+// -------------------------------------------------------------------------- //
 powers growPowers(powers pows, signed int m, signed int n) {
   powers gpows;
   gpows.reserve(n);
@@ -274,6 +308,8 @@ powers growPowers(powers pows, signed int m, signed int n) {
   return gpows;
 }
 
+
+// -------------------------------------------------------------------------- //
 qspray prod(const qspray S1, const qspray S2) {
   qspray Sout;
   qspray::const_iterator it1, it2;
@@ -318,6 +354,8 @@ qspray prod(const qspray S1, const qspray S2) {
   return Sout;
 }
 
+
+// -------------------------------------------------------------------------- //
 // [[Rcpp::export]]
 Rcpp::List qspray_mult(const Rcpp::List& Powers1,
                        const Rcpp::StringVector& coeffs1,
@@ -327,6 +365,8 @@ Rcpp::List qspray_mult(const Rcpp::List& Powers1,
       prod(makeQspray(Powers1, coeffs1), makeQspray(Powers2, coeffs2)));
 }
 
+
+// -------------------------------------------------------------------------- //
 // [[Rcpp::export]]
 bool qspray_equality(const Rcpp::List& Powers1,
                      const Rcpp::StringVector& coeffs1,
@@ -358,6 +398,8 @@ bool qspray_equality(const Rcpp::List& Powers1,
   }
 }
 
+
+// -------------------------------------------------------------------------- //
 qspray unit() {
   qspray out;
   powers pows(0);
@@ -366,6 +408,8 @@ qspray unit() {
   return out;
 }
 
+
+// -------------------------------------------------------------------------- //
 // [[Rcpp::export]]
 Rcpp::List qspray_power(const Rcpp::List& Powers,
                         const Rcpp::StringVector& coeffs,
