@@ -6,28 +6,6 @@
 #' @include qspray.R
 NULL
 
-#' @title Determinant of a rational matrix
-#' @description Determinant of a square matrix with rational entries.
-#'
-#' @param M a square matrix such that each entry of \code{as.character(M)} is 
-#'   a quoted integer or a quoted fraction
-#'
-#' @return A quoted rational number representing the determinant. 
-#' @export
-#' @examples 
-#' library(qspray)
-#' M <- cbind(c("1/2", "3"), c("5/3", "-2/7"))
-#' detQ(M)
-detQ <- function(M) {
-  stopifnot(nrow(M) == ncol(M))
-  storage.mode(M) <- "character"
-  check <- all(vapply(M, isFraction, logical(1L)))
-  if(!check) {
-    stop("Invalid matrix `M`.")
-  }
-  detQ_rcpp(M)
-}
-
 setClass(
   "qspray",
   slots = c(powers = "list", coeffs = "character")
@@ -486,6 +464,7 @@ setMethod(
 #'
 #' @return A \code{bigq} number, the exact value of the integral.
 #' @export
+#' @importFrom RationalMatrix Qdet
 #' @examples 
 #' library(qspray)
 #' x <- qlone(1); y <- qlone(2)
@@ -540,7 +519,7 @@ integratePolynomialOnSimplex <- function(P, S) {
     coef <- coef * prod(factorialZ(powers))
     s <- s + coef / prod((n+1L):(n+d))
   }
-  abs(as.bigq(detQ(as.character(B)))) *  s / factorialZ(n)
+  abs(as.bigq(Qdet(as.character(B)))) *  s / factorialZ(n)
 }
 
 #' @title Monomial symmetric function

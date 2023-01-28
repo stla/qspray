@@ -1,6 +1,8 @@
-# qspray 0.1.2
+# qspray 1.0.0
 
-The package does not depend on **RcppCGAL** anymore.
+The package does not depend on 'RcppCGAL' neither 'RcppEigen' anymore. 
+It now imports 'RationalMatrix' (to compute the determinant of a rational 
+matrix).
 
 
 # qspray 0.1.1

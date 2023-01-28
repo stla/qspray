@@ -1,13 +1,12 @@
 /* Based on original code by Robin Hankin */
 
-#include <RcppEigen.h>
+#include <Rcpp.h>
 #include <boost/multiprecision/gmp.hpp>
 #include <complex.h>
 typedef std::vector<signed int>                             powers;
 typedef boost::multiprecision::mpq_rational                 gmpq;
 typedef boost::multiprecision::mpz_int                      gmpi;
 typedef std::complex<gmpq>                                  qcplx;
-typedef Eigen::Matrix<gmpq, Eigen::Dynamic, Eigen::Dynamic> QMatrix;
 
 // -------------------------------------------------------------------------- //
 qcplx qxmult(qcplx z1, qcplx z2) {
@@ -73,21 +72,6 @@ std::string q2str(gmpq r) {
   mpz_clear(p);
   mpz_clear(q);
   return snumer + "/" + sdenom;
-}
-
-
-// -------------------------------------------------------------------------- //
-// [[Rcpp::export]]
-Rcpp::String detQ_rcpp(Rcpp::CharacterMatrix M) {
-  const int n = M.ncol();
-  QMatrix Mq(n, n);
-  for(int i = 0; i < n; i++) {
-    for(int j = 0; j < n; j++) {
-      Mq(i, j) = gmpq(Rcpp::as<std::string>(M(i, j)));
-    }
-  }
-  gmpq d = Mq.determinant();
-  return q2str(d);
 }
 
 

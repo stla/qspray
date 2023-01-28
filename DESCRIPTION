@@ -1,7 +1,7 @@
 Type: Package
 Package: qspray
 Title: Multivariate Polynomials with Rational Coefficients
-Version: 0.1.2
+Version: 1.0.0
 Authors@R: c(
     person("Stéphane", "Laurent", , "laurent_step@outlook.fr", role = c("aut", "cre")),
     person("Robin", "Hankin", role = c("ctb", "cph"),
@@ -19,12 +19,12 @@ Imports:
     gmp,
     methods,
     purrr,
+    RationalMatrix,
     Rcpp (>= 1.0.9),
     Ryacas
 LinkingTo: 
     BH,
-    Rcpp,
-    RcppEigen
+    Rcpp
 Encoding: UTF-8
 RoxygenNote: 7.2.3
 SystemRequirements: C++ 17, gmp, mpfr
