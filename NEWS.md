@@ -1,3 +1,8 @@
+# qspray 1.1.0
+
+Differentiation of `qspray` polynomials (functions `derivQspray` and `dQspray`).
+
+
 # qspray 1.0.0
 
 The package does not depend on 'RcppCGAL' neither 'RcppEigen' anymore. 
