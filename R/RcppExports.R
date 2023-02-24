@@ -5,6 +5,10 @@ evalQxspray <- function(Powers, coeffs, v_re, v_im) {
     .Call(`_qspray_evalQxspray`, Powers, coeffs, v_re, v_im)
 }
 
+qspray_deriv <- function(Powers, coeffs, n) {
+    .Call(`_qspray_qspray_deriv`, Powers, coeffs, n)
+}
+
 qspray_maker <- function(Powers, coeffs) {
     .Call(`_qspray_qspray_maker`, Powers, coeffs)
 }
