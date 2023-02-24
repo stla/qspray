@@ -334,6 +334,32 @@ derivQspray <- function(qspray, i, derivative = 1) {
   qspray_from_list(drv)
 }
 
+#' @title Partial differentiation
+#' @description Partial differentiation of a qspray polynomial.
+#'
+#' @param qspray object of class \code{qspray}
+#' @param orders integer vector, the orders of the differentiation
+#'
+#' @return A \code{qspray} object.
+#' @export
+#'
+#' @examples
+#' library(qspray)
+#' x <- qlone(1)
+#' y <- qlone(2)
+#' qspray <- x + 2*y  + 3*x*y
+#' dQspray(qspray, c(1, 1))
+#' derivQspray(derivQspray(qspray, 1), 2)
+dQspray <- function(qspray, orders) {
+  stopifnot(inherits(qspray, "qspray"))
+  for(i in seq_along(orders)) {
+    stopifnot(isPositiveInteger(orders[i]))
+  }
+  n    <- as.integer(orders)
+  drv  <- qspray_deriv(qspray@powers, qspray@coeffs, n)
+  qspray_from_list(drv)
+}
+
 qspray_arith_character <- function(e1, e2) {
   switch(
     .Generic,

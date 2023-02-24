@@ -3,6 +3,7 @@
 S3method(as.function,qspray)
 export(ESFpoly)
 export(MSFpoly)
+export(dQspray)
 export(derivQspray)
 export(evalQspray)
 export(integratePolynomialOnSimplex)
