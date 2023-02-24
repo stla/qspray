@@ -21,7 +21,8 @@ Imports:
     purrr,
     RationalMatrix,
     Rcpp (>= 1.0.9),
-    Ryacas
+    Ryacas,
+    utils
 LinkingTo: 
     BH,
     Rcpp

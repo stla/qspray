@@ -58,6 +58,8 @@ arity <- function(qspray) {
   max(lengths(qspray@powers))
 }
 
+#' @importFrom utils head
+#' @noRd
 removeTrailingZeros <- function(x) {
   n <- length(x)
   while(x[n] == 0 && n > 0L) {
