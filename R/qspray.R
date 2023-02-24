@@ -308,6 +308,27 @@ qsprayPower <- function(qspray, n) {
   qspray_power(qspray@powers, qspray@coeffs, n)
 }
 
+#' @title Partial derivative
+#' @description Partial derivative of a qspray polynomial.
+#'
+#' @param qspray object of class \code{qspray}
+#' @param i dimension to differentiate with respect to
+#' @param derivative how many times to differentiate
+#'
+#' @return A \code{qspray} object.
+#' @export
+#'
+#' @examples x
+derivQspray <- function(qspray, i, derivative = 1) {
+  stopifnot(inherits(qspray, "qspray"))
+  stopifnot(isNonnegativeInteger(i))
+  stopifnot(isPositiveInteger(derivative))
+  n    <- integer(length = i)
+  n[i] <- as.integer(derivative)
+  drv  <- qspray_deriv(qspray@powers, qspray@coeffs, n)
+  qspray_from_list(drv)
+}
+
 qspray_arith_character <- function(e1, e2) {
   switch(
     .Generic,

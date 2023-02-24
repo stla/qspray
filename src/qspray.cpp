@@ -233,7 +233,8 @@ Rcpp::List qspray_deriv(
 ){
   qspray S;
   powers v;
-  signed int i, j, J, nn;
+  signed int i, j, J, K, nn, expnt;
+  signed int N = n.size();
   signed int nterms = coeffs.size();
   std::vector<std::vector<signed int>> Powers_out(nterms);
   std::vector<signed int> sizes(nterms);
@@ -248,15 +249,16 @@ Rcpp::List qspray_deriv(
     sizes[i] = J;
     Powers_out[i].reserve(J);
     for(j = 0 ; j < J; j++){
-      Powers_out[i][j] = Exponents(j);
+      Powers_out[i].emplace_back(Exponents(j));
     }
   }
   
   for(i = 0; i < nterms; i++) {
     std::vector<signed int> exponents = Powers_out[i];
     J = sizes[i];
+    K = std::min(J, N);
     gmpq coeff(Rcpp::as<std::string>(coeffs(i)));
-    for(j = 0; j < J; j++) {
+    for(j = 0; j < K; j++) {
       nn = n(j);
       while((nn > 0) && (coeff != 0)) {  // while loop because it might not run at all
         coeff *= exponents[j];  // multiply d first, then decrement M (!)
@@ -266,9 +268,16 @@ Rcpp::List qspray_deriv(
     }
     v.clear();
     for(j = 0; j < J; j++) {
-      v.push_back(exponents[j]);
-    }                    
-    S[v] += coeff;  // increment because v is not row-unique any more
+      expnt = exponents[j];
+      // if(expnt == -1) {
+      //   v.clear();
+      //   break;
+      // }
+      v.push_back(expnt);
+    }
+    if(coeff != 0) {
+      S[v] += coeff;  // increment because v is not row-unique any more
+    }
   }  // i loop closes
   return retval(S);
 }
