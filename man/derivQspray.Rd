@@ -9,9 +9,9 @@ derivQspray(qspray, i, derivative = 1)
 \arguments{
 \item{qspray}{object of class \code{qspray}}
 
-\item{i}{dimension to differentiate with respect to}
+\item{i}{integer, the dimension to differentiate with respect to}
 
-\item{derivative}{how many times to differentiate}
+\item{derivative}{integer, how many times to differentiate}
 }
 \value{
 A \code{qspray} object.
@@ -20,5 +20,9 @@ A \code{qspray} object.
 Partial derivative of a qspray polynomial.
 }
 \examples{
-x
+library(qspray)
+x <- qlone(1)
+y <- qlone(2)
+qspray <- 2*x  + 3*x*y
+derivQspray(qspray, 1)
 }

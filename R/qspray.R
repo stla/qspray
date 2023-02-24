@@ -312,13 +312,18 @@ qsprayPower <- function(qspray, n) {
 #' @description Partial derivative of a qspray polynomial.
 #'
 #' @param qspray object of class \code{qspray}
-#' @param i dimension to differentiate with respect to
-#' @param derivative how many times to differentiate
+#' @param i integer, the dimension to differentiate with respect to
+#' @param derivative integer, how many times to differentiate
 #'
 #' @return A \code{qspray} object.
 #' @export
 #'
-#' @examples x
+#' @examples
+#' library(qspray)
+#' x <- qlone(1)
+#' y <- qlone(2)
+#' qspray <- 2*x  + 3*x*y
+#' derivQspray(qspray, 1)
 derivQspray <- function(qspray, i, derivative = 1) {
   stopifnot(inherits(qspray, "qspray"))
   stopifnot(isNonnegativeInteger(i))
