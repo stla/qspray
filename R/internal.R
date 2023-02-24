@@ -53,3 +53,15 @@ isPartition <- function(lambda){
     all(vapply(lambda, isPositiveInteger, FUN.VALUE = logical(1L))) && 
     all(diff(lambda) <= 0)
 }
+
+arity <- function(qspray) {
+  max(lengths(qspray@powers))
+}
+
+removeTrailingZeros <- function(x) {
+  n <- length(x)
+  while(x[n] == 0 && n > 0L) {
+    n <- n - 1L
+  }
+  head(x, n)
+}
