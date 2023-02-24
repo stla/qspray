@@ -256,9 +256,12 @@ Rcpp::List qspray_deriv(
   for(i = 0; i < nterms; i++) {
     std::vector<signed int> exponents = Powers_out[i];
     J = sizes[i];
-    K = std::min(J, N);
+    //K = std::min(J, N);
+    if(J < N) {
+      continue;
+    }
     gmpq coeff(Rcpp::as<std::string>(coeffs(i)));
-    for(j = 0; j < K; j++) {
+    for(j = 0; j < N; j++) {
       nn = n(j);
       while((nn > 0) && (coeff != 0)) {  // while loop because it might not run at all
         coeff *= exponents[j];  // multiply d first, then decrement M (!)
@@ -276,6 +279,7 @@ Rcpp::List qspray_deriv(
       v.push_back(expnt);
     }
     if(coeff != 0) {
+      simplifyPowers(v);
       S[v] += coeff;  // increment because v is not row-unique any more
     }
   }  // i loop closes

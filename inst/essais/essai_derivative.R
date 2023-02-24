@@ -4,6 +4,9 @@ y <- qlone(2)
 qspray <- 2*x  + 3*x*y
 derivQspray(qspray, 3)
 
+derivQspray(qspray, 2, 1)
+dQspray(qspray, c(0, 1))
+
 derivQspray(qspray, 1, 2)
 derivQspray(qspray, 2, 2)
  
@@ -12,3 +15,8 @@ dQspray(qspray, c(1, 1))
 derivQspray(derivQspray(qspray, 1), 2)
 
 
+library(spray)
+x <- lone(1, 2)
+y <- lone(2, 2)
+S <- 2*x + 3*x*y
+deriv(S, 2, 2)
