@@ -84,12 +84,12 @@ void simplifyPowers(powers& pows) {
   n--;
   powers::iterator it = pows.end();
   bool zero = pows[n] == 0;
-  while(zero && n >= 0) {
+  while(zero && n > 0) {
     it--;
     n--;
     zero = pows[n] == 0;
   }
-  if(n == -1) {
+  if(zero) {
     pows = {};
   } else {
     pows.erase(it, pows.end());
