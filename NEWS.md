@@ -1,3 +1,8 @@
+# qspray 1.1.1
+
+Fixed a small error in the C++ code.
+
+
 # qspray 1.1.0
 
 Differentiation of `qspray` polynomials (functions `derivQspray` and `dQspray`).
