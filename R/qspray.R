@@ -515,6 +515,22 @@ setMethod(
   }
 )
 
+#' @title The null qspray polynomial
+#' @description Returns the qspray polynomial identically equal to 0.
+#' @return A \code{qspray} object.
+#' @export
+qzero <- function() {
+  as.qspray(0L)
+}
+
+#' @title The unit qspray polynomial
+#' @description Returns the qspray polynomial identically equal to 1.
+#' @return A \code{qspray} object.
+#' @export
+qone <- function() {
+  as.qspray(1L)
+}
+
 #' @title Integral of a multivariate polynomial over a simplex
 #' @description Returns the exact value of the integral of a multivariate 
 #'   polynomial with rational coefficients over a simplex whose vertices have 
