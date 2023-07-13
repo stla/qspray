@@ -1,3 +1,8 @@
+# qspray 1.2.0
+
+The implementation of the opposite polynomial was wrong (it did nothing).
+
+
 # qspray 1.1.1
 
 Fixed a small error in the C++ code.

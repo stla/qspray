@@ -281,7 +281,10 @@ setMethod(
   "-", 
   signature(e1 = "qspray", e2 = "missing"), 
   function(e1, e2) {
-    new("qspray", powers = e1@powers, coeffs = as.character(as.bigq(e1@coeffs)))
+    new(
+      "qspray", 
+      powers = e1@powers, coeffs = as.character(-as.bigq(e1@coeffs))
+    )
   }
 )
 
