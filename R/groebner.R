@@ -125,7 +125,7 @@ divisionRemainder <- function(f, gs, check = TRUE) {
 #' @importFrom utils combn
 #' @references 
 #' Michael Weiss, 2010. 
-#' \href{Computing Gröbner Bases in Python with Buchberger’s Algorithm}{https://math.nyu.edu/degree/undergrad/ug_research/Weiss_SURE_Paper.pdf}.
+#' \href{https://math.nyu.edu/degree/undergrad/ug_research/Weiss_SURE_Paper.pdf}{Computing Gröbner Bases in Python with Buchberger’s Algorithm}.
 #' @examples
 #' library(qspray)
 #' f <- qsprayMaker(string = "x^(3) - 2 x^(1,1)")

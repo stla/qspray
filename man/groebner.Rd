@@ -25,5 +25,5 @@ groebner(list(f, g))
 }
 \references{
 Michael Weiss, 2010. 
-\href{Computing Gröbner Bases in Python with Buchberger’s Algorithm}{https://math.nyu.edu/degree/undergrad/ug_research/Weiss_SURE_Paper.pdf}.
+\href{https://math.nyu.edu/degree/undergrad/ug_research/Weiss_SURE_Paper.pdf}{Computing Gröbner Bases in Python with Buchberger’s Algorithm}.
 }
