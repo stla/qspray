@@ -32,7 +32,7 @@ f1 <- x^2 + y + z^2 - 1
 f2 <- x^2 + y + z - 1
 f3 <- x + y^2 + z - 1
 gb <- groebner(list(f1, f2, f3))
-lapply(G, prettyQspray, vars = c("x", "y", "z"))
+lapply(gb, prettyQspray, vars = c("x", "y", "z"))
 }
 \references{
 Michael Weiss, 2010. 
