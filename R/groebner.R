@@ -67,37 +67,66 @@ termAsQspray <- function(term) {
   qsprayMaker(powers = list(term[["powers"]]), coeffs = term[["coeff"]])
 }
 
-divisionRemainder <- function(f, gs, check = TRUE) {
+#' @title Division of a qspray polynomial
+#' @description Division of a qspray polynomial by a list of qspray 
+#'   polynomials. See the reference for the definition.
+#' 
+#' @param qspray the dividend, a \code{qspray} object 
+#' @param divisors the divisors, a list of \code{qspray} objects
+#' @param check Boolean, whether to check the division; this argument will be 
+#'   removed in a future version
+#'
+#' @return The remainder of the division, a \code{qspray} object. The 
+#'   quotients are attached to the remainder as an attribute.
+#' @export
+#'
+#' @references 
+#' Michael Weiss, 2010. 
+#' \href{https://math.nyu.edu/degree/undergrad/ug_research/Weiss_SURE_Paper.pdf}{Computing Gröbner Bases in Python with Buchberger’s Algorithm}.
+#' 
+#' @examples
+#' # a univariate example
+#' library(qspray)
+#' x <- lone(1)
+#' f <- x^4 - 4*x^3 + 4*x^2 - x # 0 and 1 are trivial roots
+#' g <- x * (x - 1)
+#' qdivision(f, list(g)) # should be zero
+qdivision <- function(qspray, divisors, check = TRUE) {
   
-  if(f == qzero()) {
+  stopifnot(is.list(divisors))
+  
+  if(qspray == qzero()) {
     return(qzero())
   }
   
-  d <- max(arity(f), max(vapply(gs, arity, integer(1L))))
+  d <- max(arity(qspray), max(vapply(divisors, arity, integer(1L))))
 
-  ngpolys <- length(gs)
-  nterms <- length(f@coeffs)
+  ndivisors <- length(divisors)
+  nterms <- length(qspray@coeffs)
   LTs_f <- vector("list", nterms) # to store the successive leading terms
   qg <- list() # to store the product q*g_i, in order to check at the end
+  quotients <- list()
   
-  cur <- f
+  cur <- qspray
   for(k in 1L:nterms) {
     # take the next leading term of f
-    tmp <- f
-    for(j in seq_len(k-1)) {
+    tmp <- qspray
+    for(j in seq_len(k-1L)) {
       tmp <- tmp - termAsQspray(LTs_f[[j]])
     }
     LTs_f[[k]] <- leadingTerm(tmp, d) -> LT_cur
     i <- 1L
-    while(i <= ngpolys) {
-      LT_g <- leadingTerm(gs[[i]], d)
+    while(i <= ndivisors) {
+      g <- divisors[[i]]
+      LT_g <- leadingTerm(g, d)
       while(divides(LT_g, LT_cur)) {
         q <- quotient(LT_cur, LT_g)
-        cur <- cur - q * gs[[i]]
+        cur <- cur - q * g
         if(cur == qzero()) {
           return(qzero())
         }
-        qg <- append(qg, q * gs[[i]])
+        quotients <- append(quotients, q)
+        qg <- append(qg, q * g)
         LT_cur <- leadingTerm(cur, d)
       }
       i <- i + 1L
@@ -109,10 +138,12 @@ divisionRemainder <- function(f, gs, check = TRUE) {
     for(i in seq_along(qg)) {
       sum_qg <- sum_qg + qg[[i]]
     }
-    stopifnot(f == sum_qg + cur)
+    stopifnot(qspray == sum_qg + cur)
   }
   # return remainder
-  cur
+  remainder <- cur
+  attr(remainder, "quotients") <- quotients
+  remainder
 }
 
 #' @title Gröbner basis
@@ -156,7 +187,7 @@ groebner <- function(G, minimal = TRUE, reduced = TRUE) {
       names(Ss_new) <- id
       Ss <- c(Ss, Ss_new)
     }
-    Sbar_fg <- divisionRemainder(Sfg, G)
+    Sbar_fg <- qdivision(Sfg, G)
     i <- i + 1L
     if(Sbar_fg != qzero()) {
       i <- 1L
@@ -192,7 +223,7 @@ groebner <- function(G, minimal = TRUE, reduced = TRUE) {
       indices <- seq_along(G)
       for(i in indices) {
         keep <- setdiff(indices, i)
-        G[[i]] <- divisionRemainder(G[[i]], G[keep])
+        G[[i]] <- qdivision(G[[i]], G[keep])
       }
     }
   }
