@@ -41,7 +41,7 @@ qsprayMonomials <- function(powers, vars) {
 #' P <- (qlone(1) + "1/2"*qlone(2))^2 + 5
 #' prettyP <- prettyQspray(P, vars = c("x", "y"))
 #' prettyP
-#' Ryacas::yac_str(sprintf("PrettyForm(%s)", prettyP))
+#' cat(Ryacas::yac_str(sprintf("PrettyForm(%s)", prettyP)))
 #' Ryacas::yac_str(sprintf("TeXForm(%s)", prettyP))
 prettyQspray <- function(qspray, vars = NULL) {
   monomials <- qsprayMonomials(qspray@powers, vars)
@@ -51,9 +51,10 @@ prettyQspray <- function(qspray, vars = NULL) {
     sprintf(" * %s Where %s==", letter, letter), 
     qspray@coeffs
   )
-  yac_str(
+  x <- yac_str(
     paste0(vapply(terms, yac_str, character(1L)), collapse = " + ")
   )
+  sub("^\\( - ", "(-", gsub("([-\\+])", " \\1 ", x))
 }
 
 rationalPolynomial <- function(powers, coeffs, stars = FALSE){

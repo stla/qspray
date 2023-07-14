@@ -389,7 +389,7 @@ qspray_arith_gmp <- function(e1, e2) {
     "+" = e1 + as_qspray_gmp(e2),
     "-" = e1 - as_qspray_gmp(e2),
     "*" = e1 * as_qspray_gmp(e2),
-    "/" = e1 / as.character(e2),
+    "/" = e1 * as_qspray_gmp(1L/e2),
     stop(gettextf(
       "Binary operator %s not defined for these two objects.", dQuote(.Generic)
     ))
