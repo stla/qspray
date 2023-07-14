@@ -54,7 +54,7 @@ prettyQspray <- function(qspray, vars = NULL) {
   x <- yac_str(
     paste0(vapply(terms, yac_str, character(1L)), collapse = " + ")
   )
-  sub("^\\( - ", "(-", gsub("([-\\+])", " \\1 ", x))
+  sub("^\\(\\( - ", "((-", sub("^\\( - ", "(-", gsub("([-\\+])", " \\1 ", x)))
 }
 
 rationalPolynomial <- function(powers, coeffs, stars = FALSE){
