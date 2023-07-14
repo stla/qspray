@@ -25,7 +25,7 @@ Division of a qspray polynomial by a list of qspray
 \examples{
 # a univariate example
 library(qspray)
-x <- lone(1)
+x <- qlone(1)
 f <- x^4 - 4*x^3 + 4*x^2 - x # 0 and 1 are trivial roots
 g <- x * (x - 1)
 qdivision(f, list(g)) # should be zero
