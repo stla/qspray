@@ -90,7 +90,8 @@ termAsQspray <- function(term) {
 #' x <- lone(1)
 #' f <- x^4 - 4*x^3 + 4*x^2 - x # 0 and 1 are trivial roots
 #' g <- x * (x - 1)
-#' qdivision(f, list(g)) # should be zero
+#' ( r <- qdivision(f, list(g)) ) # should be zero
+#' attr(r, "quotients")
 qdivision <- function(qspray, divisors, check = TRUE) {
   
   stopifnot(is.list(divisors))
@@ -121,12 +122,21 @@ qdivision <- function(qspray, divisors, check = TRUE) {
       LT_g <- leadingTerm(g, d)
       while(divides(LT_g, LT_cur)) {
         q <- quotient(LT_cur, LT_g)
-        cur <- cur - q * g
-        if(cur == qzero()) {
-          return(qzero())
-        }
         quotients <- append(quotients, q)
         qg <- append(qg, q * g)
+        cur <- cur - q * g
+        if(cur == qzero()) {
+          if(check) {
+            sum_qg <- qzero()
+            for(i in seq_along(qg)) {
+              sum_qg <- sum_qg + qg[[i]]
+            }
+            stopifnot(sum_qg == qspray)
+          }
+          remainder <- qzero()
+          attr(remainder, "quotients") <- quotients
+          return(remainder)
+        }
         LT_cur <- leadingTerm(cur, d)
       }
       i <- i + 1L
