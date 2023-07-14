@@ -2,6 +2,10 @@
 
 - The implementation of the opposite polynomial was wrong (it did nothing).
 
+- The pretty form of a polynomial returned by `prettyQspray` has been improved: now there are space around '+' and '-'.
+
+- The division of a polynomial by a `bigq` number did not always work.
+
 - New function `groebner`, to compute a Gröbner basis.
 
 
