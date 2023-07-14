@@ -1,6 +1,8 @@
 # qspray 1.2.0
 
-The implementation of the opposite polynomial was wrong (it did nothing).
+- The implementation of the opposite polynomial was wrong (it did nothing).
+
+- New function `groebner`, to compute a Gröbner basis.
 
 
 # qspray 1.1.1
