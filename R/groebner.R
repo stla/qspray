@@ -133,13 +133,13 @@ divisionRemainder <- function(f, gs, check = TRUE) {
 #' f <- qsprayMaker(string = "x^(3) - 2 x^(1,1)")
 #' g <- qsprayMaker(string = "x^(2,1) - 2 x^(0,2) + x^(1)")
 #' groebner(list(f, g), FALSE, FALSE)
-#' #
-#' x <- qlone(1); y <- qlone(2); z <- qlone(3)
+#' # other example
+#' \donttest{x <- qlone(1); y <- qlone(2); z <- qlone(3)
 #' f1 <- x^2 + y + z^2 - 1
 #' f2 <- x^2 + y + z - 1
 #' f3 <- x + y^2 + z - 1
 #' gb <- groebner(list(f1, f2, f3))
-#' lapply(gb, prettyQspray, vars = c("x", "y", "z"))
+#' lapply(gb, prettyQspray, vars = c("x", "y", "z"))}
 groebner <- function(G, minimal = TRUE, reduced = TRUE) {
   Ss <- list()
   j <- length(G)
