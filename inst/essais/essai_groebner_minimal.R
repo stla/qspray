@@ -9,6 +9,11 @@ G <- groebner(list(f, g))
 f1 <- qsprayMaker(string = "x^(2) + x^(0,1) + x^(0,0,2) - 1")
 f2 <- qsprayMaker(string = "x^(2) + x^(0,1) + x^(0,0,1) - 1")
 f3 <- qsprayMaker(string = "x^(1) + x^(0,2) + x^(0,0,1) - 1")
+
+x <- qlone(1); y <- qlone(2); z <- qlone(3)
+f1 <- x^2 + y + z^2 - 1
+f2 <- x^2 + y + z - 1
+f3 <- x + y^2 + z - 1
 G <- groebner(list(f1, f2, f3))
 
 

@@ -23,5 +23,5 @@ P <- (qlone(1) + "1/2"*qlone(2))^2 + 5
 prettyP <- prettyQspray(P, vars = c("x", "y"))
 prettyP
 Ryacas::yac_str(sprintf("PrettyForm(\%s)", prettyP))
-Ryacas::yac_str(sprintf("TeForm(\%s)", prettyP))
+Ryacas::yac_str(sprintf("TeXForm(\%s)", prettyP))
 }

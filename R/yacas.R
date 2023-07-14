@@ -42,11 +42,14 @@ qsprayMonomials <- function(powers, vars) {
 #' prettyP <- prettyQspray(P, vars = c("x", "y"))
 #' prettyP
 #' Ryacas::yac_str(sprintf("PrettyForm(%s)", prettyP))
-#' Ryacas::yac_str(sprintf("TeForm(%s)", prettyP))
+#' Ryacas::yac_str(sprintf("TeXForm(%s)", prettyP))
 prettyQspray <- function(qspray, vars = NULL) {
   monomials <- qsprayMonomials(qspray@powers, vars)
+  letter <- setdiff(letters, vars)[1L]
   terms <- paste0(
-    gsub(" ", "*", monomials, fixed = TRUE), " * z Where z==", qspray@coeffs
+    gsub(" ", "*", monomials, fixed = TRUE), 
+    sprintf(" * %s Where %s==", letter, letter), 
+    qspray@coeffs
   )
   yac_str(
     paste0(vapply(terms, yac_str, character(1L)), collapse = " + ")
