@@ -31,6 +31,7 @@ RoxygenNote: 7.2.3
 SystemRequirements: C++ 17, gmp, mpfr
 Collate: 
     'RcppExports.R'
+    'groebner.R'
     'internal.R'
     'qspray.R'
     'yacas.R'

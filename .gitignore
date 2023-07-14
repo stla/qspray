@@ -39,6 +39,7 @@ vignettes/*.pdf
 .Renviron
 
 # Rcpp
+src/*.dll
 src/Makevars
 src/*.o
 src/*.so
