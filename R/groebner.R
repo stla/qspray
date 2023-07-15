@@ -116,15 +116,24 @@ qdivision <- function(qspray, divisors, check = FALSE) {
     for(j in seq_len(k-1L)) {
       tmp <- tmp - termAsQspray(LTs_f[[j]])
     }
+    
+    # cat("LTs_f[[k]] - k=", k, "\n")
+    
     LTs_f[[k]] <- leadingTerm(tmp, d) -> LT_cur
     i <- 1L
     while(i <= ndivisors) {
       g <- divisors[[i]]
+      
+      # cat("LT_g - i=", i, "\n")
+      
       LT_g <- leadingTerm(g, d)
       while(divides(LT_g, LT_cur)) {
+        
+        # print("quotient(LT_cur, LT_g)")
+        
         q <- quotient(LT_cur, LT_g)
-        quotients <- append(quotients, q)
-        qgs <- append(qgs, q * g)
+        # quotients <- append(quotients, q)
+        # qgs <- append(qgs, q * g)
         cur <- cur - q * g
         if(cur == qzero()) {
           if(check) {
@@ -135,15 +144,16 @@ qdivision <- function(qspray, divisors, check = FALSE) {
             stopifnot(sum_qgs == qspray)
           }
           remainder <- qzero()
-          if(d == 1L) {
-            qtnt <- qzero()
-            for(i in seq_along(quotients)) {
-              qtnt <- qtnt + quotients[[i]]
-            }
-            attr(remainder, "quotient") <- qtnt
-          }
+          # if(d == 1L) {
+          #   qtnt <- qzero()
+          #   for(i in seq_along(quotients)) {
+          #     qtnt <- qtnt + quotients[[i]]
+          #   }
+          #   attr(remainder, "quotient") <- qtnt
+          # }
           return(remainder)
         }
+        # print("LT_cur")
         LT_cur <- leadingTerm(cur, d)
       }
       i <- i + 1L
@@ -159,13 +169,13 @@ qdivision <- function(qspray, divisors, check = FALSE) {
   }
   # return remainder
   remainder <- cur
-  if(d == 1L) {
-    qtnt <- qzero()
-    for(i in seq_along(quotients)) {
-      qtnt <- qtnt + quotients[[i]]
-    }
-    attr(remainder, "quotient") <- qtnt
-  }
+  # if(d == 1L) {
+  #   qtnt <- qzero()
+  #   for(i in seq_along(quotients)) {
+  #     qtnt <- qtnt + quotients[[i]]
+  #   }
+  #   attr(remainder, "quotient") <- qtnt
+  # }
   remainder
 }
 
@@ -215,7 +225,7 @@ groebner <- function(G, minimal = TRUE, reduced = TRUE) {
       Ss_new <- list(Sfg)
       names(Ss_new) <- id
       Ss <- c(Ss, Ss_new)
-	#print("calc division")
+	    # print("calc division")
       Sbar_fg <- qdivision(Sfg, G)
     }
     i <- i + 1L
