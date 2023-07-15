@@ -76,8 +76,9 @@ termAsQspray <- function(term) {
 #' @param check Boolean, whether to check the division; this argument will be 
 #'   removed in a future version
 #'
-#' @return The remainder of the division, a \code{qspray} object. The 
-#'   quotients are attached to the remainder as an attribute.
+#' @return The remainder of the division, a \code{qspray} object. Moreover, 
+#'   if \code{qspray} is univariate, the quotient is attached to the remainder 
+#'   as an attribute.
 #' @export
 #'
 #' @references 
@@ -91,7 +92,7 @@ termAsQspray <- function(term) {
 #' f <- x^4 - 4*x^3 + 4*x^2 - x # 0 and 1 are trivial roots
 #' g <- x * (x - 1)
 #' ( r <- qdivision(f, list(g)) ) # should be zero
-#' attr(r, "quotients")
+#' attr(r, "quotient")
 qdivision <- function(qspray, divisors, check = TRUE) {
   
   stopifnot(is.list(divisors))
@@ -105,7 +106,7 @@ qdivision <- function(qspray, divisors, check = TRUE) {
   ndivisors <- length(divisors)
   nterms <- length(qspray@coeffs)
   LTs_f <- vector("list", nterms) # to store the successive leading terms
-  qg <- list() # to store the product q*g_i, in order to check at the end
+  qgs <- list() # to store the products q*g_i, in order to check at the end
   quotients <- list()
   
   cur <- qspray
@@ -123,18 +124,24 @@ qdivision <- function(qspray, divisors, check = TRUE) {
       while(divides(LT_g, LT_cur)) {
         q <- quotient(LT_cur, LT_g)
         quotients <- append(quotients, q)
-        qg <- append(qg, q * g)
+        qgs <- append(qgs, q * g)
         cur <- cur - q * g
         if(cur == qzero()) {
           if(check) {
-            sum_qg <- qzero()
-            for(i in seq_along(qg)) {
-              sum_qg <- sum_qg + qg[[i]]
+            sum_qgs <- qzero()
+            for(i in seq_along(qgs)) {
+              sum_qgs <- sum_qgs + qgs[[i]]
             }
-            stopifnot(sum_qg == qspray)
+            stopifnot(sum_qgs == qspray)
           }
           remainder <- qzero()
-          attr(remainder, "quotients") <- quotients
+          if(d == 1L) {
+            qtnt <- qzero()
+            for(i in seq_along(quotients)) {
+              qtnt <- qtnt + quotients[[i]]
+            }
+            attr(remainder, "quotient") <- qtnt
+          }
           return(remainder)
         }
         LT_cur <- leadingTerm(cur, d)
@@ -144,15 +151,21 @@ qdivision <- function(qspray, divisors, check = TRUE) {
   }
   # check
   if(check) {
-    sum_qg <- qzero()
-    for(i in seq_along(qg)) {
-      sum_qg <- sum_qg + qg[[i]]
+    sum_qgs <- qzero()
+    for(i in seq_along(qgs)) {
+      sum_qgs <- sum_qgs + qgs[[i]]
     }
-    stopifnot(qspray == sum_qg + cur)
+    stopifnot(qspray == sum_qgs + cur)
   }
   # return remainder
   remainder <- cur
-  attr(remainder, "quotients") <- quotients
+  if(d == 1L) {
+    qtnt <- qzero()
+    for(i in seq_along(quotients)) {
+      qtnt <- qtnt + quotients[[i]]
+    }
+    attr(remainder, "quotient") <- qtnt
+  }
   remainder
 }
 
