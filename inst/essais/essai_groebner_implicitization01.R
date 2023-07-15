@@ -5,7 +5,7 @@ sint <- qlone(2)
 a    <- qlone(3)
 b    <- qlone(4)
 
-variables <- c("cost", "sint")
+nvariables <- 2
 parameters <- c("a", "b")
 equations <- list(
   "x" = a * cost,
@@ -15,9 +15,44 @@ relations <- list(
   cost^2 + sint^2 - 1
 )
 
+# Enneper 
+u <- qlone(1)
+v <- qlone(2)
+nvariables <- 2
+parameters <- NULL
+equations <- list(
+  "x" = 3*u + 3*u*v^2 - u^3,
+  "y" = 3*v + 3*u^2*v - v^3,
+  "z" = 3*u^2 - 3*v^2
+)
+relations <- NULL
+
+# satellite curve
+cost  <- qlone(1)
+sint  <- qlone(2)
+cos2t <- qlone(3)
+sin2t <- qlone(4)
+A     <- qlone(5)
+B     <- qlone(6)
+nvariables <- 4
+parameters <- c("A", "B")
+equations <- list(
+  "x" = A*cost*cos2t - sint*sin2t,
+  "y" = A*sint*cos2t + cost*sin2t,
+  "z" = B*cos2t
+)
+relations <- list(
+  cost^2 + sint^2 - 1,
+  cos2t - cost^2+sint^2, 
+  sin2t - 2*sint*cost,
+  A^2 + B^2 - 1
+)
+
+# implicitization(variables, parameters, equations, relations)
+
 nequations <- length(equations)
 nrelations <- length(relations)
-n1 <- max(vapply(equations, qspray:::arity, integer(1L))) # 4
+n1 <- max(vapply(equations, qspray:::arity, integer(1L))) # 4 pour ellipse, 2 pour Enneper
 coordinates <- lapply((n1+1L):(n1+nequations), qlone)
 
 generators <- relations
@@ -27,7 +62,6 @@ for(i in seq_along(equations)) {
 
 gb <- groebner(generators)
 
-nvariables <- length(variables)
 isfree <- function(i) {
   all(vapply(gb[[i]]@powers, function(pows) {
     length(pows) == 0L || 

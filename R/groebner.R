@@ -93,7 +93,7 @@ termAsQspray <- function(term) {
 #' g <- x * (x - 1)
 #' ( r <- qdivision(f, list(g)) ) # should be zero
 #' attr(r, "quotient")
-qdivision <- function(qspray, divisors, check = TRUE) {
+qdivision <- function(qspray, divisors, check = FALSE) {
   
   stopifnot(is.list(divisors))
   
@@ -201,24 +201,33 @@ groebner <- function(G, minimal = TRUE, reduced = TRUE) {
   j <- length(G)
   combins <- combn(j, 2L)
   i <- 1L
-  while(i <= ncol(combins)) {
-    combin <- combins[, i]
+  indices <- 1L:ncol(combins)
+  while(i <= length(indices)) {
+    combin <- combins[, indices[i]]
     id <- paste0(combin[1L], "-", combin[2L])
     if(id %in% names(Ss)) {
-      Sfg <- Ss[[id]]
+      print("that should not happen")
+      #Sfg <- Ss[[id]]
+      Sbar_fg <- qzero()
     } else {
+	#print("calc Sfg")
       Sfg <- S(G[[combin[1L]]], G[[combin[2L]]])
       Ss_new <- list(Sfg)
       names(Ss_new) <- id
       Ss <- c(Ss, Ss_new)
+	#print("calc division")
+      Sbar_fg <- qdivision(Sfg, G)
     }
-    Sbar_fg <- qdivision(Sfg, G)
     i <- i + 1L
     if(Sbar_fg != qzero()) {
       i <- 1L
       G <- append(G, Sbar_fg)
       j <- j + 1L
+      #print(j)
       combins <- combn(j, 2L)
+      allids <- paste0(combins[1L, ], "-", combins[2L, ])
+      indices <- which(!is.element(allids, names(Ss)))
+	#cat("nindices: ", length(indices), "\n") 
     }
   }
   #
