@@ -35,6 +35,8 @@ gb <- groebner(list(f1, f2, f3))
 lapply(gb, prettyQspray, vars = c("x", "y", "z"))}
 }
 \references{
-Michael Weiss, 2010. 
-\href{https://math.nyu.edu/degree/undergrad/ug_research/Weiss_SURE_Paper.pdf}{Computing Gröbner Bases in Python with Buchberger’s Algorithm}.
+Cox, Little & O'Shea. 
+\emph{Ideals, Varieties, and Algorithms. 
+An Introduction to Computational Algebraic Geometry and Commutative Algebra.}
+Fourth edition, Springer 2015.
 }
