@@ -2,6 +2,10 @@ isString <- function(x) {
   is.character(x) && length(x) == 1L && !is.na(x)
 }
 
+isStringVector <- function(x) {
+  is.character(x) && !anyNA(x)
+}
+
 isInteger <- function(x) {
   is.numeric(x) && length(x) == 1L && !is.na(x) && as.integer(x) == x
 }
