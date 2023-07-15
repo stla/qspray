@@ -2,6 +2,23 @@ grow <- function(powers, n) {
   c(powers, integer(n - length(powers)))
 }
 
+lexorder <- function(M){
+  do.call(
+    function(...) order(..., decreasing = TRUE), 
+    lapply(seq_len(ncol(M)), function(i) M[, i])
+  )
+}
+
+orderedQspray <- function(qspray, d) {
+  powers <- qspray@powers
+  Mpowers <- do.call(rbind, lapply(powers, grow, n = d))
+  ordr <- lexorder(Mpowers)
+  list(
+    "powers" = Mpowers[ordr, , drop = FALSE], 
+    "coeffs" = as.bigq(qspray@coeffs[ordr])
+  )
+}
+
 lexLeading <- function(M, i = 1L, b = seq_len(nrow(M))) {
   if(nrow(M) == 1L || i > ncol(M)) {
     b[1L]
@@ -15,7 +32,7 @@ lexLeading <- function(M, i = 1L, b = seq_len(nrow(M))) {
 leading <- function(qspray, d) {
   powers <- qspray@powers
   Mpowers <- do.call(rbind, lapply(powers, grow, n = d))
-  i <- lexLeading(Mpowers)
+  i <- lexLeadingArma(Mpowers)
   list("powers" = Mpowers[i, ], "coeff" = qspray@coeffs[i])
 }
 
@@ -93,7 +110,7 @@ termAsQspray <- function(term) {
 #' g <- x * (x - 1)
 #' ( r <- qdivision(f, list(g)) ) # should be zero
 #' attr(r, "quotient")
-qdivision <- function(qspray, divisors, check = FALSE) {
+qdivision <- function(qspray, divisors, check = TRUE) {
   
   stopifnot(is.list(divisors))
   
@@ -101,39 +118,32 @@ qdivision <- function(qspray, divisors, check = FALSE) {
     return(qzero())
   }
   
+  # we store the successive leading terms in LTs_f
   d <- max(arity(qspray), max(vapply(divisors, arity, integer(1L))))
-
+  oqspray <- orderedQspray(qspray, d)
+  opowers <- oqspray[["powers"]]
+  ocoeffs <- oqspray[["coeffs"]]
+  LTs_f <- lapply(seq_along(ocoeffs), function(i) {
+    list("powers" = opowers[i, ], "coeff" = ocoeffs[i])
+  })
+  
   ndivisors <- length(divisors)
   nterms <- length(qspray@coeffs)
-  LTs_f <- vector("list", nterms) # to store the successive leading terms
+
   qgs <- list() # to store the products q*g_i, in order to check at the end
-  quotients <- list()
+  quotients <- list() # to store the quotients
   
   cur <- qspray
   for(k in 1L:nterms) {
-    # take the next leading term of f
-    tmp <- qspray
-    for(j in seq_len(k-1L)) {
-      tmp <- tmp - termAsQspray(LTs_f[[j]])
-    }
-    
-    # cat("LTs_f[[k]] - k=", k, "\n")
-    
-    LTs_f[[k]] <- leadingTerm(tmp, d) -> LT_cur
+    LT_cur <- LTs_f[[k]]
     i <- 1L
     while(i <= ndivisors) {
       g <- divisors[[i]]
-      
-      # cat("LT_g - i=", i, "\n")
-      
       LT_g <- leadingTerm(g, d)
       while(divides(LT_g, LT_cur)) {
-        
-        # print("quotient(LT_cur, LT_g)")
-        
         q <- quotient(LT_cur, LT_g)
-        # quotients <- append(quotients, q)
-        # qgs <- append(qgs, q * g)
+        quotients <- append(quotients, q)
+        qgs <- append(qgs, q * g)
         cur <- cur - q * g
         if(cur == qzero()) {
           if(check) {
@@ -144,16 +154,15 @@ qdivision <- function(qspray, divisors, check = FALSE) {
             stopifnot(sum_qgs == qspray)
           }
           remainder <- qzero()
-          # if(d == 1L) {
-          #   qtnt <- qzero()
-          #   for(i in seq_along(quotients)) {
-          #     qtnt <- qtnt + quotients[[i]]
-          #   }
-          #   attr(remainder, "quotient") <- qtnt
-          # }
+          if(d == 1L) {
+            qtnt <- qzero()
+            for(i in seq_along(quotients)) {
+              qtnt <- qtnt + quotients[[i]]
+            }
+            attr(remainder, "quotient") <- qtnt
+          }
           return(remainder)
         }
-        # print("LT_cur")
         LT_cur <- leadingTerm(cur, d)
       }
       i <- i + 1L
@@ -169,14 +178,52 @@ qdivision <- function(qspray, divisors, check = FALSE) {
   }
   # return remainder
   remainder <- cur
-  # if(d == 1L) {
-  #   qtnt <- qzero()
-  #   for(i in seq_along(quotients)) {
-  #     qtnt <- qtnt + quotients[[i]]
-  #   }
-  #   attr(remainder, "quotient") <- qtnt
-  # }
+  if(d == 1L) {
+    qtnt <- qzero()
+    for(i in seq_along(quotients)) {
+      qtnt <- qtnt + quotients[[i]]
+    }
+    attr(remainder, "quotient") <- qtnt
+  }
   remainder
+}
+
+# internal division for Buchberger algorithm
+BBdivision <- function(qspray, divisors, LTdivisors) {
+  if(qspray == qzero()) {
+    return(qzero())
+  }
+  # we store the successive leading terms in LTs_f
+  d <- max(arity(qspray), max(vapply(divisors, arity, integer(1L))))
+  oqspray <- orderedQspray(qspray, d)
+  opowers <- oqspray[["powers"]]
+  ocoeffs <- oqspray[["coeffs"]]
+  LTs_f <- lapply(seq_along(ocoeffs), function(i) {
+    list("powers" = opowers[i, ], "coeff" = ocoeffs[i])
+  })
+  
+  ndivisors <- length(divisors)
+  nterms <- length(qspray@coeffs)
+
+  cur <- qspray
+  for(k in 1L:nterms) {
+    LT_cur <- LTs_f[[k]]
+    i <- 1L
+    while(i <= ndivisors) {
+      g    <- divisors[[i]]
+      LT_g <- LTdivisors[[i]] 
+      while(divides(LT_g, LT_cur)) {
+        cur <- cur - quotient(LT_cur, LT_g) * g
+        if(cur == qzero()) {
+          return(qzero())
+        }
+        LT_cur <- leadingTerm(cur, d)
+      }
+      i <- i + 1L
+    }
+  }
+  # return remainder
+  cur
 }
 
 #' @title Gröbner basis
@@ -207,6 +254,8 @@ qdivision <- function(qspray, divisors, check = FALSE) {
 #' gb <- groebner(list(f1, f2, f3))
 #' lapply(gb, prettyQspray, vars = c("x", "y", "z"))}
 groebner <- function(G, minimal = TRUE, reduced = TRUE) {
+  d <- max(vapply(G, arity, integer(1L)))
+  LT_G <- lapply(G, leadingTerm, d = d)
   Ss <- list()
   j <- length(G)
   combins <- combn(j, 2L)
@@ -214,30 +263,22 @@ groebner <- function(G, minimal = TRUE, reduced = TRUE) {
   indices <- 1L:ncol(combins)
   while(i <= length(indices)) {
     combin <- combins[, indices[i]]
-    id <- paste0(combin[1L], "-", combin[2L])
-    if(id %in% names(Ss)) {
-      print("that should not happen")
-      #Sfg <- Ss[[id]]
-      Sbar_fg <- qzero()
-    } else {
-	#print("calc Sfg")
-      Sfg <- S(G[[combin[1L]]], G[[combin[2L]]])
-      Ss_new <- list(Sfg)
-      names(Ss_new) <- id
-      Ss <- c(Ss, Ss_new)
-	    # print("calc division")
-      Sbar_fg <- qdivision(Sfg, G)
-    }
+    Sfg <- S(G[[combin[1L]]], G[[combin[2L]]])
+    Ss_new <- list(Sfg)
+    names(Ss_new) <- paste0(combin[1L], "-", combin[2L])
+    Ss <- c(Ss, Ss_new)
+    d <- max(d, arity(Sfg))
+    Sbar_fg <- BBdivision(Sfg, G, LT_G)
     i <- i + 1L
     if(Sbar_fg != qzero()) {
       i <- 1L
       G <- append(G, Sbar_fg)
+	    d <- max(d, arity(Sbar_fg))
+      LT_G <- append(LT_G, list(leadingTerm(Sbar_fg, d)))
       j <- j + 1L
-      #print(j)
       combins <- combn(j, 2L)
       allids <- paste0(combins[1L, ], "-", combins[2L, ])
       indices <- which(!is.element(allids, names(Ss)))
-	#cat("nindices: ", length(indices), "\n") 
     }
   }
   #
@@ -262,7 +303,7 @@ groebner <- function(G, minimal = TRUE, reduced = TRUE) {
         G[[i]] <- G[[i]] / leadingTerm(G[[i]], d)[["coeff"]]
       }
     }
-    #
+    # reduction
     if(reduced && length(G) > 1L) {
       indices <- seq_along(G)
       for(i in indices) {
