@@ -2,7 +2,7 @@ library(qspray)
 
 #' @title Implicitization
 #' @description Implicitization of a system of parametric equations.
-#''
+#'
 #' @param nvariables number of variables
 #' @param parameters character vector of the names of the parameters, or 
 #'   \code{NULL} if there's no parameter
