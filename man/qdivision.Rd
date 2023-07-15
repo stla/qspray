@@ -15,8 +15,9 @@ qdivision(qspray, divisors, check = TRUE)
 removed in a future version}
 }
 \value{
-The remainder of the division, a \code{qspray} object. The 
-  quotients are attached to the remainder as an attribute.
+The remainder of the division, a \code{qspray} object. Moreover, 
+  if \code{qspray} is univariate, the quotient is attached to the remainder 
+  as an attribute.
 }
 \description{
 Division of a qspray polynomial by a list of qspray 
