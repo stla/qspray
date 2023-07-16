@@ -16,6 +16,7 @@ relations <- list(
 )
 
 # Enneper 
+library(qspray)
 u <- qlone(1)
 v <- qlone(2)
 nvariables <- 2

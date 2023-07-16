@@ -514,17 +514,13 @@ Rcpp::List leadingTerm(const qspray& S, int d) {
     coeffs.emplace_back(term.second);
   }
   int index = lexLeadingIndex(pows);
-  powers leadingPows       = pows[index];
+  powers leadingPows = pows[index];
   int npows = leadingPows.size();
-  powers xxx;
   if(npows < d) {
-    xxx = growPowers(leadingPows, npows, d);
-  } else {
-    xxx = leadingPows;
+    leadingPows = growPowers(leadingPows, npows, d);
   }
   std::string leadingCoeff = q2str(coeffs[index]);
-  Rcpp::IntegerVector powsRcpp(xxx.begin(), xxx.end());
-  Rcpp::Rcout << "leadingPows: " << powsRcpp << "\n";
+  Rcpp::IntegerVector powsRcpp(leadingPows.begin(), leadingPows.end());
   return Rcpp::List::create(
     Rcpp::Named("powers") = powsRcpp,
     Rcpp::Named("coeff")  = leadingCoeff
@@ -572,34 +568,16 @@ Rcpp::List BBdivisionRcpp(
     Rcpp::List LTcur = LTsf(k);
     int i = 0;
     while(i < ngs) {
-      Rcpp::List g   = gs(i);
-      qspray gspray = makeQspray(g["powers"], g["coeffs"]); // TODO in R: convert qsprays to list
+      Rcpp::List g  = gs(i);
+      qspray gspray = makeQspray(g["powers"], g["coeffs"]);
       Rcpp::List LTg = LTgs(i);
-      Rcpp::Rcout << "starting while\n";
       while(divides(LTg, LTcur)) {
-        Rcpp::Rcout << "quotient\n";
         qspray qtnt = quotient(LTcur, LTg);
-        for(const auto& term : qtnt) {
-          Rcpp::IntegerVector popo(term.first.begin(), term.first.end());
-          Rcpp::Rcout << popo << "\n";
-          Rcpp::Rcout << term.second << "\n";
-        }
         cur = subtract(cur, prod(qtnt, gspray));
-        Rcpp::Rcout << "cur.size(): " << cur.size() << "\n";
-        for(const auto& term : cur) {
-          Rcpp::IntegerVector popo(term.first.begin(), term.first.end());
-          Rcpp::Rcout << popo << "\n";
-          Rcpp::Rcout << term.second << "\n";
-        }
         if(cur.size() == 0) {
           return(retval(cur));
         }
-        Rcpp::Rcout << "LTcur\n";
         LTcur = leadingTerm(cur, d);
-        Rcpp::IntegerVector popo = LTcur["powers"];
-        Rcpp::Rcout << popo << "\n";
-        std::string coco = LTcur["coeff"];
-        Rcpp::Rcout << coco << "\n";
       }
       i++;
     }
