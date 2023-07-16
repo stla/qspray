@@ -15,7 +15,7 @@ orderedQspray <- function(qspray, d) {
   ordr <- lexorder(Mpowers)
   list(
     "powers" = Mpowers[ordr, , drop = FALSE], 
-    "coeffs" = as.bigq(qspray@coeffs[ordr])
+    "coeffs" = qspray@coeffs[ordr]
   )
 }
 
@@ -122,7 +122,7 @@ qdivision <- function(qspray, divisors, check = TRUE) {
   d <- max(arity(qspray), max(vapply(divisors, arity, integer(1L))))
   oqspray <- orderedQspray(qspray, d)
   opowers <- oqspray[["powers"]]
-  ocoeffs <- oqspray[["coeffs"]]
+  ocoeffs <- as.bigq(oqspray[["coeffs"]])
   LTs_f <- lapply(seq_along(ocoeffs), function(i) {
     list("powers" = opowers[i, ], "coeff" = ocoeffs[i])
   })
@@ -201,29 +201,15 @@ BBdivision <- function(qspray, divisors, LTdivisors) {
   LTs_f <- lapply(seq_along(ocoeffs), function(i) {
     list("powers" = opowers[i, ], "coeff" = ocoeffs[i])
   })
-  
-  ndivisors <- length(divisors)
-  nterms <- length(qspray@coeffs)
-
-  cur <- qspray
-  for(k in 1L:nterms) {
-    LT_cur <- LTs_f[[k]]
-    i <- 1L
-    while(i <= ndivisors) {
-      g    <- divisors[[i]]
-      LT_g <- LTdivisors[[i]] 
-      while(divides(LT_g, LT_cur)) {
-        cur <- cur - quotient(LT_cur, LT_g) * g
-        if(cur == qzero()) {
-          return(qzero())
-        }
-        LT_cur <- leadingTerm(cur, d)
-      }
-      i <- i + 1L
-    }
-  }
-  # return remainder
-  cur
+  gs <- lapply(divisors, function(qspr) {
+    list("powers" = qspr@powers, "coeffs" = qspr@coeffs)
+  })
+  Powers <- qspray@powers
+  coeffs <- qspray@coeffs
+  outList <- BBdivisionRcpp(
+    Powers, coeffs, LTs_f, gs, LTdivisors, d
+  )
+  qspray_from_list(outList)  
 }
 
 #' @title Gröbner basis
@@ -255,7 +241,7 @@ BBdivision <- function(qspray, divisors, LTdivisors) {
 #' lapply(gb, prettyQspray, vars = c("x", "y", "z"))}
 groebner <- function(G, minimal = TRUE, reduced = TRUE) {
   d <- max(vapply(G, arity, integer(1L)))
-  LT_G <- lapply(G, leadingTerm, d = d)
+  LT_G <- lapply(G, leading, d = d)
   Ss <- list()
   j <- length(G)
   combins <- combn(j, 2L)
@@ -274,7 +260,7 @@ groebner <- function(G, minimal = TRUE, reduced = TRUE) {
       i <- 1L
       G <- append(G, Sbar_fg)
 	    d <- max(d, arity(Sbar_fg))
-      LT_G <- append(LT_G, list(leadingTerm(Sbar_fg, d)))
+      LT_G <- append(LT_G, list(leading(Sbar_fg, d)))
       j <- j + 1L
       combins <- combn(j, 2L)
       allids <- paste0(combins[1L, ], "-", combins[2L, ])
