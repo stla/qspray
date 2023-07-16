@@ -311,6 +311,21 @@ Rcpp::List qspray_add(const Rcpp::List& Powers1,
 
 
 // -------------------------------------------------------------------------- //
+qspray subtract(qspray S1, qspray S2) {
+  qspray::const_iterator it;
+  powers pows;  
+  for(it = S2.begin(); it != S2.end(); ++it) {
+    pows = it->first;
+    S1[pows] -= S2[pows];
+    if(S1[pows] == 0) {
+      S1.erase(pows);
+    }
+  }
+  return(S1);
+}
+
+
+// -------------------------------------------------------------------------- //
 // [[Rcpp::export]]
 Rcpp::List qspray_subtract(const Rcpp::List& Powers1,
                            const Rcpp::StringVector& coeffs1,
@@ -319,17 +334,8 @@ Rcpp::List qspray_subtract(const Rcpp::List& Powers1,
   qspray::const_iterator it;
   qspray S1 = makeQspray(Powers1, coeffs1);
   qspray S2 = makeQspray(Powers2, coeffs2);
-  powers pows;
-  
-  for(it = S2.begin(); it != S2.end(); ++it) {
-    pows = it->first;
-    S1[pows] -= S2[pows];
-    if(S1[pows] == 0) {
-      S1.erase(pows);
-    }
-  }
-
-  return retval(S1);
+  qspray S = subtract(S1, S2);
+  return retval(S);
 }
 
 
@@ -508,7 +514,7 @@ Rcpp::List leadingTerm(const qspray& S, int d) {
   powers leadingPows       = pows[index];
   int npows = pows.size();
   if(npows < d) {
-    leadingPows = growPowers(leadingPows, n, d);
+    leadingPows = growPowers(leadingPows, npows, d);
   } 
   std::string leadingCoeff = q2str(coeffs[index]);
   Rcpp::IntegerVector powsRcpp(leadingPows.begin(), leadingPows.end());
@@ -539,7 +545,7 @@ qspray quotient(Rcpp::List f, Rcpp::List g) {
   gmpq qcoeff_f(coeff_f);
   gmpq qcoeff_g(coeff_g);
   Rcpp::IntegerVector powsRcpp = pows_f - pows_g;
-  gmpq qcoeff = coeff_f / coeff_g;
+  gmpq qcoeff = qcoeff_f / qcoeff_g;
   qspray S;
   powers pows(powsRcpp.begin(), powsRcpp.end());
   S[pows] = qcoeff;
@@ -563,7 +569,7 @@ Rcpp::List BBdivisionRcpp(
       while(divides(LTg, LTcur)) {
         qspray qtnt = quotient(LTcur, LTg);
         qspray gspray = makeQspray(g["powers"], g["coeffs"]); // TODO in R: convert qsprays to list
-        cur = qspray_subtract(cur, prod(qtnt, gspray));
+        cur = subtract(cur, prod(qtnt, gspray));
         if(cur.size() == 0) {
           return(retval(cur));
         }
