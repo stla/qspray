@@ -254,7 +254,6 @@ groebner <- function(G, minimal = TRUE, reduced = TRUE) {
     names(Ss_new) <- paste0(combin[1L], "-", combin[2L])
     Ss <- c(Ss, Ss_new)
     d <- max(d, arity(Sfg))
-    print("calc division")
     Sbar_fg <- BBdivision(Sfg, G, LT_G)
     i <- i + 1L
     if(Sbar_fg != qzero()) {
@@ -263,7 +262,6 @@ groebner <- function(G, minimal = TRUE, reduced = TRUE) {
 	    d <- max(d, arity(Sbar_fg))
       LT_G <- append(LT_G, list(leading(Sbar_fg, d)))
       j <- j + 1L
-      print(j)
       combins <- combn(j, 2L)
       allids <- paste0(combins[1L, ], "-", combins[2L, ])
       indices <- which(!is.element(allids, names(Ss)))

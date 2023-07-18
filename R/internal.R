@@ -59,7 +59,7 @@ isPartition <- function(lambda){
 }
 
 arity <- function(qspray) {
-  max(lengths(qspray@powers))
+  suppressWarnings(max(lengths(qspray@powers)))
 }
 
 #' @importFrom utils head

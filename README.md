@@ -124,7 +124,7 @@ f <- qsprayMaker(string = "x^(3) - 2 x^(1,1)")
 g <- qsprayMaker(string = "x^(2,1) - 2 x^(0,2) + x^(1)")
 groebner(list(f, g))
 ## [[1]]
-## -2*x^(0, 2) + x^(1) 
+## x^(1) - 2*x^(0, 2) 
 ## 
 ## [[2]]
 ## x^(0, 3)

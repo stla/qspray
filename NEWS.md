@@ -1,3 +1,12 @@
+# qspray 2.1.0
+
+- New function `implicitization`, to transform a system of parametric equations to an implicit equation. This is based on Gröbner bases.
+
+- The division step in the Buchberger algorithm is now performed in C++.
+
+- The `groebner` function has been considerably improved, but it still can be very slow.
+
+
 # qspray 2.0.0
 
 - The implementation of the opposite polynomial was wrong (it did nothing).
