@@ -288,25 +288,31 @@ Rcpp::List qspray_maker(const Rcpp::List& Powers,
 
 
 // -------------------------------------------------------------------------- //
+qspray add(const qspray& S1, const qspray& S2) {
+  qspray S = S1;
+  qspray::const_iterator it;
+  powers pows;  
+  for(it = S2.begin(); it != S2.end(); ++it) {
+    pows = it->first;
+    S[pows] += it->second;
+    if(S[pows] == 0) {
+      S.erase(pows);
+    }
+  }
+  return S;
+}
+
+
+// -------------------------------------------------------------------------- //
 // [[Rcpp::export]]
 Rcpp::List qspray_add(const Rcpp::List& Powers1,
                       const Rcpp::StringVector& coeffs1,
                       const Rcpp::List& Powers2,
                       const Rcpp::StringVector& coeffs2) {
-  qspray::const_iterator it;
   qspray S1 = makeQspray(Powers1, coeffs1);
   qspray S2 = makeQspray(Powers2, coeffs2);
-  powers pows;
-  
-  for(it = S2.begin(); it != S2.end(); ++it) {
-    pows = it->first;
-    S1[pows] += S2[pows];
-    if(S1[pows] == 0) {
-      S1.erase(pows);
-    }
-  }
-
-  return retval(S1);
+  qspray S = add(S1, S2);  
+  return retval(S);
 }
 
 
@@ -557,31 +563,71 @@ qspray quotient(Rcpp::List f, Rcpp::List g) {
 }
 
 // [[Rcpp::export]]
+// Rcpp::List BBdivisionRcpp(
+//   Rcpp::List Powers, Rcpp::StringVector coeffs, Rcpp::List LTsf, 
+//   Rcpp::List gs, Rcpp::List LTgs, int d
+// ) {
+//   int ngs    = gs.size();
+//   int nterms = LTsf.size(); 
+//   qspray cur = makeQspray(Powers, coeffs);
+//   for(int k = 0; k < nterms; k++) {
+//     Rcpp::List LTcur = LTsf(k);
+//     int i = 0;
+//     while(i < ngs) {
+//       Rcpp::List g  = gs(i);
+//       qspray gspray = makeQspray(g["powers"], g["coeffs"]);
+//       Rcpp::List LTg = LTgs(i);
+//       while(divides(LTg, LTcur)) {
+//         qspray qtnt = quotient(LTcur, LTg);
+//         cur = subtract(cur, prod(qtnt, gspray));
+//         if(cur.size() == 0) {
+//           return(retval(cur));
+//         }
+//         LTcur = leadingTerm(cur, d);
+//       }
+//       i++;
+//     }
+//   }
+//   return retval(cur);
+// }
 Rcpp::List BBdivisionRcpp(
   Rcpp::List Powers, Rcpp::StringVector coeffs, Rcpp::List LTsf, 
   Rcpp::List gs, Rcpp::List LTgs, int d
 ) {
   int ngs    = gs.size();
-  int nterms = LTsf.size(); 
-  qspray cur = makeQspray(Powers, coeffs);
-  for(int k = 0; k < nterms; k++) {
-    Rcpp::List LTcur = LTsf(k);
-    int i = 0;
-    while(i < ngs) {
+  //int nterms = LTsf.size(); 
+  qspray p = makeQspray(Powers, coeffs);
+  qspray r;
+  //int k = 0;
+  int i;
+  bool divoccured;
+  while(!p.empty()) {
+    i = 0;
+    divoccured = false;
+    Rcpp::List LTp = leadingTerm(p, d);
+    while(i < ngs && !divoccured) {
       Rcpp::List g  = gs(i);
       qspray gspray = makeQspray(g["powers"], g["coeffs"]);
       Rcpp::List LTg = LTgs(i);
-      while(divides(LTg, LTcur)) {
-        qspray qtnt = quotient(LTcur, LTg);
-        cur = subtract(cur, prod(qtnt, gspray));
-        if(cur.size() == 0) {
-          return(retval(cur));
-        }
-        LTcur = leadingTerm(cur, d);
+      if(divides(LTg, LTp)) {
+        qspray qtnt = quotient(LTp, LTg);
+        p = subtract(p, prod(qtnt, gspray));
+        divoccured = true;
+      } else {
+        i++;
       }
-      i++;
+    }
+    if(!divoccured) {
+      Rcpp::IntegerVector powsRcpp = LTp["powers"];
+      std::string coeff = LTp["coeff"];
+      gmpq coef(coeff);
+      powers pows(powsRcpp.begin(), powsRcpp.end());
+      simplifyPowers(pows);
+      qspray LTpspray;
+      LTpspray[pows] = coef;
+      r = add(r, LTpspray);
+      p = subtract(p, LTpspray);
     }
   }
-  return retval(cur);
+  return retval(r);
 }
-
