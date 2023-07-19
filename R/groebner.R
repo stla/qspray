@@ -195,19 +195,19 @@ BBdivision <- function(qspray, divisors, LTdivisors) {
   }
   # we store the successive leading terms in LTs_f
   d <- max(arity(qspray), max(vapply(divisors, arity, integer(1L))))
-  oqspray <- orderedQspray(qspray, d)
-  opowers <- oqspray[["powers"]]
-  ocoeffs <- oqspray[["coeffs"]]
-  LTs_f <- lapply(seq_along(ocoeffs), function(i) {
-    list("powers" = opowers[i, ], "coeff" = ocoeffs[i])
-  })
+  # oqspray <- orderedQspray(qspray, d)
+  # opowers <- oqspray[["powers"]]
+  # ocoeffs <- oqspray[["coeffs"]]
+  # LTs_f <- lapply(seq_along(ocoeffs), function(i) {
+  #   list("powers" = opowers[i, ], "coeff" = ocoeffs[i])
+  # })
   gs <- lapply(divisors, function(qspr) {
     list("powers" = qspr@powers, "coeffs" = qspr@coeffs)
   })
   Powers <- qspray@powers
   coeffs <- qspray@coeffs
   outList <- BBdivisionRcpp(
-    Powers, coeffs, LTs_f, gs, LTdivisors, d
+    Powers, coeffs, gs, LTdivisors, d
   )
   qspray_from_list(outList)  
 }
@@ -254,6 +254,7 @@ groebner <- function(G, minimal = TRUE, reduced = TRUE) {
     names(Ss_new) <- paste0(combin[1L], "-", combin[2L])
     Ss <- c(Ss, Ss_new)
     d <- max(d, arity(Sfg))
+    print("division")
     Sbar_fg <- BBdivision(Sfg, G, LT_G)
     i <- i + 1L
     if(Sbar_fg != qzero()) {
@@ -262,6 +263,7 @@ groebner <- function(G, minimal = TRUE, reduced = TRUE) {
 	    d <- max(d, arity(Sbar_fg))
       LT_G <- append(LT_G, list(leading(Sbar_fg, d)))
       j <- j + 1L
+      print(j)
       combins <- combn(j, 2L)
       allids <- paste0(combins[1L, ], "-", combins[2L, ])
       indices <- which(!is.element(allids, names(Ss)))
