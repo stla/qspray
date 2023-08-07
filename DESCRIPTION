@@ -1,7 +1,7 @@
 Type: Package
 Package: qspray
 Title: Multivariate Polynomials with Rational Coefficients
-Version: 2.0.0.9002
+Version: 2.1.0
 Authors@R: c(
     person("Stéphane", "Laurent", , "laurent_step@outlook.fr", role = c("aut", "cre")),
     person("Robin", "Hankin", role = c("ctb", "cph"),
