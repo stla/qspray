@@ -26,14 +26,14 @@ to start by introducing the generating variables with the help of the
 x <- qlone(1); y <- qlone(2); z <- qlone(3)
 pol <- 4*x^2 + "1/2"*y - 5*x*y*z
 pol
-## -5*x^(1, 1, 1) + 4*x^(2) + 1/2*x^(0, 1)
+## 4*x^(2) - 5*x^(1, 1, 1) + 1/2*x^(0, 1)
 ```
 
 Or maybe you prefer to define the polynomial by giving it as a string:
 
 ``` r
 qsprayMaker(string = "4 x^(2) + 1/2 x^(0, 1) - 5 x^(1, 1, 1)")
-## -5*x^(1, 1, 1) + 1/2*x^(0, 1) + 4*x^(2)
+## 4*x^(2) - 5*x^(1, 1, 1) + 1/2*x^(0, 1)
 ```
 
 As you want, but this method is not highly robust.
@@ -42,19 +42,19 @@ Some arithmetic on this polynomial:
 
 ``` r
 -pol
-## 5*x^(1, 1, 1) - 4*x^(2) - 1/2*x^(0, 1)
+## -4*x^(2) + 5*x^(1, 1, 1) - 1/2*x^(0, 1)
 2 * pol
-## -10*x^(1, 1, 1) + 8*x^(2) + x^(0, 1)
+## 8*x^(2) - 10*x^(1, 1, 1) + x^(0, 1)
 pol / 2
-## -5/2*x^(1, 1, 1) + 2*x^(2) + 1/4*x^(0, 1)
+## 2*x^(2) - 5/2*x^(1, 1, 1) + 1/4*x^(0, 1)
 "5/3" * pol
-## -25/3*x^(1, 1, 1) + 20/3*x^(2) + 5/6*x^(0, 1)
+## 20/3*x^(2) - 25/3*x^(1, 1, 1) + 5/6*x^(0, 1)
 pol + 5
-## 1/2*x^(0, 1) + 5*x^() + 4*x^(2) - 5*x^(1, 1, 1)
+## 4*x^(2) - 5*x^(1, 1, 1) + 1/2*x^(0, 1) + 5*x^()
 pol - "2/5"
-## 1/2*x^(0, 1) - 2/5*x^() + 4*x^(2) - 5*x^(1, 1, 1)
+## 4*x^(2) - 5*x^(1, 1, 1) + 1/2*x^(0, 1) - 2/5*x^()
 pol^2
-## 25*x^(2, 2, 2) + 16*x^(4) - 40*x^(3, 1, 1) + 1/4*x^(0, 2) + 4*x^(2, 1) - 5*x^(1, 2, 1)
+## 16*x^(4) - 40*x^(3, 1, 1) + 25*x^(2, 2, 2) + 4*x^(2, 1) - 5*x^(1, 2, 1) + 1/4*x^(0, 2)
 ```
 
 Two polynomials can be added and multiplied:
@@ -63,11 +63,11 @@ Two polynomials can be added and multiplied:
 pol1 <- pol
 pol2 <- pol
 pol1 + pol2
-## x^(0, 1) + 8*x^(2) - 10*x^(1, 1, 1)
+## 8*x^(2) - 10*x^(1, 1, 1) + x^(0, 1)
 pol1 - pol2
 ## 0
 pol1 * pol2
-## 25*x^(2, 2, 2) - 40*x^(3, 1, 1) + 16*x^(4) - 5*x^(1, 2, 1) + 4*x^(2, 1) + 1/4*x^(0, 2)
+## 16*x^(4) - 40*x^(3, 1, 1) + 25*x^(2, 2, 2) + 4*x^(2, 1) - 5*x^(1, 2, 1) + 1/4*x^(0, 2)
 ```
 
 Use `evalQspray` to evaluate a polynomial for some values of the

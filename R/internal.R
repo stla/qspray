@@ -58,6 +58,13 @@ isPartition <- function(lambda){
     all(diff(lambda) <= 0)
 }
 
+lexorder <- function(M) {
+  do.call(
+    order, 
+    c(lapply(seq_len(ncol(M)), function(i) M[, i]), decreasing = TRUE)
+  )
+}
+
 arity <- function(qspray) {
   suppressWarnings(max(lengths(qspray@powers)))
 }
