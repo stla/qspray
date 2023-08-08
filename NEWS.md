@@ -1,3 +1,8 @@
+# qspray 2.1.0.9000
+
+- Unit tests
+
+
 # qspray 2.1.0
 
 - New function `implicitization`, to transform a system of parametric equations to an implicit equation. This is based on Gröbner bases.
