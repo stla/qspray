@@ -1,6 +1,6 @@
 # qspray 2.1.0.9000
 
-- Unit tests
+- Unit tests.
 
 - The polynomials are now printed with the lexicographic order of the monomials.
 
