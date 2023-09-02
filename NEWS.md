@@ -7,8 +7,7 @@
 
 # qspray 2.1.0
 
-- New function `implicitization`, to transform a system of parametric equations to an implicit equation. This is based on Gröbner bases. This doesn't always 
-work (use the 'giacR' package if needed).
+- New function `implicitization`, to transform a system of parametric equations to an implicit equation. This is based on Gröbner bases. This doesn't always work (use the 'giacR' package if needed).
 
 - The division step in the Buchberger algorithm is now performed in C++.
 
