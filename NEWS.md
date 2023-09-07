@@ -1,4 +1,4 @@
-# qspray 2.1.0.9000
+# qspray 2.1.1
 
 - Unit tests.
 
