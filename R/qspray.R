@@ -665,3 +665,48 @@ ESFpoly <- function(m, lambda) {
   }
   out
 }
+
+#' @title Compose 'qspray' polynomials
+#' @description Substitute the variables of a \code{qspray} polynomial with 
+#'   some \code{qspray} polynomials.
+#' 
+#' @param qspray a \code{qspray} polynomial
+#' @param qsprays a list containing \code{n} \code{qspray} polynomials where 
+#'   \code{n} is the number of variables of the polynomial given in the 
+#'   \code{qspray} argument
+#'
+#' @return The \code{qspray} polynomial obtained by composing the polynomial 
+#'   given in the \code{qspray} argument with the polynomials given in the 
+#'   \code{qsprays} argument.
+#' @export
+#'
+#' @examples
+#' P <- qsprayMaker(string = "1/2 x^(1, 1) + 4 x^(0, 2)")
+#' Q1 <- qsprayMaker(string = "x^(0, 1, 1)")
+#' Q2 <- qsprayMaker(string = "2 x^(1) + x^(1, 1, 1)")
+#' composeQspray(P, list(Q1, Q2))
+composeQspray <- function(qspray, qsprays) {
+  n <- arity(qspray)
+  if(length(qsprays) != n) {
+    stop(
+      sprintf(
+        "The `qsprays` argument must be a list of %d qspray polynomials.", n
+      )
+    )
+  }
+  coeffs <- qspray@coeffs
+  powers <- qspray@powers
+  result <- qzero()
+  for(i in seq_along(powers)) {
+    term <- qone()
+    pwr <- powers[[i]]
+    for(j in seq_along(pwr)) {
+      p <- pwr[j]
+      if(p != 0L) {
+        term <- term * qsprays[[j]]^p
+      }
+    }
+    result <- result + coeffs[i] * term
+  }
+  result  
+}

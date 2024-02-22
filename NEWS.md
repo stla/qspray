@@ -1,3 +1,12 @@
+# qspray 2.2.0
+
+- New function `isSymmetricPolynomial`, to check whether a `qspray` polynomial 
+is symmetric.
+
+- New function `composeQspray`, to get the polynomial obtained by substituting 
+the variables of a polynomial with polynomials.
+
+
 # qspray 2.1.1
 
 - Unit tests.
