@@ -6,6 +6,11 @@ is symmetric.
 - New function `composeQspray`, to get the polynomial obtained by substituting 
 the variables of a polynomial with polynomials.
 
+- There was an error in `qdivision` (without severe consequences).
+
+- The function `as.function.qspray` now has a Boolean argument `N`; if set to 
+`TRUE`, the function returns a numerical approximation of the result.
+
 
 # qspray 2.1.1
 
