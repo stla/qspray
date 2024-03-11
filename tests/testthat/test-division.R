@@ -2,8 +2,7 @@ test_that("division univariate", {
   x <- qlone(1)
   f <- x^4 - 4*x^3 + 4*x^2 - x
   r <- qdivision(f, list(x^2-2))
-  quotient <- attr(r, "quotient")
-  expect_true(f == quotient * (x^2-2) + r)
+  expect_true(r == -9*x + 12)
 })
 
 test_that("division multivariate", {

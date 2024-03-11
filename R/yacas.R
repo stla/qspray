@@ -91,39 +91,58 @@ rationalPolynomial <- function(powers, coeffs, stars = FALSE){
 #' @description Coerces a \code{qspray} polynomial into a function.
 #'
 #' @param x object of class \code{qspray}
+#' @param N Boolean, whether the function must numerically approximate 
+#'   the result
 #' @param ... ignored
 #'
-#' @return A function having the same variables as the polynomial. It returns 
-#'   a string.
+#' @return A function having the same variables as the polynomial. If 
+#'   \code{N=FALSE}, it returns a string. If \code{N=TRUE}, it returns a number 
+#'   if the result does not contain any variable, otherwise it returns a 
+#'   R expression.
 #' @export
 #'
-#' @importFrom Ryacas yac_str
+#' @importFrom Ryacas yac_str as_r
 #'
 #' @examples 
 #' library(qspray)
 #' P <- (qlone(1) + "1/2"*qlone(2))^2 + 5
 #' f <- as.function(P)
+#' g <- as.function(P, N = TRUE)
 #' f(2, "3/7")
+#' g(2, "3/7")
 #' f("x", "y")
+#' g("x", "y")
 #' # the evaluation is performed by (R)yacas and complex numbers are
 #' # allowed; the imaginary unit is denoted by `I`
-#' f("2 + 2*I", "1/4")
-as.function.qspray <- function(x, ...) {
+#' f("2 + 2*I", "Sqrt(2)")
+#' g("2 + 2*I", "Sqrt(2)")
+as.function.qspray <- function(x, N = FALSE, ...) {
   string <- rationalPolynomial(x@powers, x@coeffs, stars = TRUE)
   expr <- sprintf("Simplify(%s)", string)
   nvars <- max(lengths(x@powers))
   vars <- paste0("x", seq_len(nvars))
   values <- paste0(paste0(vars, "==%s"), collapse = " And ")
   yacas <- paste0("Simplify(", expr, " Where ", values, ")")
-  f <- function() {
-    yac_str(
-      do.call(function(...) sprintf(yacas, ...), lapply(vars, function(xi) {
-        eval(parse(text = xi))
-      }))
-    )
+  if(N) {
+    yacas <- paste0("N(", yacas, ")")
+    f <- function() {
+      as_r(yac_str(
+        do.call(function(...) sprintf(yacas, ...), lapply(vars, function(xi) {
+          eval(parse(text = xi))
+        }))
+      ))
+    }
+  } else {
+    f <- function() {
+      yac_str(
+        do.call(function(...) sprintf(yacas, ...), lapply(vars, function(xi) {
+          eval(parse(text = xi))
+        }))
+      )
+    }
   }
-  formals(f) <- sapply(vars, function(xi) {
+  formals(f) <- vapply(vars, function(xi) {
     `names<-`(alist(y=), xi)
-  }, USE.NAMES = FALSE)
+  }, alist(NULL))
   f
 }

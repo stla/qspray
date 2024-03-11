@@ -90,12 +90,8 @@ termAsQspray <- function(term) {
 #' 
 #' @param qspray the dividend, a \code{qspray} object 
 #' @param divisors the divisors, a list of \code{qspray} objects
-#' @param check Boolean, whether to check the division; this argument will be 
-#'   removed in a future version
 #'
-#' @return The remainder of the division, a \code{qspray} object. Moreover, 
-#'   if \code{qspray} is univariate, the quotient is attached to the remainder 
-#'   as an attribute.
+#' @return The remainder of the division, a \code{qspray} object. 
 #' @export
 #'
 #' @references 
@@ -108,84 +104,84 @@ termAsQspray <- function(term) {
 #' x <- qlone(1)
 #' f <- x^4 - 4*x^3 + 4*x^2 - x # 0 and 1 are trivial roots
 #' g <- x * (x - 1)
-#' ( r <- qdivision(f, list(g)) ) # should be zero
-#' attr(r, "quotient")
-qdivision <- function(qspray, divisors, check = TRUE) {
-  
+#' qdivision(f, list(g)) # should be zero
+qdivision <- function(qspray, divisors) {
   stopifnot(is.list(divisors))
-  
   if(qspray == qzero()) {
     return(qzero())
   }
+  d <- max(vapply(divisors, arity, integer(1L)))
+  LTdivisors <- lapply(divisors, leading, d = d)
+  BBdivision(qspray, divisors, LTdivisors)
   
-  # we store the successive leading terms in LTs_f
-  d <- max(arity(qspray), max(vapply(divisors, arity, integer(1L))))
-  oqspray <- orderedQspray(qspray, d)
-  opowers <- oqspray[["powers"]]
-  ocoeffs <- as.bigq(oqspray[["coeffs"]])
-  LTs_f <- lapply(seq_along(ocoeffs), function(i) {
-    list("powers" = opowers[i, ], "coeff" = ocoeffs[i])
-  })
-  
-  ndivisors <- length(divisors)
-  nterms <- length(qspray@coeffs)
-
-  qgs <- list() # to store the products q*g_i, in order to check at the end
-  quotients <- list() # to store the quotients
-  
-  cur <- qspray
-  for(k in 1L:nterms) {
-    LT_cur <- LTs_f[[k]]
-    i <- 1L
-    while(i <= ndivisors) {
-      g <- divisors[[i]]
-      LT_g <- leadingTerm(g, d)
-      while(divides(LT_g, LT_cur)) {
-        q <- quotient(LT_cur, LT_g)
-        quotients <- append(quotients, q)
-        qgs <- append(qgs, q * g)
-        cur <- cur - q * g
-        if(cur == qzero()) {
-          if(check) {
-            sum_qgs <- qzero()
-            for(i in seq_along(qgs)) {
-              sum_qgs <- sum_qgs + qgs[[i]]
-            }
-            stopifnot(sum_qgs == qspray)
-          }
-          remainder <- qzero()
-          if(d == 1L) {
-            qtnt <- qzero()
-            for(i in seq_along(quotients)) {
-              qtnt <- qtnt + quotients[[i]]
-            }
-            attr(remainder, "quotient") <- qtnt
-          }
-          return(remainder)
-        }
-        LT_cur <- leadingTerm(cur, d)
-      }
-      i <- i + 1L
-    }
-  }
-  # check
-  if(check) {
-    sum_qgs <- qzero()
-    for(i in seq_along(qgs)) {
-      sum_qgs <- sum_qgs + qgs[[i]]
-    }
-    stopifnot(qspray == sum_qgs + cur)
-  }
-  # return remainder
-  remainder <- cur
-  if(d == 1L) {
-    qtnt <- qzero()
-    for(i in seq_along(quotients)) {
-      qtnt <- qtnt + quotients[[i]]
-    }
-    attr(remainder, "quotient") <- qtnt
-  }
-  remainder
+  # # we store the successive leading terms in LTs_f
+  # d <- max(arity(qspray), max(vapply(divisors, arity, integer(1L))))
+  # oqspray <- orderedQspray(qspray, d)
+  # opowers <- oqspray[["powers"]]
+  # ocoeffs <- as.bigq(oqspray[["coeffs"]])
+  # LTs_f <- lapply(seq_along(ocoeffs), function(i) {
+  #   list("powers" = opowers[i, ], "coeff" = ocoeffs[i])
+  # })
+  # 
+  # ndivisors <- length(divisors)
+  # nterms <- length(qspray@coeffs)
+  # 
+  # qgs <- list() # to store the products q*g_i, in order to check at the end
+  # quotients <- list() # to store the quotients
+  # 
+  # cur <- qspray
+  # for(k in 1L:nterms) {
+  #   LT_cur <- LTs_f[[k]]
+  #   i <- 1L
+  #   while(i <= ndivisors) {
+  #     g <- divisors[[i]]
+  #     LT_g <- leadingTerm(g, d)
+  #     while(divides(LT_g, LT_cur)) {
+  #       q <- quotient(LT_cur, LT_g)
+  #       quotients <- append(quotients, q)
+  #       qgs <- append(qgs, q * g)
+  #       cur <- cur - q * g
+  #       if(cur == qzero()) {
+  #         if(check) {
+  #           sum_qgs <- qzero()
+  #           for(i in seq_along(qgs)) {
+  #             sum_qgs <- sum_qgs + qgs[[i]]
+  #           }
+  #           stopifnot(sum_qgs == qspray)
+  #         }
+  #         remainder <- qzero()
+  #         if(d == 1L) {
+  #           qtnt <- qzero()
+  #           for(i in seq_along(quotients)) {
+  #             qtnt <- qtnt + quotients[[i]]
+  #           }
+  #           attr(remainder, "quotient") <- qtnt
+  #         }
+  #         return(remainder)
+  #       }
+  #       LT_cur <- leadingTerm(cur, d)
+  #     }
+  #     i <- i + 1L
+  #   }
+  # }
+  # # check
+  # if(check) {
+  #   sum_qgs <- qzero()
+  #   for(i in seq_along(qgs)) {
+  #     sum_qgs <- sum_qgs + qgs[[i]]
+  #   }
+  #   stopifnot(qspray == sum_qgs + cur)
+  # }
+  # # return remainder
+  # remainder <- cur
+  # if(d == 1L) {
+  #   qtnt <- qzero()
+  #   for(i in seq_along(quotients)) {
+  #     qtnt <- qtnt + quotients[[i]]
+  #   }
+  #   attr(remainder, "quotient") <- qtnt
+  # }
+  # remainder
 }
 
 # internal division for Buchberger algorithm

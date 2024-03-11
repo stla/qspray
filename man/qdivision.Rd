@@ -4,20 +4,15 @@
 \alias{qdivision}
 \title{Division of a qspray polynomial}
 \usage{
-qdivision(qspray, divisors, check = TRUE)
+qdivision(qspray, divisors)
 }
 \arguments{
 \item{qspray}{the dividend, a \code{qspray} object}
 
 \item{divisors}{the divisors, a list of \code{qspray} objects}
-
-\item{check}{Boolean, whether to check the division; this argument will be 
-removed in a future version}
 }
 \value{
-The remainder of the division, a \code{qspray} object. Moreover, 
-  if \code{qspray} is univariate, the quotient is attached to the remainder 
-  as an attribute.
+The remainder of the division, a \code{qspray} object.
 }
 \description{
 Division of a qspray polynomial by a list of qspray 
@@ -29,8 +24,7 @@ library(qspray)
 x <- qlone(1)
 f <- x^4 - 4*x^3 + 4*x^2 - x # 0 and 1 are trivial roots
 g <- x * (x - 1)
-( r <- qdivision(f, list(g)) ) # should be zero
-attr(r, "quotient")
+qdivision(f, list(g)) # should be zero
 }
 \references{
 Michael Weiss, 2010. 
