@@ -396,13 +396,13 @@ implicitization <- function(nvariables, parameters, equations, relations) {
 #' f <- e1 + 2*e2 + 3*e3 + 4*e1*e3
 #' isSymmetricPolynomial(f)
 isSymmetricPolynomial <- function(qspray) {
-  n <- arity(f)
+  n <- arity(qspray)
   i_ <- seq_len(n)
   E <- lapply(i_, function(i) ESFpoly(n, i))
   Y <- lapply(i_, function(i) qlone(n + i))
   G <- lapply(i_, function(i) E[[i]] - Y[[i]])
   B <- groebner(G)
-  g <- qdivision(f, B)
+  g <- qdivision(qspray, B)
   check <- all(vapply(g@powers, function(pwr) {
     length(pwr) > n && all(pwr[1L:n] == 0L)
   }, logical(1L)))
