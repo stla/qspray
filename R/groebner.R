@@ -213,7 +213,7 @@ combn2 <- function(j, s) {
     do.call(c, lapply(1L:(j-1L), function(i) 1L:i)),
     rep(2L:j, times = 1L:(j-1L))  
   )
-  allCombs[, (s+1L):ncol(allCombs)]
+  allCombs[, (s+1L):ncol(allCombs), drop = FALSE]
 }
 
 #' @title Gröbner basis
