@@ -1,10 +1,10 @@
 # qspray 2.2.0
 
-- New function `isSymmetricPolynomial`, to check whether a `qspray` polynomial 
-is symmetric.
+- New function `substituteQspray`, to substitute some variables in a polynomial.
 
-- New function `composeQspray`, to get the polynomial obtained by substituting 
-the variables of a polynomial with polynomials.
+- New function `composeQspray`, to get the polynomial obtained by substituting the variables of a polynomial with polynomials.
+ 
+- New function `isSymmetricPolynomial`, to check whether a `qspray` polynomial is symmetric.
 
 - There was an error in `qdivision` (without severe consequences).
 

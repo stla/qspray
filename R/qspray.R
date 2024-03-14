@@ -208,10 +208,13 @@ evalQspray <- function(qspray, values_re, values_im = NULL) {
 #' substituteQspray(p, c("2", NA, "3/2"))
 substituteQspray <- function(qspray, values) {
   powers <- qspray@powers
-  # if(length(powers) == 0L) {
-  #   return(as.bigq(0L))
-  # }
+  if(length(powers) == 0L) {
+    return(qzero())
+  }
   n <- arity(qspray)
+  if(n == 0L) {
+    return(qspray)
+  }
   if(length(values) != n) {
     stop("Wrong number of values.")
   }
