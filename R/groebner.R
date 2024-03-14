@@ -249,17 +249,12 @@ groebner <- function(G, minimal = TRUE, reduced = TRUE) {
   j <- length(G)
   combins <- combn2(j, 0L)
   i <- 1L
-  # indices <- 1L:ncol(combins)
   l <- ncol(combins)
   while(i <= l) {
     combin <- combins[, i]
     Sfg <- S(G[[combin[1L]]], G[[combin[2L]]])
-    # Ss_new <- list(Sfg)
-    # names(Ss_new) <- paste0(combin[1L], "-", combin[2L])
-    # Ss <- c(Ss, Ss_new)
     d <- max(d, arity(Sfg))
     Sbar_fg <- BBdivision(Sfg, G, LT_G)
-    # i <- i + 1L
     if(Sbar_fg != qzero()) {
       G <- append(G, Sbar_fg)
 	    d <- max(d, arity(Sbar_fg))
@@ -267,8 +262,6 @@ groebner <- function(G, minimal = TRUE, reduced = TRUE) {
       j <- j + 1L
       combins <- combn2(j, i)
       l <- ncol(combins)
-      # allids <- paste0(combins[1L, ], "-", combins[2L, ])
-      # indices <- which(!is.element(allids, names(Ss)))
       i <- 1L
     } else {
       i <- i + 1L
