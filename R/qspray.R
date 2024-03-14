@@ -137,9 +137,9 @@ qlone <- function(n) {
 #'
 #' @param qspray a \code{qspray} object
 #' @param values_re vector of the real parts of the values; each element of 
-#'   \code{as.character(values_re)} must be quoted integer or a quoted fraction
+#'   \code{as.character(values_re)} must be a quoted integer or a quoted fraction
 #' @param values_im vector of the imaginary parts of the values; each element of 
-#'   \code{as.character(values_im)} must be quoted integer or a quoted fraction
+#'   \code{as.character(values_im)} must be a quoted integer or a quoted fraction
 #'
 #' @return A \code{bigq} number if \code{values_im=NULL}, a pair of \code{bigq} 
 #'   numbers otherwise: the real part and the imaginary part of the result.
@@ -182,6 +182,61 @@ evalQspray <- function(qspray, values_re, values_im = NULL) {
       term <- term * values[j]^exponents[j]
     }
     out <- out + coeffs[i] * term
+  }
+  out
+}
+
+#' @title Substitutions in a 'qspray' polynomial
+#' @description Substitute some variables in a \code{qspray} polynomial.
+#'
+#' @param qspray a \code{qspray} object
+#' @param values the values to be substituted; this must be a vector whose 
+#'   length equals the number of variables of \code{qspray}, and whose each 
+#'   entry is either \code{NA} (for non-substitution) or a 'scalar' \code{x} 
+#'   such that \code{as.character(x)} is a quoted integer or a quoted fraction
+#'
+#' @return A \code{qspray} object.
+#' @export
+#' @importFrom gmp as.bigq
+#'
+#' @examples
+#' library(qspray)
+#' x <- qlone(1)
+#' y <- qlone(2)
+#' z <- qlone(3)
+#' p <- x^2 + y^2 + x*y*z - 1
+#' substituteQspray(p, c("2", NA, "3/2"))
+substituteQspray <- function(qspray, values) {
+  powers <- qspray@powers
+  # if(length(powers) == 0L) {
+  #   return(as.bigq(0L))
+  # }
+  n <- arity(qspray)
+  if(length(values) != n) {
+    stop("Wrong number of values.")
+  }
+  values <- as.character(values)
+  check <- all(vapply(values, isFractionOrNA, logical(1L)))
+  if(!check) {
+    stop("Invalid vector `values`.")
+  }
+  qlones <- lapply(1L:n, qlone)
+  indices <- which(is.na(values))
+  coeffs <- as.bigq(qspray@coeffs)
+  values <- as.bigq(values)
+  out <- qzero()
+  for(i in seq_along(powers)) {
+    exponents <- powers[[i]]
+    idx <- setdiff(seq_along(exponents), indices)
+    term <- 1L
+    for(j in idx) {
+      term <- term * values[j]^exponents[j]
+    }
+    monomial <- qone()
+    for(k in intersect(indices, which(exponents != 0L))) {
+      monomial <- monomial * qlones[[k]]^exponents[k]
+    }
+    out <- out + coeffs[i] * term * monomial
   }
   out
 }

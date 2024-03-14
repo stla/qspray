@@ -44,6 +44,10 @@ isFraction <- function(x) {
   }
 }
 
+isFractionOrNA <- function(x) {
+  is.na(x) || isFraction(x)
+}
+
 isExponents <- function(x) {
   is.numeric(x) && !anyNA(x) && all(floor(x) == x)
 }

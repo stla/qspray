@@ -10,10 +10,10 @@ evalQspray(qspray, values_re, values_im = NULL)
 \item{qspray}{a \code{qspray} object}
 
 \item{values_re}{vector of the real parts of the values; each element of 
-\code{as.character(values_re)} must be quoted integer or a quoted fraction}
+\code{as.character(values_re)} must be a quoted integer or a quoted fraction}
 
 \item{values_im}{vector of the imaginary parts of the values; each element of 
-\code{as.character(values_im)} must be quoted integer or a quoted fraction}
+\code{as.character(values_im)} must be a quoted integer or a quoted fraction}
 }
 \value{
 A \code{bigq} number if \code{values_im=NULL}, a pair of \code{bigq} 
