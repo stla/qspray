@@ -84,7 +84,7 @@ stringToQspray <- function(p){
 #'   is a quoted integer or a quoted fraction; it must have the same length 
 #'   as the \code{powers} list
 #' @param string if not \code{NULL}, this argument takes precedence over 
-#'   \code{powers} and \code{vertices}; it must be a string representing a 
+#'   \code{powers} and \code{coeffs}; it must be a string representing a 
 #'   multivariate polynomial; see the example
 #'
 #' @return A \code{qspray} object.
