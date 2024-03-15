@@ -11,21 +11,23 @@ setClass(
   slots = c(powers = "list", coeffs = "character")
 )
 
+powersMatrix <- function(qspray) {
+  do.call(rbind, lapply(qspray@powers, grow, n = arity(qspray)))
+}
+
 showQspray <- function(qspray) {
   if(length(qspray@coeffs) == 0L) {
     return("0")
   }
-  
-  M <- do.call(rbind, lapply(qspray@powers, grow, n = arity(qspray)))
+  M <- powersMatrix(qspray)
   if(ncol(M) > 0L) {
     lex <- lexorder(M)
     qspray@powers <- qspray@powers[lex]
     qspray@coeffs <- qspray@coeffs[lex]
   }
-  
   powers <- vapply(qspray@powers, toString, FUN.VALUE = character(1L))
   coeffs <- as.bigq(qspray@coeffs)
-  plus <- vapply(coeffs, function(x) x >= 0, FUN.VALUE = logical(1L))
+  plus <- vapply(coeffs, function(x) x >= 0L, FUN.VALUE = logical(1L))
   signs <- c(ifelse(plus[-1L], " + ", " - "), "")
   abscoeffs <- as.character(abs(coeffs))
   terms <- paste0(
@@ -804,3 +806,71 @@ composeQspray <- function(qspray, qsprays) {
   }
   result  
 }
+
+#' @title Permute variables
+#' @description Permute the variables of a \code{qspray} polynomial.
+#'
+#' @param qspray a \code{qspray} object
+#' @param permutation a permutation
+#'
+#' @return A \code{qspray} object.
+#' @export
+#'
+#' @examples
+#' library(qspray)
+#' f <- function(x, y, z) {
+#'   x^2 + 5*y + z - 1
+#' }
+#' x <- qlone(1)
+#' y <- qlone(2)
+#' z <- qlone(3)
+#' P <- f(x, y, z)
+#' permutation <- c(3, 1, 2)
+#' Q <- permuteVariables(P, permutation)
+#' Q == f(z, x, y) # should be TRUE
+permuteVariables <- function(qspray, permutation) {
+  stopifnot(isPermutation(permutation))
+  n <- arity(qspray)
+  if(length(permutation) != n) {
+    stop("Wrong length of `permutation`.")
+  }
+  permutation[permutation] <- seq_along(permutation)
+  M <- powersMatrix(qspray)[, permutation]
+  powers <- apply(M, 1L, identity, simplify = FALSE)
+  qsprayMaker(powers, qspray@coeffs)
+}
+
+#' @title Swap variables
+#' @description Swap two variables of a \code{qspray} polynomial.
+#'
+#' @param qspray a \code{qspray} object
+#' @param i,j indices of the variables to be swapped
+#'
+#' @return A \code{qspray} object.
+#' @export
+#'
+#' @examples
+#' library(qspray)
+#' f <- function(x, y, z) {
+#'   x^2 + 5*y + z - 1
+#' }
+#' x <- qlone(1)
+#' y <- qlone(2)
+#' z <- qlone(3)
+#' P <- f(x, y, z)
+#' Q <- swapVariables(P, 2, 3)
+#' Q == f(x, z, y) # should be TRUE
+swapVariables <- function(qspray, i, j) {
+  stopifnot(isNonnegativeInteger(i), isNonnegativeInteger(j))
+  n <- arity(qspray)
+  if(any(c(i, j) > n)) {
+    stop("Index out of range.")
+  }
+  permutation <- seq_len(n)
+  permutation[i] <- j
+  permutation[j] <- i
+  M <- powersMatrix(qspray)[, permutation]
+  powers <- apply(M, 1L, identity, simplify = FALSE)
+  qsprayMaker(powers, qspray@coeffs)
+}
+

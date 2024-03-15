@@ -82,3 +82,7 @@ removeTrailingZeros <- function(x) {
   }
   head(x, n)
 }
+
+isPermutation <- function(x) {
+  setequal(x, seq_along(x))
+}
