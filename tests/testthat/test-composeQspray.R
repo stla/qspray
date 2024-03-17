@@ -1,4 +1,4 @@
-test_that("permute/swap", {
+test_that("composeQspray", {
   x <- qlone(1)
   y <- qlone(2)
   f <- function(x, y) {
