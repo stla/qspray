@@ -44,6 +44,9 @@ qsprayMonomials <- function(powers, vars) {
 #' cat(Ryacas::yac_str(sprintf("PrettyForm(%s)", prettyP)))
 #' Ryacas::yac_str(sprintf("TeXForm(%s)", prettyP))
 prettyQspray <- function(qspray, vars = NULL) {
+  if(qspray == qzero()) {
+    return("0")
+  }
   monomials <- qsprayMonomials(qspray@powers, vars)
   letter <- setdiff(letters, vars)[1L]
   terms <- paste0(
