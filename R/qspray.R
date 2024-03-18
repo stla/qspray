@@ -830,12 +830,16 @@ composeQspray <- function(qspray, qsprays) {
 #' Q == f(z, x, y) # should be TRUE
 permuteVariables <- function(qspray, permutation) {
   stopifnot(isPermutation(permutation))
-  n <- arity(qspray)
-  if(length(permutation) != n) {
-    stop("Wrong length of `permutation`.")
+  m <- arity(qspray)
+  n <- length(permutation)
+  if(m > n) {
+    stop("Invalid permutation.")
   }
   permutation[permutation] <- seq_along(permutation)
   M <- powersMatrix(qspray)[, permutation]
+  for(. in seq_len(n - m)) {
+    M <- cbind(M, 0L)
+  }
   powers <- apply(M, 1L, identity, simplify = FALSE)
   qsprayMaker(powers, qspray@coeffs)
 }
@@ -862,14 +866,15 @@ permuteVariables <- function(qspray, permutation) {
 #' Q == f(x, z, y) # should be TRUE
 swapVariables <- function(qspray, i, j) {
   stopifnot(isNonnegativeInteger(i), isNonnegativeInteger(j))
-  n <- arity(qspray)
-  if(any(c(i, j) > n)) {
-    stop("Index out of range.")
-  }
+  m <- arity(qspray)
+  n <- max(m, i, j)
   permutation <- seq_len(n)
   permutation[i] <- j
   permutation[j] <- i
   M <- powersMatrix(qspray)[, permutation]
+  for(. in seq_len(n - m)) {
+    M <- cbind(M, 0L)
+  }
   powers <- apply(M, 1L, identity, simplify = FALSE)
   qsprayMaker(powers, qspray@coeffs)
 }
