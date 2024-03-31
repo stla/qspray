@@ -36,6 +36,7 @@ Collate:
     'groebner.R'
     'internal.R'
     'qspray.R'
+    'symmetricPolynomials.R'
     'yacas.R'
 Suggests: 
     testthat (>= 3.0.0)

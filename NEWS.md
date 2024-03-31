@@ -11,6 +11,8 @@
 - The function `as.function.qspray` now has a Boolean argument `N`; if set to 
 `TRUE`, the function returns a numerical approximation of the result.
 
+- New function `PSFpoly`, which computes the power sum polynomials.
+
 
 # qspray 2.1.1
 
