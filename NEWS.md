@@ -13,6 +13,8 @@
 
 - New function `PSFpoly`, which computes the power sum polynomials.
 
+- New function `HallInnerProduct`, which computes the Hall inner product between symmetric polynomials.
+
 
 # qspray 2.1.1
 
