@@ -60,10 +60,28 @@ zlambda <- function(lambda) {
 zlambda(c(3, 2, 2, 1))
 
 #
+library(gmp)
 HallInnerProduct <- function(spray1, spray2) {
   PSspray1 <- PSPpolyExpr(spray1 - getCoefficient(spray1, 0L))
   PSspray2 <- PSPpolyExpr(spray2 - getCoefficient(spray2, 0L))
-  
+  powers1 <- PSspray1@powers
+  coeffs1 <- PSspray1@coeffs
+  out <- 0L
+  for(k in seq_along(powers1)) {
+    pows <- powers1[[k]]
+    coeff2 <- getCoefficient(PSspray2, pows)
+    if(coeff2 != 0L) {
+      lambda <- 
+        unlist(lapply(rev(seq_along(pows)), function(i) rep(i, pows[i])))
+      z <- zlambda(lambda)
+      out <- out + as.bigq(coeffs1[k]) * coeff2 * z
+    }
+  }
+  out
 }
+
+spray1 <- jack::SchurPol(3, c(3, 1))
+spray2 <- jack::SchurPol(4, c(3, 1))
+HallInnerProduct(spray1, spray2)
 
 
