@@ -133,8 +133,22 @@ isSymmetricPolynomial <- function(qspray) {
 
 #### ~ Hall inner product ~ ####
 
-# qspray as a polynomial in the power sum polynomials
-PSPpolyExpr <- function(qspray) {
+#' @title Symmetric polynomial in terms of the power sum polynomials.
+#' @description Expression of a symmetric \code{qspray} polynomial as a 
+#'   polynomial in the power sum polynomials.
+#'
+#' @param qspray a symmetric \code{qspray} polynomial (an error is returned if 
+#'   it is not symmetric)
+#'
+#' @return A \code{qspray} polynomial, say \eqn{P}, such that 
+#'   \eqn{P(p_1, ..., p_n)} equals the input symmetric polynomial, 
+#'   where \eqn{p_i} is the i-th power sum polynomial (\code{PSFpoly(n, i)}).
+#' @export
+#' 
+#' @note
+#' This function has been exported because it is used in the \strong{jack} 
+#'   package.
+PSPexpression <- function(qspray) {
   n <- arity(qspray)
   i_ <- seq_len(n)
   P <- lapply(i_, function(i) PSFpoly(n, i))
@@ -152,7 +166,9 @@ PSPpolyExpr <- function(qspray) {
   powers <- lapply(g@powers, function(pwr) {
     pwr[-(1L:n)]
   })
-  qsprayMaker(powers, g@coeffs) + constantTerm
+  out <- qsprayMaker(powers, g@coeffs) + constantTerm
+  attr(out, "PSPexpression") <- TRUE
+  out
 }
 
 # helper function for the Hall inner product
@@ -178,8 +194,12 @@ zlambda <- function(lambda, alpha) {
 HallInnerProduct <- function(qspray1, qspray2, alpha = 1) {
   stopifnot(isInteger(alpha) || is.bigq(alpha) || is.bigz(alpha))
   alpha <- as.bigq(alpha)
-  PSspray1 <- PSPpolyExpr(qspray1)
-  PSspray2 <- PSPpolyExpr(qspray2)
+  if(isTRUE(attr(qspray1, "PSPexpression"))) {
+    PSspray1 <- qspray1
+  } else {
+    PSspray1 <- PSPexpression(qspray1)
+  }
+  PSspray2 <- PSPexpression(qspray2)
   powers1 <- PSspray1@powers
   coeffs1 <- PSspray1@coeffs
   out <- as.bigq(0L)

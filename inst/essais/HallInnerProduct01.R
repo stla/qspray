@@ -6,13 +6,9 @@ spray2 <- jack::SchurPol(4, c(3, 1))
 HallInnerProduct(spray1, spray2)
 
 alpha <- as.bigq(2L)
-t <- as.integer(alpha)
-spray1 <- jack::JackPol(3, c(2, 1), alpha)
-spray2 <- jack::JackPol(3, c(2, 1), alpha)
-HallInnerProduct(spray1, spray2, alpha = t)
-spray1 <- jack::ZonalPol(3, c(2,1))
-spray2 <- jack::ZonalPol(3, c(2,1))
-HallInnerProduct(spray1, spray2, alpha = t)
+spray1 <- jack::JackPol(3, c(1,1,1), alpha, which = "P")
+spray2 <- jack::JackPol(3, c(1,1,1), alpha, which = "P")
+HallInnerProduct(spray1, spray2, alpha = alpha)
 t <- alpha
 3*t^3/(t^2 + 3/2*t + 1/2)
 (2*t^3 + t^2)/(t + 2) 
@@ -42,8 +38,13 @@ t + 2 # no
 # 
 library(jack)
 
-skewJackPol <- function(n, lambda, mu, alpha) {
-  Jlambda <- JackPolCPP(n, lambda, alpha)
+SkewJackPol <- function(n, lambda, mu, alpha) {
+  stopifnot(jack:::isPartition(lambda), jack:::isPartition(mu))
+  mu <- c(mu, rep(0L, length(lambda) - length(mu)))
+  if(any(lambda - mu < 0L)) {
+    stop("The partition `mu` is not a subpartition of the partition `lambda`.")
+  }
+  Jlambda <- PSPexpression(JackPolCPP(n, lambda, alpha))
   Jmu     <- JackPolCPP(n, mu, alpha)
   nus <- partitions::parts(sum(lambda) - sum(mu))
   terms <- apply(nus, 2L, function(nu) {
@@ -55,6 +56,7 @@ skewJackPol <- function(n, lambda, mu, alpha) {
   Reduce(`+`, terms)
 }
 
-skewJackPol(3, c(2,1), c(1), 2L)
+SkewJackPol(3, c(3,1), c(2), 1L)
+SkewSchurPol(3, c(3,1), c(2))
 
 
