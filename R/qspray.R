@@ -138,9 +138,11 @@ qsprayMaker <- function(powers, coeffs, string = NULL) {
 #' getCoefficient(p, 0) # the constant term
 #' getCoefficient(p, 3)
 getCoefficient <- function(qspray, exponents) {
+  stopifnot(isExponents(exponents))
+  exponents <- removeTrailingZeros(exponents)
   n <- arity(qspray)
   if(length(exponents) > n) {
-    stop("Too many exponents.")
+    return(as.bigq(0L))
   }
   powers <- vapply(qspray@powers, function(pows) {
     toString(grow(pows, n))
