@@ -18,7 +18,20 @@ t <- alpha
 (2*t^3 + t^2)/(t + 2) 
 t^3/6 + t^2/2 + t/3
 
-HallInnerProduct(PSFpoly(4, c(1,1,1,1)), PSFpoly(4, c(1,1,1,1)), alpha = t)
+poly <- PSFpoly(4, c(4))
+HallInnerProduct(poly, poly, alpha = t)
+4*t
+poly <- PSFpoly(4, c(3,1))
+HallInnerProduct(poly, poly, alpha = t)
+3*t^2
+poly <- PSFpoly(4, c(2,2))
+HallInnerProduct(poly, poly, alpha = t)
+8*t^2
+poly <- PSFpoly(4, c(2,1,1))
+HallInnerProduct(poly, poly, alpha = t)
+4*t^3
+poly <- PSFpoly(4, c(1,1,1,1))
+HallInnerProduct(poly, poly, alpha = t)
 24 * t^4
 
 HallInnerProduct(
