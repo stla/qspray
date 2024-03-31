@@ -3,6 +3,9 @@ library(qspray)
 PSFpoly <- function(m, lambda) {
   #stopifnot(isNonnegativeInteger(m), isPartition(lambda))
   lambda <- lambda[lambda > 0]
+  if(length(lambda) == 0) {
+    return(as.qspray(m))
+  }
   if(any(lambda > m)) return(as.qspray(0))
   zeros <- rep(0L, m)
   out <- 1L
@@ -36,5 +39,31 @@ PSPpolyExpr <- function(qspray) {
   qsprayMaker(powers, g@coeffs)
 }
 
-p <- PSFpoly(3, c(2)) * PSFpoly(3, c(3))^2
+p <- PSFpoly(3, c(2)) * PSFpoly(3, c(3))^2 + PSFpoly(3, c(1))
 PSPpolyExpr(p)
+p <- PSFpoly(3, c(3, 3, 2))
+q <- PSPpolyExpr(p)
+powers <- q@powers
+pows1 <- powers[[1L]]
+unlist(lapply(rev(seq_along(pows1)), function(i) rep(i, pows1[i])))
+
+
+#
+zlambda <- function(lambda) {
+  parts <- as.integer(unique(lambda))
+  mjs <- vapply(parts, function(j) {
+    sum(lambda == j)
+  }, integer(1L))
+  prod(factorial(mjs) * parts^mjs)
+}
+
+zlambda(c(3, 2, 2, 1))
+
+#
+HallInnerProduct <- function(spray1, spray2) {
+  PSspray1 <- PSPpolyExpr(spray1 - getCoefficient(spray1, 0L))
+  PSspray2 <- PSPpolyExpr(spray2 - getCoefficient(spray2, 0L))
+  
+}
+
+
