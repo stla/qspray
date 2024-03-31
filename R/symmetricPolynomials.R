@@ -196,10 +196,15 @@ HallInnerProduct <- function(qspray1, qspray2, alpha = 1) {
   alpha <- as.bigq(alpha)
   if(isTRUE(attr(qspray1, "PSPexpression"))) {
     PSspray1 <- qspray1
+    PSspray2 <- PSPexpression(qspray2)
   } else {
     PSspray1 <- PSPexpression(qspray1)
+    if(qspray2 == qspray1) {
+      PSspray2 <- PSspray1
+    } else {
+      PSspray2 <- PSPexpression(qspray2)
+    }
   }
-  PSspray2 <- PSPexpression(qspray2)
   powers1 <- PSspray1@powers
   coeffs1 <- PSspray1@coeffs
   out <- as.bigq(0L)

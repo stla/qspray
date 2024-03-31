@@ -31,7 +31,9 @@ HallInnerProduct(poly, poly, alpha = t)
 24 * t^4
 
 HallInnerProduct(
-  jack::JackPol(3, c(2,1), alpha), PSFpoly(3, c(2,1)), alpha = t
+  jack::JackPol(3, c(2,1), alpha, which = "J"), 
+  jack::JackPol(3, c(2,1), alpha, which = "P"), 
+  alpha
 )
 t + 2 # no
 
@@ -49,7 +51,7 @@ SkewJackPol <- function(n, lambda, mu, alpha) {
   nus <- partitions::parts(sum(lambda) - sum(mu))
   terms <- apply(nus, 2L, function(nu) {
     Jnu <- JackPolCPP(n, nu, alpha)
-    coeff <- HallInnerProduct(Jlambda, Jmu * Jnu, alpha) / # rq: Jlambda décomposé plusieurs fois !
+    coeff <- HallInnerProduct(Jlambda, Jmu * Jnu, alpha) /
       HallInnerProduct(Jnu, Jnu, alpha) 
     coeff * Jnu
   }, simplify = FALSE)
