@@ -406,7 +406,8 @@ isSymmetricPolynomial <- function(qspray) {
   Y <- lapply(i_, function(i) qlone(n + i))
   G <- lapply(i_, function(i) E[[i]] - Y[[i]])
   B <- groebner(G, TRUE, FALSE)
-  g <- qdivision(qspray, B)
+  constantTerm <- getCoefficient(qspray, 0L)
+  g <- qdivision(qspray - constantTerm, B)
   check <- all(vapply(g@powers, function(pwr) {
     length(pwr) > n && all(pwr[1L:n] == 0L)
   }, logical(1L)))
@@ -416,7 +417,7 @@ isSymmetricPolynomial <- function(qspray) {
   powers <- lapply(g@powers, function(pwr) {
     pwr[-(1L:n)]
   })
-  P <- qsprayMaker(powers, g@coeffs)
+  P <- qsprayMaker(powers, g@coeffs) + constantTerm
   out <- TRUE
   attr(out, "poly") <- P
   out

@@ -66,7 +66,7 @@ HallInnerProduct <- function(spray1, spray2) {
   PSspray2 <- PSPpolyExpr(spray2 - getCoefficient(spray2, 0L))
   powers1 <- PSspray1@powers
   coeffs1 <- PSspray1@coeffs
-  out <- 0L
+  out <- as.bigq(0L)
   for(k in seq_along(powers1)) {
     pows <- powers1[[k]]
     coeff2 <- getCoefficient(PSspray2, pows)
