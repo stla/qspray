@@ -15,6 +15,34 @@ powersMatrix <- function(qspray) {
   do.call(rbind, lapply(qspray@powers, grow, n = arity(qspray)))
 }
 
+collinearQsprays <- function(qspray1, qspray2) {
+  if(qspray1 == qzero() && qspray2 == qzero()) {
+    return(TRUE)
+  }
+  if(qspray1 == qzero() && qspray2 != qzero()) {
+    return(FALSE)
+  }
+  if(qspray1 != qzero() && qspray2 == qzero()) {
+    return(FALSE)
+  }
+  M1 <- powersMatrix(qspray1)
+  M2 <- powersMatrix(qspray2)
+  if(nrow(M1) != nrow(M2) || ncol(M1) != ncol(M2)) {
+    return(FALSE)
+  }
+  ordr1 <- lexorder(M1)
+  ordr2 <- lexorder(M2)
+  powers1 <- Mpowers[ordr1, , drop = FALSE]
+  coeffs1 <- as.bigq(qspray@coeffs[ordr1])
+  powers2 <- Mpowers[ordr2, , drop = FALSE]
+  coeffs2 <- as.bigq(qspray@coeffs[ordr2])
+  if(any(powers1 != powers2)) {
+    return(FALSE)
+  }
+  r <- coeffs2[1L] / coeffs1[1L]
+  all(r * coeffs1 == coeffs2)
+}
+
 showQspray <- function(qspray) {
   if(length(qspray@coeffs) == 0L) {
     return("0")
