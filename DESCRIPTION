@@ -33,10 +33,15 @@ RoxygenNote: 7.3.1
 SystemRequirements: C++ 17, gmp, mpfr
 Collate: 
     'RcppExports.R'
+    'creation.R'
+    'evaluation.R'
     'groebner.R'
+    'integrateOnSimplex.R'
     'internal.R'
     'qspray.R'
+    'queries.R'
     'symmetricPolynomials.R'
+    'transformation.R'
     'yacas.R'
 Suggests: 
     testthat (>= 3.0.0)
