@@ -39,7 +39,7 @@ E_lambda_mu <- function(lambda, mu) {
   })
   out <- Reduce(`+`, sapply(compos, function(compo) {
     decoupage(lambda, mu, compo)
-  }))
+  }, simplify = FALSE))
   if((ell_lambda - ell_mu) %% 2L == 0L) {
     out
   } else {
@@ -90,12 +90,29 @@ coeffs <- function(mu) {
   })
   sapply(lambdas, function(lambda) {
     lambda <- lambda[lambda != 0L]
-    E_lambda_mu(mu, lambda) / as.bigz(z(lambda))
-  })
+    list(
+      "coeff"  = E_lambda_mu(mu, lambda) / as.bigz(z(lambda)),
+      "lambda" = lambda
+    )
+  }, simplify = FALSE)
 }
 
 
-coeffs(c(2L, 1L))
+mu <- c(2L, 2L)
+x <- coeffs(mu)
+
+library(qspray)
+check <- qzero()
+for(t in x) {
+  coeff <- t[["coeff"]]
+  if(coeff != 0L) {
+    lambda <- t[["lambda"]]
+    check <- check + coeff * PSFpoly(4, lambda)
+  }
+}
+
+check == MSFpoly(4, mu)
+
 
 
 
