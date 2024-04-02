@@ -245,7 +245,7 @@ MSPinPSbasis <- function(mu) {
     E <- E_lambda_mu(mu, lambda)
     if(E != 0L) {
       list(
-        "coeff"  = E / as.bigz(zlambda(lambda)),
+        "coeff"  = E / as.bigz(zlambda(lambda, alpha = 1L)),
         "lambda" = lambda
       )
     }
