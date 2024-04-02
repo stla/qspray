@@ -90,3 +90,9 @@ isPermutation <- function(x) {
 fromString <- function(string) {
   as.integer(strsplit(string, ",", fixed = TRUE)[[1L]])
 }
+
+Columns <- function(M) {
+  lapply(seq_len(ncol(M)), function(j) {
+    M[, j]
+  })
+}

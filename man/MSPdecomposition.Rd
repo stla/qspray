@@ -2,7 +2,7 @@
 % Please edit documentation in R/symmetricPolynomials.R
 \name{MSPdecomposition}
 \alias{MSPdecomposition}
-\title{Symmetric polynomial in terms of the monomial symmetric polynomials.}
+\title{Symmetric polynomial in terms of the monomial symmetric polynomials}
 \usage{
 MSPdecomposition(qspray, check = TRUE)
 }
@@ -16,7 +16,7 @@ A list defining the decomposition. Each element of this list is a
   list with two elements: \code{coeff}, a \code{bigq} number, and 
   \code{lambda}, an integer partition; then this list corresponds to the 
   term \code{coeff * MSFpoly(n, lambda)}, where \code{n} is the number of 
-  variables in the symmetric polynomial
+  variables in the symmetric polynomial.
 }
 \description{
 Decomposition of a symmetric polynomial in the basis formed by 

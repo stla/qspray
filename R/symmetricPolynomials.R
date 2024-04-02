@@ -67,7 +67,7 @@ MSFpoly <- function(m, lambda) {
 #'   list with two elements: \code{coeff}, a \code{bigq} number, and 
 #'   \code{lambda}, an integer partition; then this list corresponds to the 
 #'   term \code{coeff * MSFpoly(n, lambda)}, where \code{n} is the number of 
-#'   variables in the symmetric polynomial
+#'   variables in the symmetric polynomial.
 #' @export
 #'
 #' @examples
@@ -184,6 +184,89 @@ isSymmetricPolynomial <- function(qspray) {
 
 #### ~ Hall inner product ~ ####
 
+#' @importFrom partitions compositions
+#' @noRd
+E_lambda_mu <- function(lambda, mu) {
+  ell_lambda <- length(lambda)
+  ell_mu     <- length(mu)
+  if(ell_mu > ell_lambda) {
+    return(0L)
+  }
+  # chaque composition donne les longueurs des nu_i 
+  compos <- compositions(ell_lambda, ell_mu, include.zero = FALSE)
+  compos <- Columns(compos)
+  out <- Reduce(`+`, sapply(compos, function(compo) {
+    decoupage(lambda, mu, compo)
+  }, simplify = FALSE))
+  if((ell_lambda - ell_mu) %% 2L == 0L) {
+    out
+  } else {
+    -out
+  }
+}
+
+decoupage <- function(lambda, mu, compo) {
+  starts <- cumsum(c(0L, head(compo, -1L))) + 1L
+  ends   <- cumsum(c(0L, head(compo, -1L))) + compo
+  nus <- lapply(seq_along(compo), function(i) {
+    lambda[(starts[i]):(ends[i])]
+  })
+  weights <- vapply(nus, function(nu) {
+    as.integer(sum(nu))
+  }, integer(1L))
+  if(all(weights == mu)) {
+    E_lambda_mu_term(mu, nus)
+  } else {
+    0L
+  }
+}
+
+#' @importFrom gmp factorialZ
+#' @noRd
+E_lambda_mu_term <- function(mu, nus) {
+  toMultiply <- sapply(seq_along(nus), function(i) {
+    nu  <- nus[[i]]
+    mjs <- vapply(as.integer(unique(nu)), function(j) {
+      sum(nu == j)
+    }, integer(1L))
+    mu[i] * factorialZ(length(nu)-1L) / prod(factorialZ(mjs))
+  }, simplify = FALSE)
+  Reduce(`*`, toMultiply)
+}
+
+#' @importFrom gmp as.bigz
+#' @importFrom partitions parts
+#' @noRd
+MSPinPSbasis <- function(mu) {
+  mu <- as.integer(mu)
+  lambdas <- Columns(parts(sum(mu)))
+  out <- sapply(lambdas, function(lambda) {
+    lambda <- lambda[lambda != 0L]
+    E <- E_lambda_mu(mu, lambda)
+    if(E != 0L) {
+      list(
+        "coeff"  = E / as.bigz(zlambda(lambda)),
+        "lambda" = lambda
+      )
+    }
+  }, simplify = FALSE)
+  Filter(Negate(is.null), out)
+}
+
+# also used in the Hall inner product
+zlambda <- function(lambda, alpha) {
+  parts <- as.integer(unique(lambda[lambda != 0L]))
+  mjs   <- vapply(parts, function(j) {
+    sum(lambda == j)
+  }, integer(1L))
+  out <- prod(factorial(mjs) * parts^mjs) 
+  if(alpha != 1L) {
+    out <- out * alpha^length(lambda)
+  }
+  out
+}
+
+
 #' @title Symmetric polynomial in terms of the power sum polynomials.
 #' @description Expression of a symmetric \code{qspray} polynomial as a 
 #'   polynomial in the power sum polynomials.
@@ -220,16 +303,6 @@ PSPexpression <- function(qspray) {
   out <- qsprayMaker(powers, g@coeffs) + constantTerm
   attr(out, "PSPexpression") <- TRUE
   out
-}
-
-# helper function for the Hall inner product
-zlambda <- function(lambda, alpha) {
-  # lambda is clean: no zero
-  parts <- as.integer(unique(lambda))
-  mjs <- vapply(parts, function(j) {
-    sum(lambda == j)
-  }, integer(1L))
-  prod(factorial(mjs) * parts^mjs) * alpha^length(lambda)
 }
 
 #' @title Hall inner product

@@ -1,5 +1,7 @@
 library(gmp)
 
+#' @importFrom partitions compositions
+#' @noRd
 E_lambda_mu <- function(lambda, mu) {
   ell_lambda <- length(lambda)
   ell_mu     <- length(mu)
@@ -37,6 +39,8 @@ decoupage <- function(lambda, mu, compo) {
   }
 }
 
+#' @importFrom gmp factorialZ
+#' @noRd
 E_lambda_mu_term <- function(mu, nus) {
   toMultiply <- sapply(seq_along(nus), function(i) {
     nu <- nus[[i]]
@@ -48,6 +52,9 @@ E_lambda_mu_term <- function(mu, nus) {
   Reduce(`*`, toMultiply)
 }
 
+#' @importFrom gmp as.bigz
+#' @importFrom partitions parts
+#' @noRd
 MSPinPSbasis <- function(mu) {
   mu <- as.integer(mu)
   lambdas <- partitions::parts(sum(mu))

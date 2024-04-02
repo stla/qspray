@@ -19,6 +19,7 @@ Imports:
     DescTools,
     gmp,
     methods,
+    partitions,
     purrr,
     RationalMatrix,
     Rcpp (>= 1.0.9),
