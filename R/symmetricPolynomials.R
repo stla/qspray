@@ -278,29 +278,46 @@ zlambda <- function(lambda, alpha) {
 #'   \eqn{P(p_1, ..., p_n)} equals the input symmetric polynomial, 
 #'   where \eqn{p_i} is the i-th power sum polynomial (\code{PSFpoly(n, i)}).
 #' @export
+#' @importFrom gmp c_bigq
 #' 
 #' @note
 #' This function has been exported because it is used in the \strong{jack} 
 #'   package.
 PSPexpression <- function(qspray) {
   n <- arity(qspray)
-  i_ <- seq_len(n)
-  P <- lapply(i_, function(i) PSFpoly(n, i))
-  Y <- lapply(i_, function(i) qlone(n + i))
-  G <- lapply(i_, function(i) P[[i]] - Y[[i]])
-  B <- groebner(G, TRUE, FALSE)
-  constantTerm <- getCoefficient(qspray, integer(0L))
-  g <- qdivision(qspray - constantTerm, B)
-  check <- all(vapply(g@powers, function(pwr) {
-    length(pwr) > n && all(pwr[1L:n] == 0L)
-  }, logical(1L)))
-  if(!check) {
-    stop("PSPpolyExpr: the polynomial is not symmetric.")
+  mspdecomposition <- MSPdecomposition(qspray)
+  pspexpression <- qzero()
+  for(t in mspdecomposition) {
+    xs <- MSPinPSbasis(t[["lambda"]])
+    coeffs <- c_bigq(sapply(x, `[[`, "coeff", simplify = FALSE))
+    powers <- lapply(xs, function(x) {
+      lambda <- x[["lambda"]]
+      parts <- as.integer(unique(lambda[lambda != 0L]))
+      vapply(1L:n, function(j) {
+        sum(lambda == j)
+      }, integer(1L))
+    })
+    p <- qsprayMaker(powers, coeffs)
+    pspexpression <- pspexpression + p
   }
-  powers <- lapply(g@powers, function(pwr) {
-    pwr[-(1L:n)]
-  })
-  out <- qsprayMaker(powers, g@coeffs) + constantTerm
+  out <- pspexpression
+  # i_ <- seq_len(n)
+  # P <- lapply(i_, function(i) PSFpoly(n, i))
+  # Y <- lapply(i_, function(i) qlone(n + i))
+  # G <- lapply(i_, function(i) P[[i]] - Y[[i]])
+  # B <- groebner(G, TRUE, FALSE)
+  # constantTerm <- getCoefficient(qspray, integer(0L))
+  # g <- qdivision(qspray - constantTerm, B)
+  # check <- all(vapply(g@powers, function(pwr) {
+  #   length(pwr) > n && all(pwr[1L:n] == 0L)
+  # }, logical(1L)))
+  # if(!check) {
+  #   stop("PSPpolyExpr: the polynomial is not symmetric.")
+  # }
+  # powers <- lapply(g@powers, function(pwr) {
+  #   pwr[-(1L:n)]
+  # })
+  # out <- qsprayMaker(powers, g@coeffs) + constantTerm
   attr(out, "PSPexpression") <- TRUE
   out
 }
