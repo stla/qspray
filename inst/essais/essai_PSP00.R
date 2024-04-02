@@ -34,7 +34,10 @@ E_lambda_mu <- function(lambda, mu) {
   }
   # chaque composition donne les longueurs des nu_i 
   compos <- partitions::compositions(ell_lambda, ell_mu, include.zero = FALSE)
-  out <- sum(apply(compos, 2L, function(compo) {
+  compos <- lapply(seq_len(ncol(compos)), function(j) {
+    compos[, j]
+  })
+  out <- Reduce(`+`, sapply(compos, function(compo) {
     decoupage(lambda, mu, compo)
   }))
   if((ell_lambda - ell_mu) %% 2L == 0L) {
@@ -45,8 +48,6 @@ E_lambda_mu <- function(lambda, mu) {
 }
 
 decoupage <- function(lambda, mu, compo) {
-  nu1 <- lambda[1L:compo[1L]]
-  nu2 <- lambda[(compo[1L]+1L):(compo[1L]+1L+compo[2L])]
   starts <- cumsum(c(0L, head(compo, -1L))) + 1L
   ends   <- cumsum(c(0L, head(compo, -1L))) + compo
   nus <- lapply(seq_along(compo), function(i) {
@@ -56,7 +57,7 @@ decoupage <- function(lambda, mu, compo) {
     as.integer(sum(nu))
   }, integer(1L))
   if(all(weights == mu)) {
-    E_lambda_mu_term(mu, nu)
+    E_lambda_mu_term(mu, nus)
   } else {
     0L
   }
@@ -64,21 +65,37 @@ decoupage <- function(lambda, mu, compo) {
 
 library(gmp)
 E_lambda_mu_term <- function(mu, nus) {
-  toMultiply <- vapply(seq_along(mu), function(i) {
+  toMultiply <- sapply(seq_along(nus), function(i) {
     nu <- nus[[i]]
     mjs <- vapply(as.integer(unique(nu)), function(j) {
       sum(nu == j)
     }, integer(1L))
     mu[i] * factorialZ(length(nu)-1L) /
       prod(factorialZ(mjs))
-  }, as.bigq(0L))
-  prod(toMultiply)
+  })
+  Reduce(`*`, toMultiply)
+}
+
+coeffs <- function(mu) {
+  lambdas <- partitions::parts(sum(mu))
+  z <- function(lambda) {
+    parts <- as.integer(unique(lambda[lambda != 0L]))
+    mjs <- vapply(parts, function(j) {
+      sum(lambda == j)
+    }, integer(1L))
+    prod(factorial(mjs) * parts^mjs)
+  }
+  lambdas <- lapply(seq_len(ncol(lambdas)), function(j) {
+    lambdas[, j]
+  })
+  sapply(lambdas, function(lambda) {
+    lambda <- lambda[lambda != 0L]
+    E_lambda_mu(mu, lambda) / as.bigz(z(lambda))
+  })
 }
 
 
-
-
-
+coeffs(c(2L, 1L))
 
 
 
