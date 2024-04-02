@@ -45,15 +45,66 @@ PSFpoly <- function(m, lambda) {
 #' MSFpoly(3, c(3, 1))
 MSFpoly <- function(m, lambda) {
   stopifnot(isNonnegativeInteger(m), isPartition(lambda))
-  lambda <- lambda[lambda > 0L]
+  lambda <- lambda[lambda != 0L]
   if(length(lambda) > m) return(as.qspray(0L))
-  kappa <- numeric(m)
+  kappa                    <- numeric(m)
   kappa[seq_along(lambda)] <- lambda
   perms <- Permn(kappa)
-  n <- nrow(perms)
+  n     <- nrow(perms)
   powers <- lapply(1L:n, function(i) perms[i, ])
   coeffs <- rep("1", n)
   qsprayMaker(powers, coeffs)
+}
+
+#' @title Symmetric polynomial in terms of the monomial symmetric polynomials.
+#' @description Decomposition of a symmetric polynomial in the basis formed by 
+#'   the monomial symmetric polynomials.
+#'
+#' @param qspray a \code{qspray} object defining a symmetric polynomial 
+#' @param check Boolean, whether to check the symmetry
+#'
+#' @return A list defining the decomposition. Each element of this list is a 
+#'   list with two elements: \code{coeff}, a \code{bigq} number, and 
+#'   \code{lambda}, an integer partition; then this list corresponds to the 
+#'   term \code{coeff * MSFpoly(n, lambda)}, where \code{n} is the number of 
+#'   variables in the symmetric polynomial
+#' @export
+#'
+#' @examples
+#' qspray <- PSFpoly(4, c(3, 1)) + ESFpoly(4, c(2, 2)) + 4L
+#' MSPdecomposition(qspray)
+MSPdecomposition <- function(qspray, check = TRUE) {
+  constantTerm <- getCoefficient(qspray, integer(0L))
+  M <- powersMatrix(qspray - constantTerm)
+  M <- M[lexorder(M), , drop = FALSE]
+  lambdas <- unique(apply(M, 1L, function(expnts) { 
+    toString(sort(expnts[expnts != 0L], decreasing = TRUE))
+  }))
+  out <- lapply(lambdas, function(lambda) {
+    lambda <- fromString(lambda)
+    list(
+      "coeff"  = getCoefficient(qspray, lambda),
+      "lambda" = lambda 
+    )
+  })
+  if(constantTerm != 0L) {
+    out <- c(
+      out, list(list("coeff" = constantTerm, "lambda" = integer(0L)))
+    )
+  }
+  if(check) {
+    n <- arity(qspray)
+    check <- qzero()
+    for(t in out) {
+      coeff <- t[["coeff"]]
+      lambda <- t[["lambda"]]
+      check <- check + coeff * MSFpoly(n, lambda)
+    }
+    if(check != qspray) {
+      stop("The polynomial is not symmetric.")
+    }
+  }
+  out
 }
 
 #' @title Elementary symmetric polynomial

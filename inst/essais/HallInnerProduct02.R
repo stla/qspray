@@ -74,20 +74,18 @@ SkewJackPol <- function(n, lambda, mu, alpha, which = "J") {
   stopifnot(alpha >= 0L)
   Jlambda <- PSPexpression(JackPolCPP(n, lambda, alpha, which))
   Jmu     <- JackPolCPP(n, mu, alpha, which)
-  nus <- partitions::parts(sum(lambda) - sum(mu))
-  terms <- apply(nus, 2L, function(nu) {
-    if(length(lambda) < length(nu[nu>0])) return(0L)
-    # nu <- c(nu, rep(0L, length(lambda) - length(nu)))
-    # if(any(lambda - nu < 0L)) return(0L)
+  nus <- LRskew(lambda, mu, "list")$nu
+  #nus <- partitions::parts(sum(lambda) - sum(mu))
+  terms <- lapply(nus, function(nu) {
     Jnu <- JackPolCPP(n, nu, alpha, which)
     coeff <- HallInnerProduct(Jlambda, Jmu * Jnu, alpha) /
       HallInnerProduct(Jnu, Jnu, alpha) 
     coeff * Jnu
-  }, simplify = FALSE)
+  })
   Reduce(`+`, terms)
 }
 
-SkewJackPol(3, c(3,1), c(2), 1L)
-SkewSchurPol(3, c(3,1), c(2))
+SkewJackPol(3, c(3,1), c(1), 1L)
+SkewSchurPol(3, c(3,1), c(1))
 
 

@@ -86,3 +86,7 @@ removeTrailingZeros <- function(x) {
 isPermutation <- function(x) {
   setequal(x, seq_along(x))
 }
+
+fromString <- function(string) {
+  as.integer(strsplit(string, ",", fixed = TRUE)[[1L]])
+}
