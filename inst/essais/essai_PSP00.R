@@ -34,7 +34,14 @@ E_lambda_mu <- function(lambda, mu) {
   }
   # chaque composition donne les longueurs des nu_i 
   compos <- partitions::compositions(ell_lambda, ell_mu, include.zero = FALSE)
-  
+  out <- sum(apply(compos, 2L, function(compo) {
+    decoupage(lambda, mu, compo)
+  }))
+  if((ell_lambda - ell_mu) %% 2L == 0L) {
+    out
+  } else {
+    -out
+  }
 }
 
 decoupage <- function(lambda, mu, compo) {
@@ -49,13 +56,24 @@ decoupage <- function(lambda, mu, compo) {
     as.integer(sum(nu))
   }, integer(1L))
   if(all(weights == mu)) {
-    nus
+    E_lambda_mu_term(mu, nu)
   } else {
-    NULL
+    0L
   }
 }
 
-
+library(gmp)
+E_lambda_mu_term <- function(mu, nus) {
+  toMultiply <- vapply(seq_along(mu), function(i) {
+    nu <- nus[[i]]
+    mjs <- vapply(as.integer(unique(nu)), function(j) {
+      sum(nu == j)
+    }, integer(1L))
+    mu[i] * factorialZ(length(nu)-1L) /
+      prod(factorialZ(mjs))
+  }, as.bigq(0L))
+  prod(toMultiply)
+}
 
 
 
