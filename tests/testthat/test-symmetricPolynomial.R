@@ -5,3 +5,8 @@ test_that("Symmetric polynomial", {
   f <- e1 + 2*e2 + 3*e3
   expect_true(isSymmetricPolynomial(f))
 })
+
+test_that("MSPdecomposition", {
+  qspray <- PSFpoly(4, c(3, 1)) + ESFpoly(4, c(2, 2)) + 4L
+  expect_no_error(MSPdecomposition(qspray, check = TRUE))
+})

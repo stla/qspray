@@ -92,23 +92,29 @@ check == MSFpoly(4, mu)
 
 ################################################################################
 # symmetric polynomial in MSP basis
-qspray <- PSFpoly(4, c(3, 1))
-# TODO: deal with the constant term
-M <- qspray:::powersMatrix(qspray)
+qspray <- PSFpoly(4, c(3, 1)) + ESFpoly(4, c(2, 2)) + 4L
+constantTerm <- getCoefficient(qspray, integer(0L))
+M    <- qspray:::powersMatrix(qspray - constantTerm)
+M    <- M[qspray:::lexorder(M), , drop = FALSE]
 lambdas <- unique(apply(M, 1L, function(expnts) { 
   toString(sort(expnts[expnts != 0L], decreasing = TRUE))
 }))
 fromString <- function(string) {
   as.integer(strsplit(string, ",", fixed = TRUE)[[1L]])
 }
-lapply(lambdas, function(lambda) {
+out <- lapply(lambdas, function(lambda) {
   lambda <- fromString(lambda)
   list(
     "coeff"  = getCoefficient(qspray, lambda),
     "lambda" = lambda 
   )
 })
-
+if(constantTerm != 0L) {
+  out <- c(
+    out, list(list("coeff" = constantTerm, "lambda" = integer(0L)))
+  )
+}
+out
 
 
 

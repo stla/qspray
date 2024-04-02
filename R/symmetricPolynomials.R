@@ -56,7 +56,7 @@ MSFpoly <- function(m, lambda) {
   qsprayMaker(powers, coeffs)
 }
 
-#' @title Symmetric polynomial in terms of the monomial symmetric polynomials.
+#' @title Symmetric polynomial in terms of the monomial symmetric polynomials
 #' @description Decomposition of a symmetric polynomial in the basis formed by 
 #'   the monomial symmetric polynomials.
 #'
