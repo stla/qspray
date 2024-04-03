@@ -288,16 +288,16 @@ PSPexpression <- function(qspray) {
   mspdecomposition <- MSPdecomposition(qspray)
   pspexpression <- qzero()
   for(t in mspdecomposition) {
-    xs <- MSPinPSbasis(t[["lambda"]])
-    coeffs <- c_bigq(sapply(x, `[[`, "coeff", simplify = FALSE))
+    xs     <- MSPinPSbasis(t[["lambda"]])
+    coeffs <- t[["coeff"]] * c_bigq(sapply(xs, `[[`, "coeff", simplify = FALSE))
     powers <- lapply(xs, function(x) {
       lambda <- x[["lambda"]]
-      parts <- as.integer(unique(lambda[lambda != 0L]))
-      vapply(1L:n, function(j) {
+      parts  <- as.integer(unique(lambda[lambda != 0L]))
+      vapply(1:30, function(j) {
         sum(lambda == j)
       }, integer(1L))
     })
-    p <- qsprayMaker(powers, coeffs)
+    p             <- qsprayMaker(powers, coeffs)
     pspexpression <- pspexpression + p
   }
   out <- pspexpression
