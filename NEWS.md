@@ -13,7 +13,9 @@
 
 - New function `PSFpoly`, which computes the power sum polynomials.
 
-- New function `HallInnerProduct`, which computes the Hall inner product between symmetric polynomials.
+- New function `sprayDivision`, returning the quotient and the remainder of the division of a polynomial by a polynomial.
+
+- New function `HallInnerProduct`, which computes the Hall inner product between symmetric polynomials. Very inefficient (will be hopefully improved in the future).
 
 
 # qspray 2.1.1
