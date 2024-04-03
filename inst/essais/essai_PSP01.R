@@ -5,7 +5,7 @@ library(gmp)
 E_lambda_mu <- function(lambda, mu) {
   ell_lambda <- length(lambda)
   ell_mu     <- length(mu)
-  if(ell_mu > ell_lambda) {
+  if(ell_lambda < ell_mu) {
     return(0L)
   }
   # chaque composition donne les longueurs des nu_i 
@@ -16,6 +16,9 @@ E_lambda_mu <- function(lambda, mu) {
   out <- Reduce(`+`, sapply(compos, function(compo) {
     decoupage(lambda, mu, compo)
   }, simplify = FALSE))
+  print("************")
+  print(out)
+  print("************")
   if((ell_lambda - ell_mu) %% 2L == 0L) {
     out
   } else {
@@ -33,6 +36,12 @@ decoupage <- function(lambda, mu, compo) {
     as.integer(sum(nu))
   }, integer(1L))
   if(all(weights == mu)) {
+    print("lambda:")
+    print(lambda)
+    print("mu:")
+    print(mu)
+    print(nus)
+    print("----")
     E_lambda_mu_term(mu, nus)
   } else {
     0L
@@ -82,7 +91,7 @@ MSPinPSbasis <- function(mu) {
 }
 
 
-mu <- c(2L, 2L)
+mu <- c(4L, 2L, 1L)
 x <- MSPinPSbasis(mu)
 
 library(qspray)
@@ -91,11 +100,11 @@ for(t in x) {
   coeff <- t[["coeff"]]
   if(coeff != 0L) {
     lambda <- t[["lambda"]]
-    check <- check + coeff * PSFpoly(4, lambda)
+    check <- check + coeff * PSFpoly(5, lambda)
   }
 }
 
-check == MSFpoly(4, mu)
+check == MSFpoly(5, mu)
 
 ################################################################################
 # symmetric polynomial in MSP basis

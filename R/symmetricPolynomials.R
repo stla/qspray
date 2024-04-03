@@ -96,9 +96,9 @@ MSPdecomposition <- function(qspray, check = TRUE) {
     n <- arity(qspray)
     check <- qzero()
     for(t in out) {
-      coeff <- t[["coeff"]]
+      coeff  <- t[["coeff"]]
       lambda <- t[["lambda"]]
-      check <- check + coeff * MSFpoly(n, lambda)
+      check  <- check + coeff * MSFpoly(n, lambda)
     }
     if(check != qspray) {
       stop("The polynomial is not symmetric.")
@@ -234,6 +234,7 @@ E_lambda_mu_term <- function(mu, nus) {
   Reduce(`*`, toMultiply)
 }
 
+# !!!!!! DOES NOT WORK !!!!!!!!!
 #' @importFrom gmp as.bigz
 #' @importFrom partitions parts
 #' @noRd
@@ -266,7 +267,6 @@ zlambda <- function(lambda, alpha) {
   out
 }
 
-
 #' @title Symmetric polynomial in terms of the power sum polynomials.
 #' @description Expression of a symmetric \code{qspray} polynomial as a 
 #'   polynomial in the power sum polynomials.
@@ -282,42 +282,44 @@ zlambda <- function(lambda, alpha) {
 #' 
 #' @note
 #' This function has been exported because it is used in the \strong{jack} 
-#'   package.
+#'   package. 
 PSPexpression <- function(qspray) {
   n <- arity(qspray)
-  mspdecomposition <- MSPdecomposition(qspray)
-  pspexpression <- qzero()
-  for(t in mspdecomposition) {
-    xs     <- MSPinPSbasis(t[["lambda"]])
-    coeffs <- t[["coeff"]] * c_bigq(sapply(xs, `[[`, "coeff", simplify = FALSE))
-    powers <- lapply(xs, function(x) {
-      lambda <- x[["lambda"]]
-      parts  <- as.integer(unique(lambda[lambda != 0L]))
-      vapply(1:30, function(j) {
-        sum(lambda == j)
-      }, integer(1L))
-    })
-    p             <- qsprayMaker(powers, coeffs)
-    pspexpression <- pspexpression + p
-  }
-  out <- pspexpression
-  # i_ <- seq_len(n)
-  # P <- lapply(i_, function(i) PSFpoly(n, i))
-  # Y <- lapply(i_, function(i) qlone(n + i))
-  # G <- lapply(i_, function(i) P[[i]] - Y[[i]])
-  # B <- groebner(G, TRUE, FALSE)
-  # constantTerm <- getCoefficient(qspray, integer(0L))
-  # g <- qdivision(qspray - constantTerm, B)
-  # check <- all(vapply(g@powers, function(pwr) {
-  #   length(pwr) > n && all(pwr[1L:n] == 0L)
-  # }, logical(1L)))
-  # if(!check) {
-  #   stop("PSPpolyExpr: the polynomial is not symmetric.")
+  
+  # mspdecomposition <- MSPdecomposition(qspray)
+  # pspexpression <- qzero()
+  # for(t in mspdecomposition) {
+  #   xs     <- MSPinPSbasis(t[["lambda"]])
+  #   coeffs <- t[["coeff"]] * c_bigq(sapply(xs, `[[`, "coeff", simplify = FALSE))
+  #   powers <- lapply(xs, function(x) {
+  #     lambda <- x[["lambda"]]
+  #     parts  <- as.integer(unique(lambda[lambda != 0L]))
+  #     vapply(1:30, function(j) {
+  #       sum(lambda == j)
+  #     }, integer(1L))
+  #   })
+  #   p             <- qsprayMaker(powers, coeffs)
+  #   pspexpression <- pspexpression + p
   # }
-  # powers <- lapply(g@powers, function(pwr) {
-  #   pwr[-(1L:n)]
-  # })
-  # out <- qsprayMaker(powers, g@coeffs) + constantTerm
+  # out <- pspexpression
+  
+  i_ <- seq_len(n)
+  P <- lapply(i_, function(i) PSFpoly(n, i))
+  Y <- lapply(i_, function(i) qlone(n + i))
+  G <- lapply(i_, function(i) P[[i]] - Y[[i]])
+  B <- groebner(G, TRUE, FALSE)
+  constantTerm <- getCoefficient(qspray, integer(0L))
+  g <- qdivision(qspray - constantTerm, B)
+  check <- all(vapply(g@powers, function(pwr) {
+    length(pwr) > n && all(pwr[1L:n] == 0L)
+  }, logical(1L)))
+  if(!check) {
+    stop("PSPpolyExpr: the polynomial is not symmetric.")
+  }
+  powers <- lapply(g@powers, function(pwr) {
+    pwr[-(1L:n)]
+  })
+  out <- qsprayMaker(powers, g@coeffs) + constantTerm
   attr(out, "PSPexpression") <- TRUE
   out
 }
