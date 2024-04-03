@@ -563,6 +563,45 @@ qspray quotient(Rcpp::List f, Rcpp::List g) {
 }
 
 // [[Rcpp::export]]
+Rcpp::List qsprayDivisionRcpp(
+  Rcpp::List Powers1, Rcpp::StringVector coeffs1,
+  Rcpp::List Powers2, Rcpp::StringVector coeffs2,
+  int d
+) {
+  qspray p = makeQspray(Powers1, coeffs1);
+  qspray g = makeQspray(Powers2, coeffs2);
+  Rcpp::List LTg = leadingTerm(g, d);
+  qspray q;
+  qspray r;
+  bool divoccured;
+  while(!p.empty()) {
+    divoccured = false;
+    Rcpp::List LTp = leadingTerm(p, d);
+    if(divides(LTg, LTp)) {
+      qspray qtnt = quotient(LTp, LTg);
+      p = subtract(p, prod(qtnt, g));
+      q = add(q, qtnt);
+      divoccured = true;
+    } 
+    if(!divoccured) {
+      Rcpp::IntegerVector powsRcpp = LTp["powers"];
+      std::string coeff            = LTp["coeff"];
+      gmpq   coef(coeff);
+      powers pows(powsRcpp.begin(), powsRcpp.end());
+      simplifyPowers(pows);
+      qspray LTpspray;
+      LTpspray[pows] = coef;
+      r = add(r, LTpspray);
+      p = subtract(p, LTpspray);
+    }
+  }
+  return Rcpp::List::create(
+    Rcpp::Named("Q") = retval(q),
+    Rcpp::Named("R") = retval(r)
+  );
+}
+
+// [[Rcpp::export]]
 Rcpp::List BBdivisionRcpp(
   Rcpp::List Powers, Rcpp::StringVector coeffs,
   Rcpp::List gs, Rcpp::List LTgs, int d

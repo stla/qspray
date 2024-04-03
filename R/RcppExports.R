@@ -37,6 +37,10 @@ qspray_power <- function(Powers, coeffs, n) {
     .Call(`_qspray_qspray_power`, Powers, coeffs, n)
 }
 
+qsprayDivisionRcpp <- function(Powers1, coeffs1, Powers2, coeffs2, d) {
+    .Call(`_qspray_qsprayDivisionRcpp`, Powers1, coeffs1, Powers2, coeffs2, d)
+}
+
 BBdivisionRcpp <- function(Powers, coeffs, gs, LTgs, d) {
     .Call(`_qspray_BBdivisionRcpp`, Powers, coeffs, gs, LTgs, d)
 }

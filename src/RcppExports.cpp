@@ -130,6 +130,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// qsprayDivisionRcpp
+Rcpp::List qsprayDivisionRcpp(Rcpp::List Powers1, Rcpp::StringVector coeffs1, Rcpp::List Powers2, Rcpp::StringVector coeffs2, int d);
+RcppExport SEXP _qspray_qsprayDivisionRcpp(SEXP Powers1SEXP, SEXP coeffs1SEXP, SEXP Powers2SEXP, SEXP coeffs2SEXP, SEXP dSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::List >::type Powers1(Powers1SEXP);
+    Rcpp::traits::input_parameter< Rcpp::StringVector >::type coeffs1(coeffs1SEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type Powers2(Powers2SEXP);
+    Rcpp::traits::input_parameter< Rcpp::StringVector >::type coeffs2(coeffs2SEXP);
+    Rcpp::traits::input_parameter< int >::type d(dSEXP);
+    rcpp_result_gen = Rcpp::wrap(qsprayDivisionRcpp(Powers1, coeffs1, Powers2, coeffs2, d));
+    return rcpp_result_gen;
+END_RCPP
+}
 // BBdivisionRcpp
 Rcpp::List BBdivisionRcpp(Rcpp::List Powers, Rcpp::StringVector coeffs, Rcpp::List gs, Rcpp::List LTgs, int d);
 RcppExport SEXP _qspray_BBdivisionRcpp(SEXP PowersSEXP, SEXP coeffsSEXP, SEXP gsSEXP, SEXP LTgsSEXP, SEXP dSEXP) {
@@ -156,6 +171,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_qspray_qspray_mult", (DL_FUNC) &_qspray_qspray_mult, 4},
     {"_qspray_qspray_equality", (DL_FUNC) &_qspray_qspray_equality, 4},
     {"_qspray_qspray_power", (DL_FUNC) &_qspray_qspray_power, 3},
+    {"_qspray_qsprayDivisionRcpp", (DL_FUNC) &_qspray_qsprayDivisionRcpp, 5},
     {"_qspray_BBdivisionRcpp", (DL_FUNC) &_qspray_BBdivisionRcpp, 5},
     {NULL, NULL, 0}
 };
