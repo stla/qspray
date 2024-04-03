@@ -4,14 +4,15 @@
 
 - New function `composeQspray`, to get the polynomial obtained by substituting the variables of a polynomial with polynomials.
  
-- New function `isSymmetricPolynomial`, to check whether a `qspray` polynomial is symmetric.
+- New function `isSymmetricPolynomial`, to check whether a `qspray` polynomial is symmetric. It is inefficient, but useful for testing purpose. Use `MSPdecomposition` for efficiency.
 
 - There was an error in `qdivision` (without severe consequences).
 
-- The function `as.function.qspray` now has a Boolean argument `N`; if set to 
-`TRUE`, the function returns a numerical approximation of the result.
+- The function `as.function.qspray` now has a Boolean argument `N`; if set to `TRUE`, the function returns a numerical approximation of the result.
 
 - New function `PSFpoly`, which computes the power sum polynomials.
+
+- New function `MSPdecomposition`, to get a symmetric polynomial as a linear combination of the monomial symmetric polynomials. It is also useful to check whether a polynomial is symmetric.
 
 - New function `sprayDivision`, returning the quotient and the remainder of the division of a polynomial by a polynomial.
 
