@@ -427,7 +427,7 @@ public:
   
   // methods -----
   std::pair<Qspray<T>,Qspray<T>> get() {
-    return std::make_pair<Qspray<T>,Qspray<T>>(numerator, denominator);
+    return std::pair<Qspray<T>,Qspray<T>>(numerator, denominator);
   } 
 
   void simplify() {
@@ -437,11 +437,59 @@ public:
   }
 
   RatioOfQsprays<T> operator+=(const RatioOfQsprays<T>& ROQ2) {
-  	numerator = numerator * ROQ2.denominator + ROQ2.numerator * denominator;
+  	numerator   = numerator * ROQ2.denominator + ROQ2.numerator * denominator;
   	denominator = denominator * ROQ2.denominator;
-  	RatioOfQsprays R(numerator, denominator);
-  	R.simplify();
+  	RatioOfQsprays ROQ(numerator, denominator);
+  	ROQ.simplify();
   	return R;
+  }
+
+  RatioOfQsprays<T> operator+(const RatioOfQsprays<T>& ROQ2) {
+    RatioOfQsprays<T> ROQ(numerator, denominator);
+    ROQ += ROQ2;
+    return ROQ;
+  }
+
+  RatioOfQsprays<T> operator-=(const RatioOfQsprays<T>& ROQ2) {
+    numerator   = numerator * ROQ2.denominator - ROQ2.numerator * denominator;
+    denominator = denominator * ROQ2.denominator;
+    RatioOfQsprays ROQ(numerator, denominator);
+    ROQ.simplify();
+    return ROQ;
+  }
+
+  RatioOfQsprays<T> operator-(const RatioOfQsprays<T>& ROQ2) {
+    RatioOfQsprays<T> ROQ(numerator, denominator);
+    ROQ -= ROQ2;
+    return ROQ;
+  }
+
+  RatioOfQsprays<T> operator*=(const RatioOfQsprays<T>& ROQ2) {
+    numerator   = numerator * ROQ2.numerator;
+    denominator = denominator * ROQ2.denominator;
+    RatioOfQsprays ROQ(numerator, denominator);
+    ROQ.simplify();
+    return ROQ;
+  }
+
+  RatioOfQsprays<T> operator*(const RatioOfQsprays<T>& ROQ2) {
+    RatioOfQsprays<T> ROQ(numerator, denominator);
+    ROQ *= ROQ2;
+    return ROQ;
+  }
+
+  RatioOfQsprays<T> operator/=(const RatioOfQsprays<T>& ROQ2) {
+    numerator   = numerator * ROQ2.denominator;
+    denominator = denominator * ROQ2.numerator;
+    RatioOfQsprays ROQ(numerator, denominator);
+    ROQ.simplify();
+    return ROQ;
+  }
+
+  RatioOfQsprays<T> operator/(const RatioOfQsprays<T>& ROQ2) {
+    RatioOfQsprays<T> ROQ(numerator, denominator);
+    ROQ /= ROQ2;
+    return ROQ;
   }
 
 };
