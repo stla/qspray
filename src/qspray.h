@@ -289,7 +289,7 @@ class RatioOfQsprays {
 public:
   // constructors -----
   RatioOfQsprays()
-    : numerator(scalarQspray<T>(0)), denominator(scalarQspray<T>(1))
+    : numerator(scalarQspray<T>(T(0))), denominator(scalarQspray<T>(T(1)))
       {}
 
   RatioOfQsprays(const Qspray<T>& numerator_, const Qspray<T>& denominator_) 
@@ -297,7 +297,7 @@ public:
       {}
 
   RatioOfQsprays(int k)
-    : numerator(scalarQspray<T>(k)), denominator(scalarQspray<T>(1))
+    : numerator(scalarQspray<T>(T(k))), denominator(scalarQspray<T>(T(1)))
       {}
   
   // methods -----
