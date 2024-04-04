@@ -308,6 +308,7 @@ setMethod(
   numeric_arith_qspray
 )
 
+
 setMethod(
   "Compare",
   signature(e1 = "qspray", e2 = "qspray"),
@@ -322,4 +323,123 @@ setMethod(
     )
   }
 )
-
+setMethod(
+  "Compare",
+  signature(e1 = "qspray", e2 = "character"),
+  function(e1, e2) {
+    switch(
+      .Generic,
+      "==" = e1 == as.qspray(e2),
+      "!=" = e1 != as.qspray(e2),
+      stop(gettextf(
+        "Comparison operator %s not defined for these two objects.", 
+        dQuote(.Generic)
+      ))
+    )
+  }
+)
+setMethod(
+  "Compare",
+  signature(e1 = "qspray", e2 = "numeric"),
+  function(e1, e2) {
+    switch(
+      .Generic,
+      "==" = e1 == as.qspray(e2),
+      "!=" = e1 != as.qspray(e2),
+      stop(gettextf(
+        "Comparison operator %s not defined for these two objects.", 
+        dQuote(.Generic)
+      ))
+    )
+  }
+)
+setMethod(
+  "Compare",
+  signature(e1 = "qspray", e2 = "bigz"),
+  function(e1, e2) {
+    switch(
+      .Generic,
+      "==" = e1 == as.qspray(e2),
+      "!=" = e1 != as.qspray(e2),
+      stop(gettextf(
+        "Comparison operator %s not defined for these two objects.", 
+        dQuote(.Generic)
+      ))
+    )
+  }
+)
+setMethod(
+  "Compare",
+  signature(e1 = "qspray", e2 = "bigq"),
+  function(e1, e2) {
+    switch(
+      .Generic,
+      "==" = e1 == as.qspray(e2),
+      "!=" = e1 != as.qspray(e2),
+      stop(gettextf(
+        "Comparison operator %s not defined for these two objects.", 
+        dQuote(.Generic)
+      ))
+    )
+  }
+)
+setMethod(
+  "Compare",
+  signature(e1 = "character", e2 = "qspray"),
+  function(e1, e2) {
+    switch(
+      .Generic,
+      "==" = as.qspray(e1) == e2,
+      "!=" = as.qspray(e1) != e2,
+      stop(gettextf(
+        "Comparison operator %s not defined for these two objects.", 
+        dQuote(.Generic)
+      ))
+    )
+  }
+)
+setMethod(
+  "Compare",
+  signature(e1 = "numeric", e2 = "qspray"),
+  function(e1, e2) {
+    switch(
+      .Generic,
+      "==" = as.qspray(e1) == e2,
+      "!=" = as.qspray(e1) != e2,
+      stop(gettextf(
+        "Comparison operator %s not defined for these two objects.", 
+        dQuote(.Generic)
+      ))
+    )
+  }
+)
+setMethod(
+  "Compare",
+  signature(e1 = "bigz", e2 = "qspray"),
+  function(e1, e2) {
+    switch(
+      .Generic,
+      "==" = as.qspray(e1) == e2,
+      "!=" = as.qspray(e1) != e2,
+      stop(gettextf(
+        "Comparison operator %s not defined for these two objects.", 
+        dQuote(.Generic)
+      ))
+    )
+  }
+)
+setMethod(
+  "Compare",
+  signature(e1 = "bigq", e2 = "qspray"),
+  function(e1, e2) {
+    switch(
+      .Generic,
+      "==" = as.qspray(e1) == e2,
+      "!=" = as.qspray(e1) != e2,
+      stop(gettextf(
+        "Comparison operator %s not defined for these two objects.", 
+        dQuote(.Generic)
+      ))
+    )
+  }
+)
