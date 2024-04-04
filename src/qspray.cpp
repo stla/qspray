@@ -51,8 +51,12 @@ public:
     : S()
       {}
 
-  Qspray(const std::unordered_map<powers,T,PowersHasher> &S_) 
+  Qspray(const std::unordered_map<powers,T,PowersHasher>& S_) 
     : S(S_) 
+      {}
+
+  Qspray(int k)
+    : S(scalarQspray(T(k)))
       {}
    
   std::unordered_map<powers,T,PowersHasher> get() {
@@ -261,6 +265,16 @@ public:
   }
 
 };
+
+
+// -------------------------------------------------------------------------- //
+template <typename T>
+Qspray<T> scalarQspray(T x) {
+  typename std::unordered_map<powers,T,PowersHasher> singleton;
+  powers pows(0);
+  singleton[pows] = x;
+  return Qspray<T>(singleton);
+}
 
 
 // -------------------------------------------------------------------------- //
