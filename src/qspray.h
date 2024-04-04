@@ -9,11 +9,6 @@ typedef boost::multiprecision::mpq_rational                 gmpq;
 typedef boost::multiprecision::mpz_int                      gmpi;
 typedef std::complex<gmpq>                                  qcplx;
 
-std::string q2str(gmpq);
-void simplifyPowers(powers&);
-powers growPowers(powers, signed int, signed int);
-
-
 // -------------------------------------------------------------------------- //
 class PowersHasher {
  public:
@@ -28,6 +23,12 @@ class PowersHasher {
 };
 
 typedef std::unordered_map<powers, gmpq, PowersHasher> qspray;
+
+std::string q2str(gmpq);
+void simplifyPowers(powers&);
+powers growPowers(powers, signed int, signed int);
+qspray makeQspray(const Rcpp::List&, const Rcpp::StringVector&); 
+Rcpp::List retval(const qspray&);
 
 
 // -------------------------------------------------------------------------- //
