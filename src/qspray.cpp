@@ -412,4 +412,3 @@ Rcpp::List BBdivisionRcpp(
   }
   return retval(r.get());
 }
-

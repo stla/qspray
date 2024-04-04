@@ -305,6 +305,20 @@ public:
     return std::make_pair<Qspray<T>,Qspray<T>>(numerator, denominator);
   } 
 
+  void simplify() {
+  	Qspray<T> G = gcdQsprays(numerator, denominator);
+  	numerator   = QuotientQsprays(numerator, G);
+  	denominator = QuotientQsprays(denominator, G);
+  }
+
+  RatioOfQsprays<T> operator+=(const RatioOfQsprays<T>& ROQ2) {
+  	numerator = numerator * ROQ2.denominator + ROQ2.numerator * denominator;
+  	denominator = denominator * ROQ2.denominator;
+  	RatioOfQsprays R(numerator, denominator);
+  	R.simplify();
+  	return R;
+  }
+
 };
 
 
