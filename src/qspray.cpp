@@ -43,33 +43,30 @@ class PowersHasher {
 typedef std::unordered_map<powers, gmpq, PowersHasher> qspray;
 
 // -------------------------------------------------------------------------- //
+// Note: this class is not used currently
 template<typename T>
 class Qspray {
-  const std::unordered_map<powers, T, PowersHasher> S;
+  const std::unordered_map<powers,T,PowersHasher> S;
 public:
   Qspray()
     : S()
       {}
 
-  Qspray(const std::unordered_map<powers, T, PowersHasher> &S_) 
+  Qspray(const std::unordered_map<powers,T,PowersHasher> &S_) 
     : S(S_) 
       {}
-  
-  // Qspray(const powers& exponents, const std::vector<T>& coefficients)
-  //   : S()
-  //   {}
-  
-  bool isNull(const Qspray<T>& Q) {
+    
+  bool isNull() {
     typename std::unordered_map<powers,T,PowersHasher>::const_iterator it;
     powers pows;
     bool result = true;
-    for(it = Q.begin(); it != Q.end(); ++it) {
+    for(it = S.begin(); it != S.end(); ++it) {
       pows = it->first;
       if(it->second != -it->second) {
         result = false;
         break;
       }
-    }
+    } // insuffisant !!!!!!!!!!!
     return result;
   }
 
