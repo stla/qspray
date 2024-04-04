@@ -14,6 +14,8 @@
 
 - New function `MSPcombination`, to get a symmetric polynomial as a linear combination of the monomial symmetric polynomials. It is also useful to check whether a polynomial is symmetric.
 
+- New function `prettySymmetricQspray` which prints a symmetric polynomial as a linear combination of the monomial symmetric polynomials.
+
 - New function `sprayDivision`, returning the quotient and the remainder of the division of a polynomial by a polynomial.
 
 - New function `HallInnerProduct`, which computes the Hall inner product between symmetric polynomials. Very inefficient (will be hopefully improved in the future).

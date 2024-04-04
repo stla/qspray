@@ -107,6 +107,31 @@ MSPcombination <- function(qspray, check = TRUE) {
   out
 }
 
+#' @title Pretty symmetric qspray
+#' @description Prints a symmetric qspray polynomial as a linear combination of 
+#'   the monomial symmetric polynomials. 
+#'
+#' @param qspray a \code{qspray} object, which should correspond to a 
+#'   symmetric polynomial
+#' @param check Boolean, whether to check the symmetry
+#'
+#' @return A character string.
+#' @export
+#'
+#' @examples
+#' library(qspray)
+#' qspray <- PSFpoly(4, c(3, 1)) + ESFpoly(4, c(2, 2)) + 4L
+#' prettySymmetricQspray(qspray)
+prettySymmetricQspray <- function(qspray, check = FALSE) {
+  combo   <- MSPcombination(qspray, check = check)
+  toPaste <- unlist(lapply(combo, function(t) {
+    coeff  <- as.character(t[["coeff"]])
+    lambda <- toString(t[["lambda"]])
+    sprintf("(%s) * M[%s]", coeff, lambda)
+  }))
+  paste0(toPaste, collapse = " + ")
+}
+
 #' @title Elementary symmetric polynomial
 #' @description Returns an elementary symmetric function as a polynomial.
 #'
