@@ -5,16 +5,24 @@ lexLeadingArma <- function(M) {
     .Call(`_qspray_lexLeadingArma`, M)
 }
 
+qsprayDivisionRcpp <- function(Powers1, coeffs1, Powers2, coeffs2, d) {
+    .Call(`_qspray_qsprayDivisionRcpp`, Powers1, coeffs1, Powers2, coeffs2, d)
+}
+
+BBdivisionRcpp <- function(Powers, coeffs, gs, LTgs, d) {
+    .Call(`_qspray_BBdivisionRcpp`, Powers, coeffs, gs, LTgs, d)
+}
+
 evalQxspray <- function(Powers, coeffs, v_re, v_im) {
     .Call(`_qspray_evalQxspray`, Powers, coeffs, v_re, v_im)
 }
 
-qspray_deriv <- function(Powers, coeffs, n) {
-    .Call(`_qspray_qspray_deriv`, Powers, coeffs, n)
-}
-
 qspray_maker <- function(Powers, coeffs) {
     .Call(`_qspray_qspray_maker`, Powers, coeffs)
+}
+
+qspray_deriv <- function(Powers, coeffs, n) {
+    .Call(`_qspray_qspray_deriv`, Powers, coeffs, n)
 }
 
 qspray_add <- function(Powers1, coeffs1, Powers2, coeffs2) {
@@ -35,13 +43,5 @@ qspray_equality <- function(Powers1, coeffs1, Powers2, coeffs2) {
 
 qspray_power <- function(Powers, coeffs, n) {
     .Call(`_qspray_qspray_power`, Powers, coeffs, n)
-}
-
-qsprayDivisionRcpp <- function(Powers1, coeffs1, Powers2, coeffs2, d) {
-    .Call(`_qspray_qsprayDivisionRcpp`, Powers1, coeffs1, Powers2, coeffs2, d)
-}
-
-BBdivisionRcpp <- function(Powers, coeffs, gs, LTgs, d) {
-    .Call(`_qspray_BBdivisionRcpp`, Powers, coeffs, gs, LTgs, d)
 }
 

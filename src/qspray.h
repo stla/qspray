@@ -51,7 +51,7 @@ public:
     : S(scalarQspray(T(k)))
       {}
   
-  // methods -----
+  // methods ----------
   std::unordered_map<powers,T,PowersHasher> get() {
     return S;
   } 
