@@ -1,3 +1,14 @@
+#' @title Number of variables in a 'qspray' polynomial
+#' @description Number of variables involved in a \code{qspray} object.
+#'
+#' @param qspray a \code{qspray} object
+#'
+#' @return An integer.
+#' @export
+numberOfVariables <- function(qspray) {
+  max(0L, arity(qspray))
+}
+
 #' @title Get coefficient
 #' @description Get the coefficient corresponding to the given exponents.
 #' 
@@ -55,7 +66,7 @@ getConstantTerm <- function(qspray) {
 #' @return A Boolean value.
 #' @export
 isConstantQspray <- function(qspray) {
-  arity(qspray) <= 0L
+  numberOfVariables(qspray) == 0L
 }
 
 #' @title Whether a qspray polynomial is null
