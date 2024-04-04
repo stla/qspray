@@ -55,7 +55,7 @@ getConstantTerm <- function(qspray) {
 #' @return A Boolean value.
 #' @export
 isConstantQspray <- function(qspray) {
-  arity(qspray) == 0L
+  arity(qspray) <= 0L
 }
 
 #' @title Whether a qspray polynomial is null
