@@ -21,7 +21,8 @@ qsprayDivision <- function(qsprayA, qsprayB) {
     stop("Division by zero.")
   }
   divis <- qsprayDivisionRcpp(
-    A@powers, A@coeffs, B@powers, B@coeffs, max(arity(qsprayA), arity(qsprayB))
+    qsprayA@powers, qsprayA@coeffs, qsprayB@powers, qsprayB@coeffs, 
+    max(arity(qsprayA), arity(qsprayB))
   ) 
   Q <- qspray_from_list(divis[["Q"]])
   R <- qspray_from_list(divis[["R"]])
