@@ -46,7 +46,7 @@ typedef std::unordered_map<powers, gmpq, PowersHasher> qspray;
 // Note: this class is not used currently
 template<typename T>
 class Qspray {
-  const std::unordered_map<powers,T,PowersHasher> S;
+  std::unordered_map<powers,T,PowersHasher> S;
 public:
   Qspray()
     : S()
@@ -55,39 +55,49 @@ public:
   Qspray(const std::unordered_map<powers,T,PowersHasher> &S_) 
     : S(S_) 
       {}
-    
+   
+  std::unordered_map<powers,T,PowersHasher> get() {
+    return S;
+  } 
+
+  bool empty() {
+    return S.empty();
+  }
+
   bool isNull() {
     typename std::unordered_map<powers,T,PowersHasher>::const_iterator it;
     powers pows;
+    T zero;
     bool result = true;
     for(it = S.begin(); it != S.end(); ++it) {
       pows = it->first;
-      if(it->second != -it->second) {
+      if(it->second != zero) {
         result = false;
         break;
       }
-    } // insuffisant !!!!!!!!!!!
+    } 
     return result;
   }
 
-  bool operator==(const Qspray<T>& S2) {
+  bool operator==(const Qspray<T>& Q) {
+    typename std::unordered_map<powers,T,PowersHasher> SS(S);
+    typename std::unordered_map<powers,T,PowersHasher> S2(Q.S);
     if(S.size() != S2.size()) {
       return false;
     }
-    Qspray<T> Q(S2);
     typename std::unordered_map<powers,T,PowersHasher>::const_iterator it;
     powers pows;
     for(it = S.begin(); it != S.end(); ++it) {
       pows = it->first;
-      if(S[pows] != Q[pows]) {
+      if(SS[pows] != S2[pows]) {
         return false;
       } else {
-        Q.erase(pows);
+        S2.erase(pows);
       }
     }
-    // at this point, Q[k] == S[k] for every index 'k' of S;
+    // at this point, S2[k] == S[k] for every index 'k' of S;
     // it remains to check that every element of Q has been accounted for:
-    if(Q.empty()) {
+    if(S2.empty()) {
       return true;
     } else {
       return false;
@@ -95,41 +105,63 @@ public:
   }
 
   Qspray<T> operator-() {
-    Qspray<T> Q(S);
     typename std::unordered_map<powers,T,PowersHasher>::const_iterator it;
     powers pows;  
     for(it = S.begin(); it != S.end(); ++it) {
       pows = it->first;
-      Q[pows] = -it->second;
+      S[pows] = -it->second;
     }
-    return Q;
+    return Qspray<T>(S);
   }
 
-  Qspray<T> operator+(const Qspray<T>& S2) {
-    Qspray<T> Q(S2);
+  Qspray<T> operator+=(const Qspray<T>& Q) {
+    typename std::unordered_map<powers,T,PowersHasher> S2 = Q.S;
     typename std::unordered_map<powers,T,PowersHasher>::const_iterator it;
     powers pows;
-    const T zero(); // il s'agira de définir T() pour les ratio of polynomials :-)
-    for(it = S.begin(); it != S.end(); ++it) {
+    const T zero; // il s'agira de définir T() pour les ratio of polynomials :-)
+    for(it = S2.begin(); it != S2.end(); ++it) {
       pows = it->first;
-      T a = it->second + Q[pows]; // quid si pas de clé pows? https://stackoverflow.com/q/78272300/1100107
-      if(a == zero) {
-        Q.erase(pows); // il a peut-être pas de clé pows!
-      } else {
-        Q[pows] = a; 
+      S[pows] += it->second;
+      if(S[pows] == zero) {
+        S.erase(pows);
       }
     }
+    return Qspray<T>(S);
+  }
+
+  Qspray<T> operator+(const Qspray<T>& Q2) {
+    Qspray<T> Q(S);
+    Q += Q2;
     return Q;
   }
 
-  Qspray<T> operator-(const Qspray<T>& S2) {
-    return S + (-S2);
+  Qspray<T> operator-=(const Qspray<T>& Q) {
+//    typename std::unordered_map<powers,T,PowersHasher> SS(S);
+    typename std::unordered_map<powers,T,PowersHasher> S2 = Q.S;
+    typename std::unordered_map<powers,T,PowersHasher>::const_iterator it;
+    powers pows;
+    const T zero; // il s'agira de définir T() pour les ratio of polynomials :-)
+    for(it = S2.begin(); it != S2.end(); ++it) {
+      pows = it->first;
+      S[pows] -= it->second;
+      if(S[pows] == zero) {
+        S.erase(pows);
+      }
+    }
+    return Qspray<T>(S);
   }
 
-  Qspray<T> operator*(const Qspray<T> S2) {
-    Qspray<T> Sout;
+  Qspray<T> operator-(const Qspray<T>& Q2) {
+    Qspray<T> Q(S);
+    Q -= Q2;
+    return Q;
+  }
+
+  Qspray<T> operator*(const Qspray<T>& Q) {
+    typename std::unordered_map<powers,T,PowersHasher> S2 = Q.S;
+    typename std::unordered_map<powers,T,PowersHasher> Sout;
     typename std::unordered_map<powers,T,PowersHasher>::const_iterator it1, it2;
-    const T zero = T();
+    const T zero;
     powers powssum;
     signed int i;
     for(it1 = S.begin(); it1 != S.end(); ++it1) {
@@ -166,7 +198,7 @@ public:
         }
       }
     }
-    return Sout;    
+    return Qspray<T>(Sout);
   }
   
 
@@ -387,8 +419,11 @@ Rcpp::List qspray_add(const Rcpp::List& Powers1,
                       const Rcpp::StringVector& coeffs2) {
   qspray S1 = makeQspray(Powers1, coeffs1);
   qspray S2 = makeQspray(Powers2, coeffs2);
-  qspray S = add(S1, S2);  
-  return retval(S);
+  Qspray<gmpq> Q1(S1);
+  Qspray<gmpq> Q2(S2);  
+  Qspray<gmpq> Q = Q1 + Q2;
+//  qspray S = add(S1, S2);  
+  return retval(Q.get());
 }
 
 
@@ -415,11 +450,14 @@ Rcpp::List qspray_subtract(const Rcpp::List& Powers1,
                            const Rcpp::StringVector& coeffs1,
                            const Rcpp::List& Powers2,
                            const Rcpp::StringVector& coeffs2) {
-  qspray::const_iterator it;
   qspray S1 = makeQspray(Powers1, coeffs1);
   qspray S2 = makeQspray(Powers2, coeffs2);
-  qspray S = subtract(S1, S2);
-  return retval(S);
+  Qspray<gmpq> Q1(S1);
+  Qspray<gmpq> Q2(S2);  
+  Qspray<gmpq> Q = Q1 - Q2;
+  return retval(Q.get());
+  // qspray S = subtract(S1, S2);
+  // return retval(S);
 }
 
 
@@ -475,8 +513,14 @@ Rcpp::List qspray_mult(const Rcpp::List& Powers1,
                        const Rcpp::StringVector& coeffs1,
                        const Rcpp::List& Powers2,
                        const Rcpp::StringVector& coeffs2) {
-  return retval(
-      prod(makeQspray(Powers1, coeffs1), makeQspray(Powers2, coeffs2)));
+  // return retval(
+  //     prod(makeQspray(Powers1, coeffs1), makeQspray(Powers2, coeffs2)));
+  qspray S1 = makeQspray(Powers1, coeffs1);
+  qspray S2 = makeQspray(Powers2, coeffs2);
+  Qspray<gmpq> Q1(S1);
+  Qspray<gmpq> Q2(S2);  
+  Qspray<gmpq> Q = Q1 * Q2;
+  return retval(Q.get());
 }
 
 
@@ -490,26 +534,29 @@ bool qspray_equality(const Rcpp::List& Powers1,
   qspray::const_iterator it;
   qspray S1 = makeQspray(Powers1, coeffs1);
   qspray S2 = makeQspray(Powers2, coeffs2);
+  Qspray<gmpq> Q1(S1);
+  Qspray<gmpq> Q2(S2);  
+  return Q1 == Q2;
 
-  if(S1.size() != S2.size()) {
-    return false;
-  }
+  // if(S1.size() != S2.size()) {
+  //   return false;
+  // }
 
-  for(it = S1.begin(); it != S1.end(); ++it) {
-    pows = it->first;
-    if(S1[pows] != S2[pows]) {
-      return false;
-    } else {
-      S2.erase(pows);
-    }
-  }
-  // at this point, S1[v] == S2[v] for every index 'v' of S1;  S1\subseteq S2.
-  // We need to check that every element of S2 has been accounted for:
-  if(S2.empty()) {
-    return true;
-  } else {
-    return false;
-  }
+  // for(it = S1.begin(); it != S1.end(); ++it) {
+  //   pows = it->first;
+  //   if(S1[pows] != S2[pows]) {
+  //     return false;
+  //   } else {
+  //     S2.erase(pows);
+  //   }
+  // }
+  // // at this point, S1[v] == S2[v] for every index 'v' of S1;  S1\subseteq S2.
+  // // We need to check that every element of S2 has been accounted for:
+  // if(S2.empty()) {
+  //   return true;
+  // } else {
+  //   return false;
+  // }
 }
 
 
@@ -595,6 +642,10 @@ Rcpp::List leadingTerm(const qspray& S, int d) {
   );
 }
 
+Rcpp::List leadingTerm(Qspray<gmpq>& Q, int d) {
+  return leadingTerm(Q.get(), d);
+}
+
 bool divides(Rcpp::List f, Rcpp::List g) {
   Rcpp::IntegerVector pows_f = f["powers"];
   Rcpp::IntegerVector pows_g = g["powers"];
@@ -630,19 +681,26 @@ Rcpp::List qsprayDivisionRcpp(
   Rcpp::List Powers2, Rcpp::StringVector coeffs2,
   int d
 ) {
-  qspray p = makeQspray(Powers1, coeffs1);
-  qspray g = makeQspray(Powers2, coeffs2);
+  // qspray p = makeQspray(Powers1, coeffs1);
+  // qspray g = makeQspray(Powers2, coeffs2);
+  Qspray<gmpq> p(makeQspray(Powers1, coeffs1));
+  Qspray<gmpq> g(makeQspray(Powers2, coeffs2));
   Rcpp::List LTg = leadingTerm(g, d);
-  qspray q;
-  qspray r;
+  // qspray q;
+  // qspray r;
+  Qspray<gmpq> q;
+  Qspray<gmpq> r;
   bool divoccured;
   while(!p.empty()) {
     divoccured = false;
     Rcpp::List LTp = leadingTerm(p, d);
     if(divides(LTg, LTp)) {
       qspray qtnt = quotient(LTp, LTg);
-      p = subtract(p, prod(qtnt, g));
-      q = add(q, qtnt);
+      Qspray<gmpq> Qtnt(qtnt);
+      // p = subtract(p, prod(qtnt, g));
+      // q = add(q, qtnt);
+      p -= Qtnt * g;
+      q += Qtnt;
       divoccured = true;
     } 
     if(!divoccured) {
@@ -653,13 +711,16 @@ Rcpp::List qsprayDivisionRcpp(
       simplifyPowers(pows);
       qspray LTpspray;
       LTpspray[pows] = coef;
-      r = add(r, LTpspray);
-      p = subtract(p, LTpspray);
+      Qspray<gmpq> ltp(LTpspray);
+      // r = add(r, LTpspray);
+      // p = subtract(p, LTpspray);
+      r += ltp;
+      p -= ltp;
     }
   }
   return Rcpp::List::create(
-    Rcpp::Named("Q") = retval(q),
-    Rcpp::Named("R") = retval(r)
+    Rcpp::Named("Q") = retval(q.get()),
+    Rcpp::Named("R") = retval(r.get())
   );
 }
 
