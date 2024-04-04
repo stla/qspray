@@ -268,6 +268,16 @@ Qspray<T> scalarQspray(T x) {
   return Qspray<T>(singleton);
 }
 
+template <typename T>
+Qspray<T> gcdQsprays(const Qspray<T>& Q1, const Qspray<T>& Q2) {
+  return scalarQspray<T>(1);
+}
+
+template <typename T>
+Qspray<T> QuotientQsprays(const Qspray<T>& A, const Qspray<T>& B) {
+  return A;
+}
+
 
 // ---------------------------------------------------------------------------//
 template<typename T>
