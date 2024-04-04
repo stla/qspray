@@ -11,6 +11,17 @@ setClass(
   slots = c(powers = "list", coeffs = "character")
 )
 
+#' @title Number of variables in a 'qspray' polynomial
+#' @description Number of variables involved in a \code{qspray} object.
+#'
+#' @param qspray a \code{qspray} object
+#'
+#' @return An integer.
+#' @export
+numberOfVariables <- function(qspray) {
+  arity(qspray)
+}
+
 powersMatrix <- function(qspray) {
   do.call(rbind, lapply(qspray@powers, grow, n = arity(qspray)))
 }

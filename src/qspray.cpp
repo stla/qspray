@@ -426,7 +426,6 @@ Rcpp::List qspray_subtract(const Rcpp::List& Powers1,
 }
 
 
-
 // -------------------------------------------------------------------------- //
 qspray prod(const qspray S1, const qspray S2) {
   qspray Sout;
