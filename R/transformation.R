@@ -86,7 +86,7 @@ permuteVariables <- function(qspray, permutation) {
     stop("Invalid permutation.")
   }
   permutation[permutation] <- seq_along(permutation)
-  M <- powersMatrix(qspray)#[, permutation]
+  M <- powersMatrix(qspray)
   for(. in seq_len(n - m)) {
     M <- cbind(M, 0L)
   }
@@ -122,10 +122,11 @@ swapVariables <- function(qspray, i, j) {
   permutation <- seq_len(n)
   permutation[i] <- j
   permutation[j] <- i
-  M <- powersMatrix(qspray)[, permutation]
+  M <- powersMatrix(qspray)
   for(. in seq_len(n - m)) {
     M <- cbind(M, 0L)
   }
+  M <- M[, permutation]
   powers <- apply(M, 1L, identity, simplify = FALSE)
   qsprayMaker(powers, qspray@coeffs)
 }
