@@ -1,6 +1,5 @@
 #include "qspray.h"
 
-
 // [[Rcpp::export]]
 Rcpp::List qsprayDivisionRcpp(
   Rcpp::List Powers1, Rcpp::StringVector coeffs1,

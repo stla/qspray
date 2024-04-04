@@ -425,7 +425,7 @@ public:
       dimension(0)
       {}
   
-  // methods -----
+  // methods ----------
   std::pair<Qspray<T>,Qspray<T>> get() {
     return std::pair<Qspray<T>,Qspray<T>>(numerator, denominator);
   } 
@@ -441,7 +441,7 @@ public:
   	denominator = denominator * ROQ2.denominator;
   	RatioOfQsprays ROQ(numerator, denominator);
   	ROQ.simplify();
-  	return R;
+  	return ROQ;
   }
 
   RatioOfQsprays<T> operator+(const RatioOfQsprays<T>& ROQ2) {
