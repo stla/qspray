@@ -43,7 +43,6 @@ class PowersHasher {
 typedef std::unordered_map<powers, gmpq, PowersHasher> qspray;
 
 // -------------------------------------------------------------------------- //
-// Note: this class is not used currently
 template<typename T>
 class Qspray {
   std::unordered_map<powers,T,PowersHasher> S;
@@ -208,28 +207,20 @@ public:
   }
 
   Qspray<T> power(unsigned int n) {
-    typename std::unordered_map<powers,T,PowersHasher> unit;
+    typename std::unordered_map<powers,T,PowersHasher> u;
     powers pows(0);
     T      one(1);
-    unit[pows] = one;
-
-    typename std::unordered_map<powers,T,PowersHasher> out;
-    if(n >= 1) {
-      if(n == 1) {
-        out = S;
-      } else {
-        Qspray<T> Out(unit);
-        Qspray<T> Q(S);
-        for(; n > 0; n--) {
-          Out *= Q;
-        }
-        out = Out.get();
+    u[pows] = one;
+    Qspray<T> Result(u);
+    Qspray<T> Q(S);
+    while(n) {
+      if(n & 1) {
+        Result *= Q;
       }
-    } else {
-      out = unit;
+      n >>= 1;
+      Q *= Q;
     }
-
-    return Qspray<T>(out);
+    return Q;
   }
   
   Qspray<T> deriv(std::vector<unsigned int> n) {
@@ -410,52 +401,6 @@ Rcpp::List qspray_deriv(
   std::vector<unsigned int> orders(n.begin(), n.end());
   Qspray<gmpq> Qprime = Q.deriv(orders);
   return retval(Qprime.get());
-
-  // qspray S;
-  // powers v;
-  // signed int i, j, J, nj, expnt;
-  // signed int N = n.size();
-  // signed int nterms = coeffs.size();
-  // std::vector<std::vector<signed int>> Powers_out(nterms);
-  // std::vector<signed int> sizes(nterms);
-
-  // for(i = 0 ; i < nterms; i++) {
-  //   Rcpp::IntegerVector Exponents = Powers(i);
-  //   J = Exponents.size();
-  //   sizes[i] = J;
-  //   Powers_out[i].reserve(J);
-  //   for(j = 0 ; j < J; j++){
-  //     Powers_out[i].emplace_back(Exponents(j));
-  //   }
-  // }
-  
-  // for(i = 0; i < nterms; i++) {
-  //   std::vector<signed int> exponents = Powers_out[i];
-  //   J = sizes[i];
-  //   if(J < N) {
-  //     continue;
-  //   }
-  //   gmpq coeff(Rcpp::as<std::string>(coeffs(i)));
-  //   for(j = 0; j < N; j++) {
-  //     nj = n(j);
-  //     while((nj > 0) && (coeff != 0)) { // while loop because it might not run at all
-  //       coeff *= exponents[j]; // multiply coeff first, then decrement exponent 
-  //       exponents[j]--;
-  //       nj--;
-  //     }
-  //   }
-  //   if(coeff != 0) {
-  //     v.clear();
-  //     for(j = 0; j < J; j++) {
-  //       expnt = exponents[j];
-  //       v.push_back(expnt);
-  //     }
-  //     simplifyPowers(v);
-  //     S[v] += coeff;  // increment because v is not row-unique any more
-  //   }
-  // }  // i loop closes
-  
-  // return retval(S);
 }
 
 
@@ -465,22 +410,6 @@ Rcpp::List qspray_maker(const Rcpp::List& Powers,
                         const Rcpp::StringVector& coeffs) {
   return retval(prepare(Powers, coeffs));
 }
-
-
-// -------------------------------------------------------------------------- //
-// qspray add(const qspray& S1, const qspray& S2) {
-//   qspray S = S1;
-//   qspray::const_iterator it;
-//   powers pows;  
-//   for(it = S2.begin(); it != S2.end(); ++it) {
-//     pows = it->first;
-//     S[pows] += it->second;
-//     if(S[pows] == 0) {
-//       S.erase(pows);
-//     }
-//   }
-//   return S;
-// }
 
 
 // -------------------------------------------------------------------------- //
@@ -494,26 +423,8 @@ Rcpp::List qspray_add(const Rcpp::List& Powers1,
   Qspray<gmpq> Q1(S1);
   Qspray<gmpq> Q2(S2);  
   Qspray<gmpq> Q = Q1 + Q2;
-//  qspray S = add(S1, S2);  
   return retval(Q.get());
 }
-
-
-// -------------------------------------------------------------------------- //
-// qspray subtract(const qspray& S1, const qspray& S2) {
-//   qspray S = S1;
-//   qspray::const_iterator it;
-//   powers pows;  
-//   for(it = S2.begin(); it != S2.end(); ++it) {
-//     pows = it->first;
-//     const gmpq coeff = it->second;
-//     S[pows] -= coeff; 
-//     if(S[pows] == 0) {
-//       S.erase(pows);
-//     }
-//   }
-//   return(S);
-// }
 
 
 // -------------------------------------------------------------------------- //
@@ -528,55 +439,7 @@ Rcpp::List qspray_subtract(const Rcpp::List& Powers1,
   Qspray<gmpq> Q2(S2);  
   Qspray<gmpq> Q = Q1 - Q2;
   return retval(Q.get());
-  // qspray S = subtract(S1, S2);
-  // return retval(S);
 }
-
-
-// -------------------------------------------------------------------------- //
-// qspray prod(const qspray S1, const qspray S2) {
-//   qspray Sout;
-//   qspray::const_iterator it1, it2;
-//   powers powssum;
-//   signed int i;
-
-//   for(it1 = S1.begin(); it1 != S1.end(); ++it1) {
-//     const gmpq r1 = it1->second;
-//     if(r1 != 0) {
-//       powers pows1 = it1->first;
-//       signed int n1 = pows1.size();
-//       for(it2 = S2.begin(); it2 != S2.end(); ++it2) {
-//         const gmpq r2 = it2->second;
-//         if(r2 != 0) {
-//           powers pows2 = it2->first;
-//           signed int n2 = pows2.size();
-//           powssum.clear();
-//           if(n1 < n2) {
-//             powers gpows = growPowers(pows1, n1, n2);
-//             powssum.reserve(n2);
-//             for(i = 0; i < n2; i++) {
-//               powssum.emplace_back(gpows[i] + pows2[i]);
-//             }
-//           } else if(n1 > n2) {
-//             powers gpows = growPowers(pows2, n2, n1);
-//             powssum.reserve(n1);
-//             for(i = 0; i < n1; i++) {
-//               powssum.emplace_back(pows1[i] + gpows[i]);
-//             }
-//           } else {
-//             powssum.reserve(n1);
-//             for(i = 0; i < n1; i++) {
-//               powssum.emplace_back(pows1[i] + pows2[i]);
-//             }
-//           }
-//           Sout[powssum] += r1 * r2;
-//         }
-//       }
-//     }
-//   }
-
-//   return Sout;
-// }
 
 
 // -------------------------------------------------------------------------- //
@@ -609,36 +472,6 @@ bool qspray_equality(const Rcpp::List& Powers1,
   Qspray<gmpq> Q1(S1);
   Qspray<gmpq> Q2(S2);  
   return Q1 == Q2;
-
-  // if(S1.size() != S2.size()) {
-  //   return false;
-  // }
-
-  // for(it = S1.begin(); it != S1.end(); ++it) {
-  //   pows = it->first;
-  //   if(S1[pows] != S2[pows]) {
-  //     return false;
-  //   } else {
-  //     S2.erase(pows);
-  //   }
-  // }
-  // // at this point, S1[v] == S2[v] for every index 'v' of S1;  S1\subseteq S2.
-  // // We need to check that every element of S2 has been accounted for:
-  // if(S2.empty()) {
-  //   return true;
-  // } else {
-  //   return false;
-  // }
-}
-
-
-// -------------------------------------------------------------------------- //
-qspray unit() {
-  qspray out;
-  powers pows(0);
-  gmpq one(1);
-  out[pows] = one;
-  return out;
 }
 
 
@@ -649,25 +482,6 @@ Rcpp::List qspray_power(const Rcpp::List& Powers,
                         unsigned int n) {
    Qspray<gmpq> Q(makeQspray(Powers, coeffs));
    return retval(Q.power(n).get());
-  // qspray out;
-  // if(n >= 1) {
-  //   const qspray S = makeQspray(Powers, coeffs);
-  //   if(n == 1) {
-  //     out = S;
-  //   } else {
-  //     out = unit();
-  //     Qspray<gmpq> Out(out);
-  //     Qspray<gmpq> Q(S);
-  //     for(; n > 0; n--) {
-  //       Out *= Q;
-  //     }
-  //     out = Out.get();
-  //   }
-  // } else {
-  //   out = unit();
-  // }
-
-  // return retval(out);
 }
 
 
@@ -758,13 +572,9 @@ Rcpp::List qsprayDivisionRcpp(
   Rcpp::List Powers2, Rcpp::StringVector coeffs2,
   int d
 ) {
-  // qspray p = makeQspray(Powers1, coeffs1);
-  // qspray g = makeQspray(Powers2, coeffs2);
   Qspray<gmpq> p(makeQspray(Powers1, coeffs1));
   Qspray<gmpq> g(makeQspray(Powers2, coeffs2));
   Rcpp::List LTg = leadingTerm(g, d);
-  // qspray q;
-  // qspray r;
   Qspray<gmpq> q;
   Qspray<gmpq> r;
   bool divoccured;
@@ -774,8 +584,6 @@ Rcpp::List qsprayDivisionRcpp(
     if(divides(LTg, LTp)) {
       qspray qtnt = quotient(LTp, LTg);
       Qspray<gmpq> Qtnt(qtnt);
-      // p = subtract(p, prod(qtnt, g));
-      // q = add(q, qtnt);
       p -= Qtnt * g;
       q += Qtnt;
       divoccured = true;
@@ -789,8 +597,6 @@ Rcpp::List qsprayDivisionRcpp(
       qspray LTpspray;
       LTpspray[pows] = coef;
       Qspray<gmpq> ltp(LTpspray);
-      // r = add(r, LTpspray);
-      // p = subtract(p, LTpspray);
       r += ltp;
       p -= ltp;
     }
