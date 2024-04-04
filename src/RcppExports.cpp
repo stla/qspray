@@ -22,36 +22,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// qsprayDivisionRcpp
-Rcpp::List qsprayDivisionRcpp(Rcpp::List Powers1, Rcpp::StringVector coeffs1, Rcpp::List Powers2, Rcpp::StringVector coeffs2, int d);
-RcppExport SEXP _qspray_qsprayDivisionRcpp(SEXP Powers1SEXP, SEXP coeffs1SEXP, SEXP Powers2SEXP, SEXP coeffs2SEXP, SEXP dSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::List >::type Powers1(Powers1SEXP);
-    Rcpp::traits::input_parameter< Rcpp::StringVector >::type coeffs1(coeffs1SEXP);
-    Rcpp::traits::input_parameter< Rcpp::List >::type Powers2(Powers2SEXP);
-    Rcpp::traits::input_parameter< Rcpp::StringVector >::type coeffs2(coeffs2SEXP);
-    Rcpp::traits::input_parameter< int >::type d(dSEXP);
-    rcpp_result_gen = Rcpp::wrap(qsprayDivisionRcpp(Powers1, coeffs1, Powers2, coeffs2, d));
-    return rcpp_result_gen;
-END_RCPP
-}
-// BBdivisionRcpp
-Rcpp::List BBdivisionRcpp(Rcpp::List Powers, Rcpp::StringVector coeffs, Rcpp::List gs, Rcpp::List LTgs, int d);
-RcppExport SEXP _qspray_BBdivisionRcpp(SEXP PowersSEXP, SEXP coeffsSEXP, SEXP gsSEXP, SEXP LTgsSEXP, SEXP dSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::List >::type Powers(PowersSEXP);
-    Rcpp::traits::input_parameter< Rcpp::StringVector >::type coeffs(coeffsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::List >::type gs(gsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::List >::type LTgs(LTgsSEXP);
-    Rcpp::traits::input_parameter< int >::type d(dSEXP);
-    rcpp_result_gen = Rcpp::wrap(BBdivisionRcpp(Powers, coeffs, gs, LTgs, d));
-    return rcpp_result_gen;
-END_RCPP
-}
 // evalQxspray
 Rcpp::StringVector evalQxspray(const Rcpp::List Powers, const Rcpp::StringVector coeffs, const Rcpp::StringVector v_re, const Rcpp::StringVector v_im);
 RcppExport SEXP _qspray_evalQxspray(SEXP PowersSEXP, SEXP coeffsSEXP, SEXP v_reSEXP, SEXP v_imSEXP) {
@@ -163,8 +133,6 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_qspray_lexLeadingArma", (DL_FUNC) &_qspray_lexLeadingArma, 1},
-    {"_qspray_qsprayDivisionRcpp", (DL_FUNC) &_qspray_qsprayDivisionRcpp, 5},
-    {"_qspray_BBdivisionRcpp", (DL_FUNC) &_qspray_BBdivisionRcpp, 5},
     {"_qspray_evalQxspray", (DL_FUNC) &_qspray_evalQxspray, 4},
     {"_qspray_qspray_maker", (DL_FUNC) &_qspray_qspray_maker, 2},
     {"_qspray_qspray_deriv", (DL_FUNC) &_qspray_qspray_deriv, 3},

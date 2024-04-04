@@ -282,11 +282,11 @@ int numberOfVariables(const Qspray<T>& Q) {
   return d;
 }
 
-Qspray<gmpq> gcdQsprays(const Qspray<gmpq>& Q1, const Qspray<gmpq>& Q2) {
+static Qspray<gmpq> gcdQsprays(const Qspray<gmpq>& Q1, const Qspray<gmpq>& Q2) {
   return scalarQspray<gmpq>(1);
 }
 
-int lexLeadingIndex(std::vector<powers> expnts) {
+static int lexLeadingIndex(std::vector<powers> expnts) {
   const int n = expnts.size();
   int i = 0;
   while(i < n-1) {
@@ -308,7 +308,7 @@ int lexLeadingIndex(std::vector<powers> expnts) {
   return i;
 }
 
-Rcpp::List leadingTerm(Qspray<gmpq>& Q, int d) {
+static Rcpp::List leadingTerm(Qspray<gmpq>& Q, int d) {
   qspray S = Q.get();
   std::vector<powers> pows;
   std::vector<gmpq>   coeffs;
@@ -332,7 +332,7 @@ Rcpp::List leadingTerm(Qspray<gmpq>& Q, int d) {
   );
 }
 
-bool divides(Rcpp::List f, Rcpp::List g) {
+static bool divides(Rcpp::List f, Rcpp::List g) {
   Rcpp::IntegerVector pows_f = f["powers"];
   Rcpp::IntegerVector pows_g = g["powers"];
   int n = pows_f.size();
@@ -345,7 +345,7 @@ bool divides(Rcpp::List f, Rcpp::List g) {
   return out;
 }
 
-Qspray<gmpq> quotient(Rcpp::List f, Rcpp::List g) {
+static Qspray<gmpq> quotient(Rcpp::List f, Rcpp::List g) {
   Rcpp::IntegerVector pows_f = f["powers"];
   std::string coeff_f        = f["coeff"];
   Rcpp::IntegerVector pows_g = g["powers"];
@@ -361,7 +361,7 @@ Qspray<gmpq> quotient(Rcpp::List f, Rcpp::List g) {
   return Qspray<gmpq>(S);
 }
 
-std::pair<Qspray<gmpq>,Qspray<gmpq>> qsprayDivision(
+static std::pair<Qspray<gmpq>,Qspray<gmpq>> qsprayDivision(
   Qspray<gmpq>& p, Qspray<gmpq>& g, int d
 ) {
   Rcpp::List LTg = leadingTerm(g, d);
@@ -393,7 +393,7 @@ std::pair<Qspray<gmpq>,Qspray<gmpq>> qsprayDivision(
   return std::pair<Qspray<gmpq>,Qspray<gmpq>>(q, r);
 }
 
-Qspray<gmpq> QuotientQsprays(Qspray<gmpq>& A, Qspray<gmpq>& B, int d) {
+static Qspray<gmpq> QuotientQsprays(Qspray<gmpq>& A, Qspray<gmpq>& B, int d) {
   return qsprayDivision(A, B, d).first;
 }
 

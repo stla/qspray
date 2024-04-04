@@ -5,14 +5,6 @@ lexLeadingArma <- function(M) {
     .Call(`_qspray_lexLeadingArma`, M)
 }
 
-qsprayDivisionRcpp <- function(Powers1, coeffs1, Powers2, coeffs2, d) {
-    .Call(`_qspray_qsprayDivisionRcpp`, Powers1, coeffs1, Powers2, coeffs2, d)
-}
-
-BBdivisionRcpp <- function(Powers, coeffs, gs, LTgs, d) {
-    .Call(`_qspray_BBdivisionRcpp`, Powers, coeffs, gs, LTgs, d)
-}
-
 evalQxspray <- function(Powers, coeffs, v_re, v_im) {
     .Call(`_qspray_evalQxspray`, Powers, coeffs, v_re, v_im)
 }
