@@ -48,6 +48,61 @@ class PowersHasher {
 
 typedef std::unordered_map<powers, gmpq, PowersHasher> qspray;
 
+// -------------------------------------------------------------------------- //
+template<typename T>
+class Qspray {
+  const std::unordered_map<powers, T, PowersHasher> S;
+  const T a;
+public:
+  Qspray(const std::unordered_map<powers, T, PowersHasher> &S_) 
+    : S(S_) 
+      {}
+  
+  // Qspray(const powers& exponents, const std::vector<T>& coefficients)
+  //   : S()
+  //   {}
+  
+  bool isNull(const Qspray<T>& Q) {
+    typename std::unordered_map<powers,T,PowersHasher>::const_iterator it;
+    powers pows;
+    bool result = true;
+    for(it = Q.begin(); it != Q.end(); ++it) {
+      pows = it->first;
+      if(it->second != -it->second) {
+        result = false;
+        break;
+      }
+    }
+    return result;
+  }
+
+  Qspray<T> operator-() {
+    Qspray<T> Q(S);
+    typename std::unordered_map<powers,T,PowersHasher>::const_iterator it;
+    powers pows;  
+    for(it = S.begin(); it != S.end(); ++it) {
+      pows = it->first;
+      Q[pows] = -it->second;
+    }
+    return Q;
+  }
+
+  Qspray<T> operator+(const Qspray<T>& S2) {
+    Qspray<T> Q(S2);
+    typename std::unordered_map<powers,T,PowersHasher>::const_iterator it;
+    powers pows;  
+    for(it = S.begin(); it != S.end(); ++it) {
+      pows = it->first;
+      Q[pows] += it->second;
+      if(Q[pows] == -Q[pows]) {
+        Q.erase(pows);
+      }
+    }
+    return Q;
+  }
+  
+
+};
 
 // -------------------------------------------------------------------------- //
 std::string q2str(gmpq r) {
