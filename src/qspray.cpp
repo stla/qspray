@@ -220,7 +220,7 @@ public:
       n >>= 1;
       Q *= Q;
     }
-    return Q;
+    return Result;
   }
   
   Qspray<T> deriv(std::vector<unsigned int> n) {
