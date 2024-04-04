@@ -270,35 +270,159 @@ Qspray<T> scalarQspray(T x) {
 }
 
 template <typename T>
-Qspray<T> gcdQsprays(const Qspray<T>& Q1, const Qspray<T>& Q2) {
-  return scalarQspray<T>(1);
+int numberOfVariables(const Qspray<T>& Q) {
+  std::unordered_map<powers,T,PowersHasher> S = Q.get();
+  int d = 0;
+  for(const auto& term : S) {
+    int n = term.first.size();
+    if(n > d) {
+      d = n;
+    }
+  }
+  return d;
 }
 
-template <typename T>
-Qspray<T> QuotientQsprays(const Qspray<T>& A, const Qspray<T>& B) {
-  return A;
+Qspray<gmpq> gcdQsprays(const Qspray<gmpq>& Q1, const Qspray<gmpq>& Q2) {
+  return scalarQspray<gmpq>(1);
 }
 
+int lexLeadingIndex(std::vector<powers> expnts) {
+  const int n = expnts.size();
+  int i = 0;
+  while(i < n-1) {
+    powers vi = expnts[i];
+    for(int j = i + 1; j < n; j++) {
+      powers vj = expnts[j];
+      bool vjmax = std::lexicographical_compare(
+        std::begin(vi), std::end(vi), std::begin(vj), std::end(vj)
+      );
+      if(vjmax) {
+        i = j - 1;
+        break;
+      } else if(j == n-1) {
+        return i;
+      }
+    }
+    i++;
+  }
+  return i;
+}
+
+Rcpp::List leadingTerm(Qspray<gmpq>& Q, int d) {
+  qspray S = Q.get();
+  std::vector<powers> pows;
+  std::vector<gmpq>   coeffs;
+  pows.reserve(S.size());
+  coeffs.reserve(S.size());
+  for(const auto& term : S) {
+    pows.emplace_back(term.first);
+    coeffs.emplace_back(term.second);
+  }
+  int index = lexLeadingIndex(pows);
+  powers leadingPows = pows[index];
+  int npows = leadingPows.size();
+  if(npows < d) {
+    leadingPows = growPowers(leadingPows, npows, d);
+  }
+  std::string leadingCoeff = q2str(coeffs[index]);
+  Rcpp::IntegerVector powsRcpp(leadingPows.begin(), leadingPows.end());
+  return Rcpp::List::create(
+    Rcpp::Named("powers") = powsRcpp,
+    Rcpp::Named("coeff")  = leadingCoeff
+  );
+}
+
+bool divides(Rcpp::List f, Rcpp::List g) {
+  Rcpp::IntegerVector pows_f = f["powers"];
+  Rcpp::IntegerVector pows_g = g["powers"];
+  int n = pows_f.size();
+  int i = 0;
+  bool out = true;
+  while(out && i < n) {
+    out = out && (pows_f(i) <= pows_g(i));
+    i++;
+  }
+  return out;
+}
+
+Qspray<gmpq> quotient(Rcpp::List f, Rcpp::List g) {
+  Rcpp::IntegerVector pows_f = f["powers"];
+  std::string coeff_f        = f["coeff"];
+  Rcpp::IntegerVector pows_g = g["powers"];
+  std::string coeff_g        = g["coeff"];
+  gmpq qcoeff_f(coeff_f);
+  gmpq qcoeff_g(coeff_g);
+  Rcpp::IntegerVector powsRcpp = pows_f - pows_g;
+  gmpq qcoeff = qcoeff_f / qcoeff_g;
+  qspray S;
+  powers pows(powsRcpp.begin(), powsRcpp.end());
+  simplifyPowers(pows);
+  S[pows] = qcoeff;
+  return Qspray<gmpq>(S);
+}
+
+std::pair<Qspray<gmpq>,Qspray<gmpq>> qsprayDivision(
+  Qspray<gmpq>& p, Qspray<gmpq>& g, int d
+) {
+  Rcpp::List LTg = leadingTerm(g, d);
+  Qspray<gmpq> q;
+  Qspray<gmpq> r;
+  bool divoccured;
+  while(!p.empty()) {
+    divoccured = false;
+    Rcpp::List LTp = leadingTerm(p, d);
+    if(divides(LTg, LTp)) {
+      Qspray<gmpq> Qtnt = quotient(LTp, LTg);
+      p -= Qtnt * g;
+      q += Qtnt;
+      divoccured = true;
+    } 
+    if(!divoccured) {
+      Rcpp::IntegerVector powsRcpp = LTp["powers"];
+      std::string coeff            = LTp["coeff"];
+      gmpq   coef(coeff);
+      powers pows(powsRcpp.begin(), powsRcpp.end());
+      simplifyPowers(pows);
+      qspray LTpspray;
+      LTpspray[pows] = coef;
+      Qspray<gmpq> ltp(LTpspray);
+      r += ltp;
+      p -= ltp;
+    }
+  }
+  return std::pair<Qspray<gmpq>,Qspray<gmpq>>(q, r);
+}
+
+Qspray<gmpq> QuotientQsprays(Qspray<gmpq>& A, Qspray<gmpq>& B, int d) {
+  return qsprayDivision(A, B, d).first;
+}
 
 // ---------------------------------------------------------------------------//
 template<typename T>
 class RatioOfQsprays {
 
   Qspray<T> numerator;
-  Qspray<T> denominator; 
+  Qspray<T> denominator;
+  int       dimension;
 
 public:
   // constructors -----
   RatioOfQsprays()
-    : numerator(scalarQspray<T>(T(0))), denominator(scalarQspray<T>(T(1)))
+    : numerator(scalarQspray<T>(T(0))), 
+      denominator(scalarQspray<T>(T(1))),
+      dimension(0)
       {}
 
   RatioOfQsprays(const Qspray<T>& numerator_, const Qspray<T>& denominator_) 
-    : numerator(numerator_), denominator(denominator_)
+    : numerator(numerator_), 
+      denominator(denominator_),
+      dimension(std::max<int>(numberOfVariables(numerator_), numberOfVariables(denominator_)))
       {}
 
   RatioOfQsprays(int k)
-    : numerator(scalarQspray<T>(T(k))), denominator(scalarQspray<T>(T(1)))
+    : numerator(scalarQspray<T>(T(k))), 
+      denominator(scalarQspray<T>(T(1))),
+      dimension(0)
       {}
   
   // methods -----
