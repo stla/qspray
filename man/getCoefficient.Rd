@@ -23,7 +23,7 @@ x <- qlone(1)
 y <- qlone(2)
 p <- 2*x^2 + 3*y - 5
 getCoefficient(p, 2)
-getCoefficient(p, c(2, 0))
+getCoefficient(p, c(2, 0)) # same as getCoefficient(p, 2)
 getCoefficient(p, c(0, 1))
 getCoefficient(p, 0) # the constant term
 getCoefficient(p, 3)

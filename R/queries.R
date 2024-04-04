@@ -14,7 +14,7 @@
 #' y <- qlone(2)
 #' p <- 2*x^2 + 3*y - 5
 #' getCoefficient(p, 2)
-#' getCoefficient(p, c(2, 0))
+#' getCoefficient(p, c(2, 0)) # same as getCoefficient(p, 2)
 #' getCoefficient(p, c(0, 1))
 #' getCoefficient(p, 0) # the constant term
 #' getCoefficient(p, 3)
@@ -56,6 +56,30 @@ getConstantTerm <- function(qspray) {
 #' @export
 isConstantQspray <- function(qspray) {
   arity(qspray) == 0L
+}
+
+#' @title Whether a qspray polynomial is null
+#' @description Checks whether a \code{qspray} object defines the zero 
+#'   polynomial.
+#'
+#' @param qspray a \code{qspray} object
+#'
+#' @return A Boolean value.
+#' @export
+isQzero <- function(qspray) {
+  isConstantQspray(qspray) && (getConstantTerm(qspray) == 0L)
+}
+
+#' @title Whether a qspray polynomial is the unit polynomial
+#' @description Checks whether a \code{qspray} object defines the unit 
+#'   polynomial.
+#'
+#' @param qspray a \code{qspray} object
+#'
+#' @return A Boolean value.
+#' @export
+isQone <- function(qspray) {
+  isConstantQspray(qspray) && (getConstantTerm(qspray) == 1L)
 }
 
 #' @title Whether two qsprays are collinear
