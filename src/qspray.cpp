@@ -206,6 +206,31 @@ public:
     Q *= Q2;
     return Q;
   }
+
+  Qspray<T> power(unsigned int n) {
+    typename std::unordered_map<powers,T,PowersHasher> unit;
+    powers pows(0);
+    T      one(1);
+    unit[pows] = one;
+
+    typename std::unordered_map<powers,T,PowersHasher> out;
+    if(n >= 1) {
+      if(n == 1) {
+        out = S;
+      } else {
+        Qspray<T> Out(unit);
+        Qspray<T> Q(S);
+        for(; n > 0; n--) {
+          Out *= Q;
+        }
+        out = Out.get();
+      }
+    } else {
+      out = unit;
+    }
+
+    return Qspray<T>(out);
+  }
   
   Qspray<T> deriv(std::vector<unsigned int> n) {
     typename std::unordered_map<powers,T,PowersHasher> Sprime;
@@ -622,25 +647,27 @@ qspray unit() {
 Rcpp::List qspray_power(const Rcpp::List& Powers,
                         const Rcpp::StringVector& coeffs,
                         unsigned int n) {
-  qspray out;
-  if(n >= 1) {
-    const qspray S = makeQspray(Powers, coeffs);
-    if(n == 1) {
-      out = S;
-    } else {
-      out = unit();
-      Qspray<gmpq> Out(out);
-      Qspray<gmpq> Q(S);
-      for(; n > 0; n--) {
-        Out *= Q;
-      }
-      out = Out.get();
-    }
-  } else {
-    out = unit();
-  }
+   Qspray<gmpq> Q(makeQspray(Powers, coeffs));
+   return retval(Q.power(n).get());
+  // qspray out;
+  // if(n >= 1) {
+  //   const qspray S = makeQspray(Powers, coeffs);
+  //   if(n == 1) {
+  //     out = S;
+  //   } else {
+  //     out = unit();
+  //     Qspray<gmpq> Out(out);
+  //     Qspray<gmpq> Q(S);
+  //     for(; n > 0; n--) {
+  //       Out *= Q;
+  //     }
+  //     out = Out.get();
+  //   }
+  // } else {
+  //   out = unit();
+  // }
 
-  return retval(out);
+  // return retval(out);
 }
 
 
