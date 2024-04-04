@@ -1,12 +1,6 @@
 /* Based on original code by Robin Hankin */
 
-#include <Rcpp.h>
-#include <boost/multiprecision/gmp.hpp>
-#include <complex.h>
-typedef std::vector<signed int>                             powers;
-typedef boost::multiprecision::mpq_rational                 gmpq;
-typedef boost::multiprecision::mpz_int                      gmpi;
-typedef std::complex<gmpq>                                  qcplx;
+#include "qspray.h"
 
 // -------------------------------------------------------------------------- //
 qcplx qxmult(qcplx z1, qcplx z2) {
@@ -52,8 +46,11 @@ typedef std::unordered_map<powers, gmpq, PowersHasher> qspray;
 template<typename T>
 class Qspray {
   const std::unordered_map<powers, T, PowersHasher> S;
-  const T a;
 public:
+  Qspray()
+    : S()
+      {}
+
   Qspray(const std::unordered_map<powers, T, PowersHasher> &S_) 
     : S(S_) 
       {}
@@ -76,6 +73,30 @@ public:
     return result;
   }
 
+  bool operator==(const Qspray<T>& S2) {
+    if(S.size() != S2.size()) {
+      return false;
+    }
+    Qspray<T> Q(S2);
+    typename std::unordered_map<powers,T,PowersHasher>::const_iterator it;
+    powers pows;
+    for(it = S.begin(); it != S.end(); ++it) {
+      pows = it->first;
+      if(S[pows] != Q[pows]) {
+        return false;
+      } else {
+        Q.erase(pows);
+      }
+    }
+    // at this point, Q[k] == S[k] for every index 'k' of S;
+    // it remains to check that every element of Q has been accounted for:
+    if(Q.empty()) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   Qspray<T> operator-() {
     Qspray<T> Q(S);
     typename std::unordered_map<powers,T,PowersHasher>::const_iterator it;
@@ -90,66 +111,69 @@ public:
   Qspray<T> operator+(const Qspray<T>& S2) {
     Qspray<T> Q(S2);
     typename std::unordered_map<powers,T,PowersHasher>::const_iterator it;
-    powers pows;  
+    powers pows;
+    const T zero(); // il s'agira de définir T() pour les ratio of polynomials :-)
     for(it = S.begin(); it != S.end(); ++it) {
       pows = it->first;
-      Q[pows] += it->second;
-      if(Q[pows] == -Q[pows]) {
-        Q.erase(pows);
+      T a = it->second + Q[pows]; // quid si pas de clé pows? https://stackoverflow.com/q/78272300/1100107
+      if(a == zero) {
+        Q.erase(pows); // il a peut-être pas de clé pows!
+      } else {
+        Q[pows] = a; 
       }
     }
     return Q;
   }
+
+  Qspray<T> operator-(const Qspray<T>& S2) {
+    return S + (-S2);
+  }
+
+  Qspray<T> operator*(const Qspray<T> S2) {
+    Qspray<T> Sout;
+    typename std::unordered_map<powers,T,PowersHasher>::const_iterator it1, it2;
+    const T zero = T();
+    powers powssum;
+    signed int i;
+    for(it1 = S.begin(); it1 != S.end(); ++it1) {
+      const T r1 = it1->second;
+      if(r1 != zero) {
+        powers pows1 = it1->first;
+        signed int n1 = pows1.size();
+        for(it2 = S2.begin(); it2 != S2.end(); ++it2) {
+          const gmpq r2 = it2->second;
+          if(r2 != zero) {
+            powers pows2 = it2->first;
+            signed int n2 = pows2.size();
+            powssum.clear();
+            if(n1 < n2) {
+              powers gpows = growPowers(pows1, n1, n2);
+              powssum.reserve(n2);
+              for(i = 0; i < n2; i++) {
+                powssum.emplace_back(gpows[i] + pows2[i]);
+              }
+            } else if(n1 > n2) {
+              powers gpows = growPowers(pows2, n2, n1);
+              powssum.reserve(n1);
+              for(i = 0; i < n1; i++) {
+                powssum.emplace_back(pows1[i] + gpows[i]);
+              }
+            } else {
+              powssum.reserve(n1);
+              for(i = 0; i < n1; i++) {
+                powssum.emplace_back(pows1[i] + pows2[i]);
+              }
+            }
+            Sout[powssum] += r1 * r2;
+          }
+        }
+      }
+    }
+    return Sout;    
+  }
   
 
 };
-
-// -------------------------------------------------------------------------- //
-std::string q2str(gmpq r) {
-  const gmpi numer = boost::multiprecision::numerator(r);
-  const gmpi denom = boost::multiprecision::denominator(r);
-  mpz_t p;
-  mpz_init(p);
-  mpz_set(p, numer.backend().data());
-  mpz_t q;
-  mpz_init(q);
-  mpz_set(q, denom.backend().data());
-  const size_t n = mpz_sizeinbase(p, 10) + 2;
-  const size_t d = mpz_sizeinbase(q, 10) + 2;
-  char* cnumer = new char[n];
-  char* cdenom = new char[d];
-  cnumer = mpz_get_str(cnumer, 10, p);
-  cdenom = mpz_get_str(cdenom, 10, q);
-  std::string snumer = cnumer;
-  std::string sdenom = cdenom;
-  delete[] cnumer;
-  delete[] cdenom;
-  mpz_clear(p);
-  mpz_clear(q);
-  return snumer + "/" + sdenom;
-}
-
-
-// -------------------------------------------------------------------------- //
-void simplifyPowers(powers& pows) {
-  int n = pows.size();
-  if(n == 0) {
-    return;
-  }
-  n--;
-  powers::iterator it = pows.end();
-  bool zero = pows[n] == 0;
-  while(zero && n > 0) {
-    it--;
-    n--;
-    zero = pows[n] == 0;
-  }
-  if(zero) {
-    pows = {};
-  } else {
-    pows.erase(it, pows.end());
-  }
-}
 
 
 // -------------------------------------------------------------------------- //
@@ -401,19 +425,6 @@ Rcpp::List qspray_subtract(const Rcpp::List& Powers1,
   return retval(S);
 }
 
-
-// -------------------------------------------------------------------------- //
-powers growPowers(powers pows, signed int m, signed int n) {
-  powers gpows;
-  gpows.reserve(n);
-  for(signed int i = 0; i < m; i++) {
-    gpows.emplace_back(pows[i]);
-  }
-  for(signed int i = m; i < n; i++) {
-    gpows.emplace_back(0);
-  }
-  return gpows;
-}
 
 
 // -------------------------------------------------------------------------- //
