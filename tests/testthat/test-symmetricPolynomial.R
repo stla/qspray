@@ -6,7 +6,7 @@ test_that("Symmetric polynomial", {
   expect_true(isSymmetricPolynomial(f))
 })
 
-test_that("MSPdecomposition", {
+test_that("MSPcombination", {
   qspray <- PSFpoly(4, c(3, 1)) + ESFpoly(4, c(2, 2)) + 4L
-  expect_no_error(MSPdecomposition(qspray, check = TRUE))
+  expect_no_error(MSPcombination(qspray, check = TRUE))
 })

@@ -57,13 +57,13 @@ MSFpoly <- function(m, lambda) {
 }
 
 #' @title Symmetric polynomial in terms of the monomial symmetric polynomials
-#' @description Decomposition of a symmetric polynomial in the basis formed by 
-#'   the monomial symmetric polynomials.
+#' @description Expression of a symmetric polynomial as a linear combination 
+#'   of the monomial symmetric polynomials.
 #'
 #' @param qspray a \code{qspray} object defining a symmetric polynomial 
 #' @param check Boolean, whether to check the symmetry
 #'
-#' @return A list defining the decomposition. Each element of this list is a 
+#' @return A list defining the combination. Each element of this list is a 
 #'   list with two elements: \code{coeff}, a \code{bigq} number, and 
 #'   \code{lambda}, an integer partition; then this list corresponds to the 
 #'   term \code{coeff * MSFpoly(n, lambda)}, where \code{n} is the number of 
@@ -72,8 +72,8 @@ MSFpoly <- function(m, lambda) {
 #'
 #' @examples
 #' qspray <- PSFpoly(4, c(3, 1)) + ESFpoly(4, c(2, 2)) + 4L
-#' MSPdecomposition(qspray)
-MSPdecomposition <- function(qspray, check = TRUE) {
+#' MSPcombination(qspray)
+MSPcombination <- function(qspray, check = TRUE) {
   constantTerm <- getCoefficient(qspray, integer(0L))
   M <- powersMatrix(qspray - constantTerm)
   M <- M[lexorder(M), , drop = FALSE]
@@ -286,7 +286,7 @@ zlambda <- function(lambda, alpha) {
 PSPexpression <- function(qspray) {
   n <- arity(qspray)
   
-  # mspdecomposition <- MSPdecomposition(qspray)
+  # mspdecomposition <- MSPcombination(qspray)
   # pspexpression <- qzero()
   # for(t in mspdecomposition) {
   #   xs     <- MSPinPSbasis(t[["lambda"]])
@@ -309,7 +309,7 @@ PSPexpression <- function(qspray) {
   G <- lapply(i_, function(i) P[[i]] - Y[[i]])
   B <- groebner(G, TRUE, FALSE)
   constantTerm <- getCoefficient(qspray, integer(0L))
-  g <- qdivision(qspray - constantTerm, B)
+  g            <- qdivision(qspray - constantTerm, B)
   check <- all(vapply(g@powers, function(pwr) {
     length(pwr) > n && all(pwr[1L:n] == 0L)
   }, logical(1L)))
