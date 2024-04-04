@@ -6,12 +6,12 @@ Rcpp::List qsprayDivisionRcpp(
   Rcpp::List Powers2, Rcpp::StringVector coeffs2,
   int d
 ) {
-  Qspray<gmpq> p(makeQspray(Powers1, coeffs1));
-  Qspray<gmpq> g(makeQspray(Powers2, coeffs2));
+  Qspray<gmpq> p = makeQspray(Powers1, coeffs1);
+  Qspray<gmpq> g = makeQspray(Powers2, coeffs2);
   std::pair<Qspray<gmpq>,Qspray<gmpq>> QR = qsprayDivision(p, g, d);
   return Rcpp::List::create(
-    Rcpp::Named("Q") = retval(QR.first.get()),
-    Rcpp::Named("R") = retval(QR.second.get())
+    Rcpp::Named("Q") = returnQspray(QR.first),
+    Rcpp::Named("R") = returnQspray(QR.second)
   );
 }
 
@@ -54,5 +54,5 @@ Rcpp::List BBdivisionRcpp(
       p -= ltp;
     }
   }
-  return retval(r.get());
+  return returnQspray(r);
 }

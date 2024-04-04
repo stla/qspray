@@ -27,8 +27,6 @@ typedef std::unordered_map<powers, gmpq, PowersHasher> qspray;
 std::string q2str(gmpq);
 void simplifyPowers(powers&);
 powers growPowers(powers, signed int, signed int);
-qspray makeQspray(const Rcpp::List&, const Rcpp::StringVector&); 
-Rcpp::List retval(const qspray&);
 
 
 // -------------------------------------------------------------------------- //
@@ -73,6 +71,36 @@ public:
       }
     } 
     return result;
+  }
+
+  int numberOfVariables() {
+    int d = 0;
+    for(const auto& term : S) {
+      int n = term.first.size();
+      if(n > d) {
+        d = n;
+      }
+    }
+    return d;
+  }
+
+  bool isConstant() {
+    int nterms = S.size();
+    bool result = false;
+    if(nterms == 0) {
+      result = true;
+    } else if(nterms == 1) {
+      powers pows(0);
+      if(auto search = S.find(pows); search != S.end()) {
+        result = true;
+      }
+    }
+    return result;
+  }
+
+  T constantTerm() {
+    powers pows(0);
+    return S[pows];
   }
 
   bool operator==(const Qspray<T>& Q) {
@@ -259,6 +287,9 @@ public:
 
 };
 
+Qspray<gmpq> makeQspray(const Rcpp::List&, const Rcpp::StringVector&); 
+Rcpp::List returnQspray(Qspray<gmpq>);
+
 
 // -------------------------------------------------------------------------- //
 template <typename T>
@@ -267,19 +298,6 @@ Qspray<T> scalarQspray(T x) {
   powers pows(0);
   singleton[pows] = x;
   return Qspray<T>(singleton);
-}
-
-template <typename T>
-int numberOfVariables(const Qspray<T>& Q) {
-  std::unordered_map<powers,T,PowersHasher> S = Q.get();
-  int d = 0;
-  for(const auto& term : S) {
-    int n = term.first.size();
-    if(n > d) {
-      d = n;
-    }
-  }
-  return d;
 }
 
 static Qspray<gmpq> gcdQsprays(const Qspray<gmpq>& Q1, const Qspray<gmpq>& Q2) {
@@ -406,17 +424,21 @@ class RatioOfQsprays {
   int       dimension;
 
 public:
-  // constructors -----
+  // constructors ---------------
   RatioOfQsprays()
     : numerator(scalarQspray<T>(T(0))), 
       denominator(scalarQspray<T>(T(1))),
       dimension(0)
       {}
 
-  RatioOfQsprays(const Qspray<T>& numerator_, const Qspray<T>& denominator_) 
+  RatioOfQsprays(Qspray<T> numerator_, Qspray<T> denominator_) 
     : numerator(numerator_), 
       denominator(denominator_),
-      dimension(std::max<int>(numberOfVariables(numerator_), numberOfVariables(denominator_)))
+      dimension(
+        std::max<int>(
+          numerator_.numberOfVariables(), denominator_.numberOfVariables()
+        )
+      )
       {}
 
   RatioOfQsprays(int k)
@@ -425,15 +447,24 @@ public:
       dimension(0)
       {}
   
-  // methods ----------
-  std::pair<Qspray<T>,Qspray<T>> get() {
-    return std::pair<Qspray<T>,Qspray<T>>(numerator, denominator);
-  } 
+  // methods --------------------
+  Qspray<T> getNumerator() {
+    return numerator;
+  }
+
+  Qspray<T> getDenominator() {
+    return denominator;
+  }
 
   void simplify() {
   	Qspray<T> G = gcdQsprays(numerator, denominator);
   	numerator   = QuotientQsprays(numerator, G);
   	denominator = QuotientQsprays(denominator, G);
+    if(denominator.isConstant()) {
+      Qspray<T> d = scalarQspray<T>(T(1) / denominator.constantTerm());
+      numerator   *= d;
+      denominator *= d;
+    }
   }
 
   RatioOfQsprays<T> operator+=(const RatioOfQsprays<T>& ROQ2) {
@@ -494,5 +525,43 @@ public:
 
 };
 
+
+// -------------------------------------------------------------------------- //
+static Rcpp::List returnRatioOfQsprays(RatioOfQsprays<gmpq> ROQ) {
+  return Rcpp::List::create(
+    Rcpp::Named("numerator")   = returnQspray(ROQ.getNumerator()),
+    Rcpp::Named("denominator") = returnQspray(ROQ.getDenominator())
+  );
+}
+
+
+// -------------------------------------------------------------------------- //
+static RatioOfQsprays<gmpq> makeRatioOfQsprays(
+  const Rcpp::List& Numerator, 
+  const Rcpp::List& Denominator
+) {
+  Rcpp::List Powers1 = Numerator["powers"];
+  Rcpp::List Powers2 = Denominator["powers"];
+  Rcpp::StringVector coeffs1 = Numerator["coeffs"];
+  Rcpp::StringVector coeffs2 = Denominator["coeffs"];
+  qspray S1;
+  for(int i = 0; i < Powers1.size(); i++) {
+    Rcpp::IntegerVector Exponents = Powers1(i);
+    gmpq coeff(Rcpp::as<std::string>(coeffs1(i)));
+    powers pows(Exponents.begin(), Exponents.end());
+    S1[pows] = coeff;
+  }
+  qspray S2;
+  for(int i = 0; i < Powers2.size(); i++) {
+    Rcpp::IntegerVector Exponents = Powers2(i);
+    gmpq coeff(Rcpp::as<std::string>(coeffs2(i)));
+    powers pows(Exponents.begin(), Exponents.end());
+    S2[pows] = coeff;
+  }
+  Qspray<gmpq> Q1(S1);
+  Qspray<gmpq> Q2(S2);
+  RatioOfQsprays<gmpq> ROQ(Q1, Q2);
+  return ROQ;
+}
 
 #endif
