@@ -259,4 +259,43 @@ public:
 };
 
 
+// -------------------------------------------------------------------------- //
+template <typename T>
+Qspray<T> scalarQspray(T x) {
+  typename std::unordered_map<powers,T,PowersHasher> singleton;
+  powers pows(0);
+  singleton[pows] = x;
+  return Qspray<T>(singleton);
+}
+
+
+// ---------------------------------------------------------------------------//
+template<typename T>
+class RatioOfQsprays {
+
+  Qspray<T> numerator;
+  Qspray<T> denominator; 
+
+public:
+  // constructors -----
+  RatioOfQsprays()
+    : numerator(scalarQspray<T>(0)), denominator(scalarQspray<T>(1))
+      {}
+
+  RatioOfQsprays(const Qspray<T>& numerator_, const Qspray<T>& denominator_) 
+    : numerator(numerator_), denominator(denominator_)
+      {}
+
+  RatioOfQsprays(int k)
+    : numerator(scalarQspray<T>(k)), denominator(scalarQspray<T>(1))
+      {}
+  
+  // methods -----
+  std::pair<Qspray<T>,Qspray<T>> get() {
+    return std::make_pair<Qspray<T>,Qspray<T>>(numerator, denominator);
+  } 
+
+};
+
+
 #endif

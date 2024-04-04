@@ -27,17 +27,6 @@ qcplx qxpow(qcplx z, unsigned k) {
 }
 
 
-
-// -------------------------------------------------------------------------- //
-template <typename T>
-Qspray<T> scalarQspray(T x) {
-  typename std::unordered_map<powers,T,PowersHasher> singleton;
-  powers pows(0);
-  singleton[pows] = x;
-  return Qspray<T>(singleton);
-}
-
-
 // -------------------------------------------------------------------------- //
 qspray prepare(const Rcpp::List Powers, const Rcpp::StringVector coeffs) {
   qspray S;
