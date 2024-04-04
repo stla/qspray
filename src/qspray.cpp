@@ -136,7 +136,6 @@ public:
   }
 
   Qspray<T> operator-=(const Qspray<T>& Q) {
-//    typename std::unordered_map<powers,T,PowersHasher> SS(S);
     typename std::unordered_map<powers,T,PowersHasher> S2 = Q.S;
     typename std::unordered_map<powers,T,PowersHasher>::const_iterator it;
     powers pows;
@@ -201,6 +200,42 @@ public:
     return Qspray<T>(Sout);
   }
   
+  Qspray<T> deriv(std::vector<unsigned int> n) {
+    typename std::unordered_map<powers,T,PowersHasher> Sprime;
+    typename std::unordered_map<powers,T,PowersHasher>::const_iterator it;
+    powers v;
+    signed int j, J, nj, expnt;
+    signed int N = n.size();
+    T zero;
+
+    for(it = S.begin(); it != S.end(); ++it) {
+      std::vector<signed int> exponents = it->first;
+      J = exponents.size();
+      if(J < N) {
+        continue;
+      }
+      T coeff = S[it->first];
+      for(j = 0; j < N; j++) {
+        nj = n[j];
+        while((nj > 0) && (coeff != zero)) { // while loop because it might not run at all
+          coeff *= exponents[j]; // multiply coeff first, then decrement exponent 
+          exponents[j]--;
+          nj--;
+        }
+      }
+      if(coeff != zero) {
+        v.clear();
+        for(j = 0; j < J; j++) {
+          expnt = exponents[j];
+          v.push_back(expnt);
+        }
+        simplifyPowers(v);
+        Sprime[v] += coeff;  // increment because v is not row-unique any more
+      }
+    }  // loop closes
+    
+    return Qspray<T>(Sprime);
+  }
 
 };
 
@@ -339,51 +374,56 @@ Rcpp::List qspray_deriv(
     const Rcpp::List& Powers, const Rcpp::StringVector& coeffs,   
     const Rcpp::IntegerVector& n
 ){
-  qspray S;
-  powers v;
-  signed int i, j, J, nj, expnt;
-  signed int N = n.size();
-  signed int nterms = coeffs.size();
-  std::vector<std::vector<signed int>> Powers_out(nterms);
-  std::vector<signed int> sizes(nterms);
+  Qspray<gmpq> Q(makeQspray(Powers, coeffs));
+  std::vector<unsigned int> orders(n.begin(), n.end());
+  Qspray<gmpq> Qprime = Q.deriv(orders);
+  return retval(Qprime.get());
 
-  for(i = 0 ; i < nterms; i++) {
-    Rcpp::IntegerVector Exponents = Powers(i);
-    J = Exponents.size();
-    sizes[i] = J;
-    Powers_out[i].reserve(J);
-    for(j = 0 ; j < J; j++){
-      Powers_out[i].emplace_back(Exponents(j));
-    }
-  }
+  // qspray S;
+  // powers v;
+  // signed int i, j, J, nj, expnt;
+  // signed int N = n.size();
+  // signed int nterms = coeffs.size();
+  // std::vector<std::vector<signed int>> Powers_out(nterms);
+  // std::vector<signed int> sizes(nterms);
+
+  // for(i = 0 ; i < nterms; i++) {
+  //   Rcpp::IntegerVector Exponents = Powers(i);
+  //   J = Exponents.size();
+  //   sizes[i] = J;
+  //   Powers_out[i].reserve(J);
+  //   for(j = 0 ; j < J; j++){
+  //     Powers_out[i].emplace_back(Exponents(j));
+  //   }
+  // }
   
-  for(i = 0; i < nterms; i++) {
-    std::vector<signed int> exponents = Powers_out[i];
-    J = sizes[i];
-    if(J < N) {
-      continue;
-    }
-    gmpq coeff(Rcpp::as<std::string>(coeffs(i)));
-    for(j = 0; j < N; j++) {
-      nj = n(j);
-      while((nj > 0) && (coeff != 0)) { // while loop because it might not run at all
-        coeff *= exponents[j]; // multiply coeff first, then decrement exponent 
-        exponents[j]--;
-        nj--;
-      }
-    }
-    if(coeff != 0) {
-      v.clear();
-      for(j = 0; j < J; j++) {
-        expnt = exponents[j];
-        v.push_back(expnt);
-      }
-      simplifyPowers(v);
-      S[v] += coeff;  // increment because v is not row-unique any more
-    }
-  }  // i loop closes
+  // for(i = 0; i < nterms; i++) {
+  //   std::vector<signed int> exponents = Powers_out[i];
+  //   J = sizes[i];
+  //   if(J < N) {
+  //     continue;
+  //   }
+  //   gmpq coeff(Rcpp::as<std::string>(coeffs(i)));
+  //   for(j = 0; j < N; j++) {
+  //     nj = n(j);
+  //     while((nj > 0) && (coeff != 0)) { // while loop because it might not run at all
+  //       coeff *= exponents[j]; // multiply coeff first, then decrement exponent 
+  //       exponents[j]--;
+  //       nj--;
+  //     }
+  //   }
+  //   if(coeff != 0) {
+  //     v.clear();
+  //     for(j = 0; j < J; j++) {
+  //       expnt = exponents[j];
+  //       v.push_back(expnt);
+  //     }
+  //     simplifyPowers(v);
+  //     S[v] += coeff;  // increment because v is not row-unique any more
+  //   }
+  // }  // i loop closes
   
-  return retval(S);
+  // return retval(S);
 }
 
 
