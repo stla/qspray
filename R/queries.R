@@ -36,6 +36,28 @@ getCoefficient <- function(qspray, exponents) {
   }
 }
 
+#' @title Get the constant term of a qspray polynomial.
+#'
+#' @param qspray a \code{qspray} object
+#'
+#' @return A \code{bigq} number.
+#' @export
+getConstantTerm <- function(qspray) {
+  getCoefficient(qspray, integer(0L))
+}
+
+#' @title Whether a qspray polynomial is constant
+#' @description Checks whether a \code{qspray} object defines a constant 
+#'   polynomial.
+#'
+#' @param qspray a \code{qspray} object
+#'
+#' @return A Boolean value.
+#' @export
+isConstantQspray <- function(qspray) {
+  arity(qspray) == 0L
+}
+
 #' @title Whether two qsprays are collinear
 #' @description Checks whether two qsprays are collinear, that is, whether 
 #'   they are equal up to a scalar factor.
