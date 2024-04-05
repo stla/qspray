@@ -45,3 +45,27 @@ qspray_power <- function(Powers, coeffs, n) {
     .Call(`_qspray_qspray_power`, Powers, coeffs, n)
 }
 
+ROQaddition <- function(Numerator1, Denominator1, Numerator2, Denominator2) {
+    .Call(`_qspray_ROQaddition`, Numerator1, Denominator1, Numerator2, Denominator2)
+}
+
+ROQsubtraction <- function(Numerator1, Denominator1, Numerator2, Denominator2) {
+    .Call(`_qspray_ROQsubtraction`, Numerator1, Denominator1, Numerator2, Denominator2)
+}
+
+ROQmultiplication <- function(Numerator1, Denominator1, Numerator2, Denominator2) {
+    .Call(`_qspray_ROQmultiplication`, Numerator1, Denominator1, Numerator2, Denominator2)
+}
+
+ROQdivision <- function(Numerator1, Denominator1, Numerator2, Denominator2) {
+    .Call(`_qspray_ROQdivision`, Numerator1, Denominator1, Numerator2, Denominator2)
+}
+
+ROQpower <- function(Numerator, Denominator, n) {
+    .Call(`_qspray_ROQpower`, Numerator, Denominator, n)
+}
+
+ROQequality <- function(Numerator1, Denominator1, Numerator2, Denominator2) {
+    .Call(`_qspray_ROQequality`, Numerator1, Denominator1, Numerator2, Denominator2)
+}
+

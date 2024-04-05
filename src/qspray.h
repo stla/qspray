@@ -593,7 +593,8 @@ public:
   }
 
   bool operator==(const RatioOfQsprays<T>& ROQ2) {
-    return ROQ1numerator == ROQ2.numerator;
+    Qspray<T> Q = numerator * ROQ2.denominator + denominator * ROQ2.numerator; 
+    return Q.isConstant() && Q.constantTerm() == T(0);
   }
 
 };
