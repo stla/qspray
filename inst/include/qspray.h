@@ -324,6 +324,20 @@ namespace QSPRAY {
       }
       return Result;
     }
+
+    void scale(T lambda) {
+      typename std::unordered_map<powers,T,PowersHasher>::const_iterator it;
+      if(lambda == T(0)) {
+        for(it = S.begin(); it != S.end(); ++it) {
+          S.erase(it->first);
+        }
+      } else {
+        for(it = S.begin(); it != S.end(); ++it) {
+          pows = it->first;
+          S[it->first] *= lambda;
+        }        
+      }
+    }
     
     Qspray<T> deriv(std::vector<unsigned int> n) {
       typename std::unordered_map<powers,T,PowersHasher> Sprime;
