@@ -525,7 +525,6 @@ public:
 
 };
 
-
 // -------------------------------------------------------------------------- //
 static Rcpp::List returnRatioOfQsprays(RatioOfQsprays<gmpq> ROQ) {
   return Rcpp::List::create(
@@ -563,5 +562,54 @@ static RatioOfQsprays<gmpq> makeRatioOfQsprays(
   RatioOfQsprays<gmpq> ROQ(Q1, Q2);
   return ROQ;
 }
+
+// -------------------------------------------------------------------------- //
+typedef Qspray<RatioOfQsprays<gmpq>>                                   SymbolicQspray;
+typedef std::unordered_map<powers, RatioOfQsprays<gmpq>, PowersHasher> symbolicQspray;
+
+
+static Rcpp::List returnSymbolicQspray(SymbolicQspray SQ) { // used to return a list to R
+  symbolicQspray S = SQ.get();
+  if(S.size() == 0) {
+    return Rcpp::List::create(Rcpp::Named("powers") = R_NilValue,
+                              Rcpp::Named("coeffs") = R_NilValue);
+  } else {
+    Rcpp::List Powers(S.size());
+    powers pows;
+    unsigned int row = 0, col = 0;
+    Rcpp::List Coeffs(S.size());
+    unsigned int i = 0;
+    for(auto it = S.begin(); it != S.end(); ++it) {
+      pows = it->first;
+      Rcpp::IntegerVector Exponents(pows.size());
+      col = 0;
+      for(auto ci = pows.begin(); ci != pows.end(); ++ci) {
+        Exponents(col++) = *ci;
+      }
+      Powers(row++) = Exponents;
+      Coeffs(i++) = returnRatioOfQsprays(it->second);
+    }
+    return Rcpp::List::create(Rcpp::Named("powers") = Powers,
+                              Rcpp::Named("coeffs") = Coeffs);
+  }
+}
+
+// -------------------------------------------------------------------------- //
+static SymbolicQspray makeSymbolicQspray(
+  const Rcpp::List& Powers, const Rcpp::List& Coeffs
+) {
+  symbolicQspray S;
+  for(int i = 0; i < Powers.size(); i++) {
+    Rcpp::IntegerVector Exponents = Powers(i);
+    powers pows(Exponents.begin(), Exponents.end());
+    Rcpp::List coeff = Coeffs(i);
+    Rcpp::List numerator   = coeff["numerator"];
+    Rcpp::List denominator = coeff["denominator"];
+    S[pows] = makeRatioOfQsprays(numerator, denominator);
+  }
+  return SymbolicQspray(S);
+}
+
+
 
 #endif
