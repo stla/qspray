@@ -333,7 +333,6 @@ namespace QSPRAY {
         }
       } else {
         for(it = S.begin(); it != S.end(); ++it) {
-          pows = it->first;
           S[it->first] *= lambda;
         }        
       }
