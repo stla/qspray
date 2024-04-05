@@ -31,7 +31,8 @@ Rcpp::StringVector evalQxspray(const Rcpp::List Powers,
                                const Rcpp::StringVector coeffs,
                                const Rcpp::StringVector v_re,
                                const Rcpp::StringVector v_im) {
-  qspray S = makeQspray(Powers, coeffs);
+  Qspray<gmpq> Q = makeQspray(Powers, coeffs);
+  qspray S       = Q.get();
 
   std::vector<qcplx> v;
   int n = v_re.size();
