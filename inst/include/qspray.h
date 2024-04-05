@@ -638,7 +638,7 @@ static RatioOfQsprays<gmpq> makeRatioOfQsprays(
 
 // -------------------------------------------------------------------------- //
 // [[Rcpp::export]]
-Rcpp::List ROQaddition(
+static Rcpp::List ROQaddition(
   const Rcpp::List& Numerator1, const Rcpp::List& Denominator1,
   const Rcpp::List& Numerator2, const Rcpp::List& Denominator2
 ) {
@@ -649,7 +649,7 @@ Rcpp::List ROQaddition(
 
 // -------------------------------------------------------------------------- //
 // [[Rcpp::export]]
-Rcpp::List ROQsubtraction(
+static Rcpp::List ROQsubtraction(
   const Rcpp::List& Numerator1, const Rcpp::List& Denominator1,
   const Rcpp::List& Numerator2, const Rcpp::List& Denominator2
 ) {
@@ -660,7 +660,7 @@ Rcpp::List ROQsubtraction(
 
 // -------------------------------------------------------------------------- //
 // [[Rcpp::export]]
-Rcpp::List ROQmultiplication(
+static Rcpp::List ROQmultiplication(
   const Rcpp::List& Numerator1, const Rcpp::List& Denominator1,
   const Rcpp::List& Numerator2, const Rcpp::List& Denominator2
 ) {
@@ -671,7 +671,7 @@ Rcpp::List ROQmultiplication(
 
 // -------------------------------------------------------------------------- //
 // [[Rcpp::export]]
-Rcpp::List ROQdivision(
+static Rcpp::List ROQdivision(
   const Rcpp::List& Numerator1, const Rcpp::List& Denominator1,
   const Rcpp::List& Numerator2, const Rcpp::List& Denominator2
 ) {
@@ -682,7 +682,7 @@ Rcpp::List ROQdivision(
 
 // -------------------------------------------------------------------------- //
 // [[Rcpp::export]]
-Rcpp::List ROQpower(
+static Rcpp::List ROQpower(
   const Rcpp::List& Numerator, const Rcpp::List& Denominator, int n
 ) {
   RatioOfQsprays<gmpq> ROQ = makeRatioOfQsprays(Numerator, Denominator);
@@ -691,7 +691,7 @@ Rcpp::List ROQpower(
 
 // -------------------------------------------------------------------------- //
 // [[Rcpp::export]]
-bool ROQequality(
+static bool ROQequality(
   const Rcpp::List& Numerator1, const Rcpp::List& Denominator1,
   const Rcpp::List& Numerator2, const Rcpp::List& Denominator2
 ) {
