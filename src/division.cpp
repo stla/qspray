@@ -3,12 +3,11 @@
 // [[Rcpp::export]]
 Rcpp::List qsprayDivisionRcpp(
   Rcpp::List Powers1, Rcpp::StringVector coeffs1,
-  Rcpp::List Powers2, Rcpp::StringVector coeffs2,
-  int d
+  Rcpp::List Powers2, Rcpp::StringVector coeffs2
 ) {
   Qspray<gmpq> p = makeQspray(Powers1, coeffs1);
   Qspray<gmpq> g = makeQspray(Powers2, coeffs2);
-  std::pair<Qspray<gmpq>,Qspray<gmpq>> QR = qsprayDivision(p, g, d);
+  std::pair<Qspray<gmpq>,Qspray<gmpq>> QR = qsprayDivision(p, g);
   return Rcpp::List::create(
     Rcpp::Named("Q") = returnQspray(QR.first),
     Rcpp::Named("R") = returnQspray(QR.second)

@@ -17,12 +17,11 @@
 #' divis <- qsprayDivision(A, B)
 #' B * divis[["Q"]] + divis[["R"]] == A # should be TRUE
 qsprayDivision <- function(qsprayA, qsprayB) {
-  if(qsprayB == qzero()) {
+  if(isQzero(qsprayB)) {
     stop("Division by zero.")
   }
   divis <- qsprayDivisionRcpp(
-    qsprayA@powers, qsprayA@coeffs, qsprayB@powers, qsprayB@coeffs, 
-    max(arity(qsprayA), arity(qsprayB))
+    qsprayA@powers, qsprayA@coeffs, qsprayB@powers, qsprayB@coeffs
   ) 
   Q <- qspray_from_list(divis[["Q"]])
   R <- qspray_from_list(divis[["R"]])

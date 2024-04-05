@@ -9,6 +9,10 @@ typedef boost::multiprecision::mpq_rational                 gmpq;
 typedef boost::multiprecision::mpz_int                      gmpi;
 typedef std::complex<gmpq>                                  qcplx;
 
+std::string q2str(gmpq);
+void simplifyPowers(powers&);
+powers growPowers(powers, signed int, signed int);
+
 // -------------------------------------------------------------------------- //
 class PowersHasher {
  public:
@@ -24,9 +28,6 @@ class PowersHasher {
 
 typedef std::unordered_map<powers, gmpq, PowersHasher> qspray;
 
-std::string q2str(gmpq);
-void simplifyPowers(powers&);
-powers growPowers(powers, signed int, signed int);
 
 
 // -------------------------------------------------------------------------- //
@@ -61,7 +62,7 @@ public:
   bool isNull() {
     typename std::unordered_map<powers,T,PowersHasher>::const_iterator it;
     powers pows;
-    T zero;
+    T zero(0);
     bool result = true;
     for(it = S.begin(); it != S.end(); ++it) {
       pows = it->first;
@@ -142,7 +143,7 @@ public:
     typename std::unordered_map<powers,T,PowersHasher> S2 = Q.S;
     typename std::unordered_map<powers,T,PowersHasher>::const_iterator it;
     powers pows;
-    const T zero; // il s'agira de définir T() pour les ratio of polynomials :-)
+    const T zero(0);
     for(it = S2.begin(); it != S2.end(); ++it) {
       pows = it->first;
       S[pows] += it->second;
@@ -163,7 +164,7 @@ public:
     typename std::unordered_map<powers,T,PowersHasher> S2 = Q.S;
     typename std::unordered_map<powers,T,PowersHasher>::const_iterator it;
     powers pows;
-    const T zero; // il s'agira de définir T() pour les ratio of polynomials :-)
+    const T zero(0);
     for(it = S2.begin(); it != S2.end(); ++it) {
       pows = it->first;
       S[pows] -= it->second;
@@ -184,7 +185,7 @@ public:
     typename std::unordered_map<powers,T,PowersHasher> S2 = Q.S;
     typename std::unordered_map<powers,T,PowersHasher> Sout;
     typename std::unordered_map<powers,T,PowersHasher>::const_iterator it1, it2;
-    const T zero;
+    const T zero(0);
     powers powssum;
     signed int i;
     for(it1 = S.begin(); it1 != S.end(); ++it1) {
@@ -254,8 +255,7 @@ public:
     powers v;
     signed int j, J, nj, expnt;
     signed int N = n.size();
-    T zero;
-
+    T zero(0);
     for(it = S.begin(); it != S.end(); ++it) {
       std::vector<signed int> exponents = it->first;
       J = exponents.size();
@@ -380,8 +380,9 @@ static Qspray<gmpq> quotient(Rcpp::List f, Rcpp::List g) {
 }
 
 static std::pair<Qspray<gmpq>,Qspray<gmpq>> qsprayDivision(
-  Qspray<gmpq>& p, Qspray<gmpq>& g, int d
+  Qspray<gmpq>& p, Qspray<gmpq>& g
 ) {
+  int d = std::max<int>(p.numberOfVariables(), g.numberOfVariables());
   Rcpp::List LTg = leadingTerm(g, d);
   Qspray<gmpq> q;
   Qspray<gmpq> r;
@@ -411,8 +412,8 @@ static std::pair<Qspray<gmpq>,Qspray<gmpq>> qsprayDivision(
   return std::pair<Qspray<gmpq>,Qspray<gmpq>>(q, r);
 }
 
-static Qspray<gmpq> QuotientQsprays(Qspray<gmpq>& A, Qspray<gmpq>& B, int d) {
-  return qsprayDivision(A, B, d).first;
+static Qspray<gmpq> QuotientQsprays(Qspray<gmpq>& A, Qspray<gmpq>& B) {
+  return qsprayDivision(A, B).first;
 }
 
 // ---------------------------------------------------------------------------//
