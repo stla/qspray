@@ -61,5 +61,5 @@ Rcpp::StringVector evalQxspray(const Rcpp::List Powers,
     result += term;
   }
 
-  return Rcpp::StringVector::create(q2str(result.real()), q2str(result.imag()));
+  return Rcpp::StringVector::create(QSPRAY::utils::q2str(result.real()), QSPRAY::utils::q2str(result.imag()));
 }

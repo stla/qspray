@@ -11,68 +11,71 @@ typedef std::complex<gmpq>                                  qcplx;
 
 
 // -------------------------------------------------------------------------- //
-std::string q2str(gmpq r) {
-  const gmpi numer = boost::multiprecision::numerator(r);
-  const gmpi denom = boost::multiprecision::denominator(r);
-  mpz_t p;
-  mpz_init(p);
-  mpz_set(p, numer.backend().data());
-  mpz_t q;
-  mpz_init(q);
-  mpz_set(q, denom.backend().data());
-  const size_t n = mpz_sizeinbase(p, 10) + 2;
-  const size_t d = mpz_sizeinbase(q, 10) + 2;
-  char* cnumer = new char[n];
-  char* cdenom = new char[d];
-  cnumer = mpz_get_str(cnumer, 10, p);
-  cdenom = mpz_get_str(cdenom, 10, q);
-  std::string snumer = cnumer;
-  std::string sdenom = cdenom;
-  delete[] cnumer;
-  delete[] cdenom;
-  mpz_clear(p);
-  mpz_clear(q);
-  return snumer + "/" + sdenom;
-}
-
-
-// -------------------------------------------------------------------------- //
-void simplifyPowers(powers& pows) {
-  int n = pows.size();
-  if(n == 0) {
-    return;
-  }
-  n--;
-  powers::iterator it = pows.end();
-  bool zero = pows[n] == 0;
-  while(zero && n > 0) {
-    it--;
-    n--;
-    zero = pows[n] == 0;
-  }
-  if(zero) {
-    pows = {};
-  } else {
-    pows.erase(it, pows.end());
-  }
-}
-
-// -------------------------------------------------------------------------- //
-powers growPowers(powers pows, signed int m, signed int n) {
-  powers gpows;
-  gpows.reserve(n);
-  for(signed int i = 0; i < m; i++) {
-    gpows.emplace_back(pows[i]);
-  }
-  for(signed int i = m; i < n; i++) {
-    gpows.emplace_back(0);
-  }
-  return gpows;
-}
-
-
-// -------------------------------------------------------------------------- //
 namespace QSPRAY {
+
+  // -------------------------------------------------------------------------- //
+  namespace utils {
+
+    // -------------------------------------------------------------------------- //
+    static std::string q2str(gmpq r) {
+      const gmpi numer = boost::multiprecision::numerator(r);
+      const gmpi denom = boost::multiprecision::denominator(r);
+      mpz_t p;
+      mpz_init(p);
+      mpz_set(p, numer.backend().data());
+      mpz_t q;
+      mpz_init(q);
+      mpz_set(q, denom.backend().data());
+      const size_t n = mpz_sizeinbase(p, 10) + 2;
+      const size_t d = mpz_sizeinbase(q, 10) + 2;
+      char* cnumer = new char[n];
+      char* cdenom = new char[d];
+      cnumer = mpz_get_str(cnumer, 10, p);
+      cdenom = mpz_get_str(cdenom, 10, q);
+      std::string snumer = cnumer;
+      std::string sdenom = cdenom;
+      delete[] cnumer;
+      delete[] cdenom;
+      mpz_clear(p);
+      mpz_clear(q);
+      return snumer + "/" + sdenom;
+    }
+
+    // -------------------------------------------------------------------------- //
+    static void simplifyPowers(powers& pows) {
+      int n = pows.size();
+      if(n == 0) {
+        return;
+      }
+      n--;
+      powers::iterator it = pows.end();
+      bool zero = pows[n] == 0;
+      while(zero && n > 0) {
+        it--;
+        n--;
+        zero = pows[n] == 0;
+      }
+      if(zero) {
+        pows = {};
+      } else {
+        pows.erase(it, pows.end());
+      }
+    }
+
+    // -------------------------------------------------------------------------- //
+    static powers growPowers(powers pows, signed int m, signed int n) {
+      powers gpows;
+      gpows.reserve(n);
+      for(signed int i = 0; i < m; i++) {
+        gpows.emplace_back(pows[i]);
+      }
+      for(signed int i = m; i < n; i++) {
+        gpows.emplace_back(0);
+      }
+      return gpows;
+    }
+
+  } // end of namespace utils
 
   class PowersHasher {
    public:
@@ -259,13 +262,13 @@ namespace QSPRAY {
               signed int n2 = pows2.size();
               powssum.clear();
               if(n1 < n2) {
-                powers gpows = growPowers(pows1, n1, n2);
+                powers gpows = QSPRAY::utils::growPowers(pows1, n1, n2);
                 powssum.reserve(n2);
                 for(i = 0; i < n2; i++) {
                   powssum.emplace_back(gpows[i] + pows2[i]);
                 }
               } else if(n1 > n2) {
-                powers gpows = growPowers(pows2, n2, n1);
+                powers gpows = QSPRAY::utils::growPowers(pows2, n2, n1);
                 powssum.reserve(n1);
                 for(i = 0; i < n1; i++) {
                   powssum.emplace_back(pows1[i] + gpows[i]);
@@ -336,7 +339,7 @@ namespace QSPRAY {
             expnt = exponents[j];
             v.push_back(expnt);
           }
-          simplifyPowers(v);
+          QSPRAY::utils::simplifyPowers(v);
           Sprime[v] += coeff;  // increment because v is not row-unique any more
         }
       }  // loop closes
@@ -385,7 +388,7 @@ namespace QSPRAY {
           Exponents(col++) = *ci;
         }
         Powers(row++) = Exponents;
-        Coeffs(i++) = q2str(it->second);
+        Coeffs(i++) = QSPRAY::utils::q2str(it->second);
       }
       return Rcpp::List::create(Rcpp::Named("powers") = Powers,
                                 Rcpp::Named("coeffs") = Coeffs);
@@ -439,9 +442,9 @@ namespace QSPRAY {
       powers leadingPows = pows[index];
       int npows = leadingPows.size();
       if(npows < d) {
-        leadingPows = growPowers(leadingPows, npows, d);
+        leadingPows = QSPRAY::utils::growPowers(leadingPows, npows, d);
       }
-      std::string leadingCoeff = q2str(coeffs[index]);
+      std::string leadingCoeff = QSPRAY::utils::q2str(coeffs[index]);
       Rcpp::IntegerVector powsRcpp(leadingPows.begin(), leadingPows.end());
       return Rcpp::List::create(
         Rcpp::Named("powers") = powsRcpp,
@@ -473,7 +476,7 @@ namespace QSPRAY {
       gmpq qcoeff = qcoeff_f / qcoeff_g;
       qspray S;
       powers pows(powsRcpp.begin(), powsRcpp.end());
-      simplifyPowers(pows);
+      QSPRAY::utils::simplifyPowers(pows);
       S[pows] = qcoeff;
       return Qspray<gmpq>(S);
     }
@@ -502,7 +505,7 @@ namespace QSPRAY {
         std::string coeff            = LTp["coeff"];
         gmpq   coef(coeff);
         powers pows(powsRcpp.begin(), powsRcpp.end());
-        simplifyPowers(pows);
+        QSPRAY::utils::simplifyPowers(pows);
         qspray LTpspray;
         LTpspray[pows] = coef;
         Qspray<gmpq> ltp(LTpspray);

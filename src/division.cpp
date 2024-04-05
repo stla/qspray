@@ -47,7 +47,7 @@ Rcpp::List BBdivisionRcpp(
       std::string coeff = LTp["coeff"];
       gmpq coef(coeff);
       powers pows(powsRcpp.begin(), powsRcpp.end());
-      simplifyPowers(pows);
+      QSPRAY::utils::simplifyPowers(pows);
       qspray LTpspray;
       LTpspray[pows] = coef;
       Qspray<gmpq> ltp(LTpspray);
@@ -57,3 +57,4 @@ Rcpp::List BBdivisionRcpp(
   }
   return returnQspray(r);
 }
+

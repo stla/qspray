@@ -13,7 +13,7 @@ Qspray<gmpq> prepare(const Rcpp::List& Powers, const Rcpp::StringVector& coeffs)
     gmpq coeff(Rcpp::as<std::string>(coeffs(i)));
     if(coeff != 0) {
       powers pows(Exponents.begin(), Exponents.end());
-      simplifyPowers(pows);
+      QSPRAY::utils::simplifyPowers(pows);
       S[pows] += coeff;
     }
   }
