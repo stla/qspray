@@ -334,6 +334,13 @@ namespace QSPRAY {
     }
   }
 
+  template <typename T>
+  Qspray<T> scalarQspray(T x) {
+    typename std::unordered_map<powers,T,PowersHasher> singleton;
+    powers pows(0);
+    singleton[pows] = x;
+    return Qspray<T>(singleton);
+  }
 
   // -------------------------------------------------------------------------- //
   namespace internal {
@@ -415,7 +422,7 @@ namespace QSPRAY {
 
   } // end namespace QSPRAY::internal
 
-  static std::pair<Qspray<gmpq>,Qspray<gmpq>> qsprayDivision(
+  static inline std::pair<Qspray<gmpq>,Qspray<gmpq>> qsprayDivision(
     Qspray<gmpq>& p, Qspray<gmpq>& g
   ) {
     int d = std::max<int>(p.numberOfVariables(), g.numberOfVariables());
@@ -452,14 +459,6 @@ namespace QSPRAY {
 
 // ---------------------------------------------------------------------------//
 using namespace QSPRAY;
-
-template <typename T>
-Qspray<T> scalarQspray(T x) {
-  typename std::unordered_map<powers,T,PowersHasher> singleton;
-  powers pows(0);
-  singleton[pows] = x;
-  return Qspray<T>(singleton);
-}
 
 static Qspray<gmpq> gcdQsprays(const Qspray<gmpq>& Q1, const Qspray<gmpq>& Q2) {
   return scalarQspray<gmpq>(1);
@@ -511,8 +510,8 @@ public:
 
   void simplify() {
   	Qspray<T> G = gcdQsprays(numerator, denominator);
-  	numerator   = QuotientQsprays(numerator, G);
-  	denominator = QuotientQsprays(denominator, G);
+  	numerator   = QuotientOfQsprays(numerator, G);
+  	denominator = QuotientOfQsprays(denominator, G);
     if(denominator.isConstant()) {
       Qspray<T> d = scalarQspray<T>(T(1) / denominator.constantTerm());
       numerator   *= d;
@@ -521,7 +520,7 @@ public:
   }
 
   RatioOfQsprays<T> operator+=(const RatioOfQsprays<T>& ROQ2) {
-  	numerator   = numerator * ROQ2.denominator + ROQ2.numerator * denominator;
+  	numerator   = numerator * ROQ2.denominator + denominator * ROQ2.numerator;
   	denominator = denominator * ROQ2.denominator;
   	RatioOfQsprays ROQ(numerator, denominator);
   	ROQ.simplify();
@@ -535,7 +534,7 @@ public:
   }
 
   RatioOfQsprays<T> operator-=(const RatioOfQsprays<T>& ROQ2) {
-    numerator   = numerator * ROQ2.denominator - ROQ2.numerator * denominator;
+    numerator   = numerator * ROQ2.denominator - denominator * ROQ2.numerator;
     denominator = denominator * ROQ2.denominator;
     RatioOfQsprays ROQ(numerator, denominator);
     ROQ.simplify();
@@ -576,6 +575,10 @@ public:
     return ROQ;
   }
 
+  bool operator==(const RatioOfQsprays<T>& ROQ2) {
+    return ROQ1numerator == ROQ2.numerator;
+  }
+
 };
 
 // -------------------------------------------------------------------------- //
@@ -585,7 +588,6 @@ static Rcpp::List returnRatioOfQsprays(RatioOfQsprays<gmpq> ROQ) {
     Rcpp::Named("denominator") = returnQspray(ROQ.getDenominator())
   );
 }
-
 
 // -------------------------------------------------------------------------- //
 static RatioOfQsprays<gmpq> makeRatioOfQsprays(
@@ -615,6 +617,62 @@ static RatioOfQsprays<gmpq> makeRatioOfQsprays(
   RatioOfQsprays<gmpq> ROQ(Q1, Q2);
   return ROQ;
 }
+
+// -------------------------------------------------------------------------- //
+// [[Rcpp::export]]
+Rcpp::List ROQaddition(
+  const Rcpp::List& Numerator1, const Rcpp::List& Denominator1,
+  const Rcpp::List& Numerator2, const Rcpp::List& Denominator2
+) {
+  RatioOfQsprays<gmpq> ROQ1 = makeRatioOfQsprays(Numerator1, Denominator1);
+  RatioOfQsprays<gmpq> ROQ2 = makeRatioOfQsprays(Numerator2, Denominator2);
+  return returnRatioOfQsprays(ROQ1 + ROQ2);
+}
+
+// -------------------------------------------------------------------------- //
+// [[Rcpp::export]]
+Rcpp::List ROQsubtraction(
+  const Rcpp::List& Numerator1, const Rcpp::List& Denominator1,
+  const Rcpp::List& Numerator2, const Rcpp::List& Denominator2
+) {
+  RatioOfQsprays<gmpq> ROQ1 = makeRatioOfQsprays(Numerator1, Denominator1);
+  RatioOfQsprays<gmpq> ROQ2 = makeRatioOfQsprays(Numerator2, Denominator2);
+  return returnRatioOfQsprays(ROQ1 - ROQ2);
+}
+
+// -------------------------------------------------------------------------- //
+// [[Rcpp::export]]
+Rcpp::List ROQmultiplication(
+  const Rcpp::List& Numerator1, const Rcpp::List& Denominator1,
+  const Rcpp::List& Numerator2, const Rcpp::List& Denominator2
+) {
+  RatioOfQsprays<gmpq> ROQ1 = makeRatioOfQsprays(Numerator1, Denominator1);
+  RatioOfQsprays<gmpq> ROQ2 = makeRatioOfQsprays(Numerator2, Denominator2);
+  return returnRatioOfQsprays(ROQ1 * ROQ2);
+}
+
+// -------------------------------------------------------------------------- //
+// [[Rcpp::export]]
+Rcpp::List ROQdivision(
+  const Rcpp::List& Numerator1, const Rcpp::List& Denominator1,
+  const Rcpp::List& Numerator2, const Rcpp::List& Denominator2
+) {
+  RatioOfQsprays<gmpq> ROQ1 = makeRatioOfQsprays(Numerator1, Denominator1);
+  RatioOfQsprays<gmpq> ROQ2 = makeRatioOfQsprays(Numerator2, Denominator2);
+  return returnRatioOfQsprays(ROQ1 + ROQ2);
+}
+
+// -------------------------------------------------------------------------- //
+// [[Rcpp::export]]
+bool ROQequality(
+  const Rcpp::List& Numerator1, const Rcpp::List& Denominator1,
+  const Rcpp::List& Numerator2, const Rcpp::List& Denominator2
+) {
+  RatioOfQsprays<gmpq> ROQ1 = makeRatioOfQsprays(Numerator1, Denominator1);
+  RatioOfQsprays<gmpq> ROQ2 = makeRatioOfQsprays(Numerator2, Denominator2);
+  return ROQ1 == ROQ2;
+}
+
 
 // -------------------------------------------------------------------------- //
 typedef Qspray<RatioOfQsprays<gmpq>>                                   SymbolicQspray;
