@@ -1,5 +1,7 @@
 #include "qspray.h"
 
+using namespace QSPRAY;
+
 // -------------------------------------------------------------------------- //
 qcplx qxmult(qcplx z1, qcplx z2) {
   gmpq r1 = z1.real();

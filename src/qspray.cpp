@@ -2,6 +2,7 @@
 
 #include "qspray.h"
 
+using namespace QSPRAY;
 
 // -------------------------------------------------------------------------- //
 Qspray<gmpq> prepare(const Rcpp::List& Powers, const Rcpp::StringVector& coeffs) {
@@ -35,54 +36,6 @@ Qspray<gmpq> prepare(const Rcpp::List& Powers, const Rcpp::StringVector& coeffs)
 Rcpp::List qspray_maker(const Rcpp::List& Powers,
                         const Rcpp::StringVector& coeffs) {
   return returnQspray(prepare(Powers, coeffs));
-}
-
-
-// -------------------------------------------------------------------------- //
-Qspray<gmpq> makeQspray(const Rcpp::List& Powers, const Rcpp::StringVector& coeffs) {
-  qspray S;
-  for(int i = 0; i < Powers.size(); i++) {
-    Rcpp::IntegerVector Exponents = Powers(i);
-    gmpq coeff(Rcpp::as<std::string>(coeffs(i)));
-    powers pows(Exponents.begin(), Exponents.end());
-    S[pows] = coeff;
-  }
-  return Qspray<gmpq>(S);
-}
-
-
-// -------------------------------------------------------------------------- //
-Rcpp::List returnQspray(Qspray<gmpq> Q) {  // used to return a list to R
-
-  // In this function, returning a zero-row matrix results in a
-  // segfault ('memory not mapped').  So we check for 'S' being zero
-  // size and, if so, return a special Nil value.  This corresponds to
-  // an empty spray object.
-
-  qspray S = Q.get();
-
-  if(S.size() == 0) {
-    return Rcpp::List::create(Rcpp::Named("powers") = R_NilValue,
-                              Rcpp::Named("coeffs") = R_NilValue);
-  } else {
-    Rcpp::List Powers(S.size());
-    powers pows;
-    unsigned int row = 0, col = 0;
-    Rcpp::StringVector Coeffs(S.size());
-    unsigned int i = 0;
-    for(auto it = S.begin(); it != S.end(); ++it) {
-      pows = it->first;
-      Rcpp::IntegerVector Exponents(pows.size());
-      col = 0;
-      for(auto ci = pows.begin(); ci != pows.end(); ++ci) {
-        Exponents(col++) = *ci;
-      }
-      Powers(row++) = Exponents;
-      Coeffs(i++) = q2str(it->second);
-    }
-    return Rcpp::List::create(Rcpp::Named("powers") = Powers,
-                              Rcpp::Named("coeffs") = Coeffs);
-  }
 }
 
 

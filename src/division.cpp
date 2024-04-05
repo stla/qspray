@@ -1,5 +1,7 @@
 #include "qspray.h"
 
+using namespace QSPRAY;
+
 // [[Rcpp::export]]
 Rcpp::List qsprayDivisionRcpp(
   Rcpp::List Powers1, Rcpp::StringVector coeffs1,
@@ -27,13 +29,13 @@ Rcpp::List BBdivisionRcpp(
   while(!p.empty()) {
     i = 0;
     divoccured = false;
-    Rcpp::List LTp = leadingTerm(p, d);
+    Rcpp::List LTp = QSPRAY::internal::leadingTerm(p, d);
     while(i < ngs && !divoccured) {
       Rcpp::List LTg = LTgs(i);
-      if(divides(LTg, LTp)) {
+      if(QSPRAY::internal::divides(LTg, LTp)) {
         Rcpp::List g  = gs(i);
         Qspray<gmpq> gspray(makeQspray(g["powers"], g["coeffs"]));
-        Qspray<gmpq> qtnt = quotient(LTp, LTg);
+        Qspray<gmpq> qtnt = QSPRAY::internal::quotient(LTp, LTg);
         p -= qtnt * gspray;
         divoccured = true;
       } else {
