@@ -1,7 +1,7 @@
 #ifndef __HEADER__
 #define __HEADER__
 
-#include <Rcpp.h>
+#include <RcppArmadillo.h>
 #include <boost/multiprecision/gmp.hpp>
 #include <complex.h>
 typedef std::vector<signed int>                             powers;
@@ -123,11 +123,9 @@ namespace QSPRAY {
 
     bool isNull() {
       typename std::unordered_map<powers,T,PowersHasher>::const_iterator it;
-      powers pows;
       T zero(0);
       bool result = true;
       for(it = S.begin(); it != S.end(); ++it) {
-        pows = it->first;
         if(it->second != zero) {
           result = false;
           break;
@@ -222,8 +220,8 @@ namespace QSPRAY {
       return Q;
     }
 
-    Qspray<T> operator-=(const Qspray<T>& Q) {
-      typename std::unordered_map<powers,T,PowersHasher> S2 = Q.S;
+    Qspray<T> operator-=(const Qspray<T>& Q2) {
+      typename std::unordered_map<powers,T,PowersHasher> S2 = Q2.S;
       typename std::unordered_map<powers,T,PowersHasher>::const_iterator it;
       powers pows;
       const T zero(0);
@@ -280,6 +278,9 @@ namespace QSPRAY {
                 }
               }
               Sout[powssum] += r1 * r2;
+              if(Sout[powssum] == zero) {
+                Sout.erase(powssum);
+              }
             }
           }
         }
