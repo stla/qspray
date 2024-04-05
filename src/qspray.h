@@ -575,6 +575,23 @@ public:
     return ROQ;
   }
 
+  RatioOfQsprays<T> power(int n) {
+    RatioOfQsprays<T> Result(1);
+    RatioOfQsprays ROQ(numerator, denominator);
+    if(n >= 0) {
+      while(n) {
+        if(n & 1) {
+          Result *= ROQ;
+        }
+        n >>= 1;
+        ROQ *= ROQ;
+      }
+    } else {
+      ROQ.power(-n);
+    }
+    return Result;
+  }
+
   bool operator==(const RatioOfQsprays<T>& ROQ2) {
     return ROQ1numerator == ROQ2.numerator;
   }
@@ -660,6 +677,15 @@ Rcpp::List ROQdivision(
   RatioOfQsprays<gmpq> ROQ1 = makeRatioOfQsprays(Numerator1, Denominator1);
   RatioOfQsprays<gmpq> ROQ2 = makeRatioOfQsprays(Numerator2, Denominator2);
   return returnRatioOfQsprays(ROQ1 + ROQ2);
+}
+
+// -------------------------------------------------------------------------- //
+// [[Rcpp::export]]
+Rcpp::List ROQpower(
+  const Rcpp::List& Numerator, const Rcpp::List& Denominator, int n
+) {
+  RatioOfQsprays<gmpq> ROQ = makeRatioOfQsprays(Numerator, Denominator);
+  return returnRatioOfQsprays(ROQ.power(n));
 }
 
 // -------------------------------------------------------------------------- //
