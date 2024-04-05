@@ -169,11 +169,10 @@ namespace QSPRAY {
       for(const auto& term : S) {
         powers pows = term.first;
         T coeff     = term.second;
-        if(coeff == zero) {
-          S.erase(pows);
-        } else {
+        S.erase(pows);
+        if(coeff != zero) {
           utils::simplifyPowers(pows);
-          S[pows] = term.second;
+          S[pows] = coeff;
         }
       }
     }
