@@ -164,6 +164,20 @@ namespace QSPRAY {
       return S[pows];
     }
 
+    void clean() {
+      T zero(0);
+      for(const auto& term : S) {
+        powers pows = term.first;
+        T coeff     = term.second;
+        if(coeff == zero) {
+          S.erase(pows);
+        } else {
+          utils::simplifyPowers(pows);
+          S[pows] = term.second;
+        }
+      }
+    }
+
     bool operator==(const Qspray<T>& Q) {
       typename std::unordered_map<powers,T,PowersHasher> SS(S);
       typename std::unordered_map<powers,T,PowersHasher> S2(Q.S);
