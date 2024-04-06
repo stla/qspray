@@ -154,7 +154,7 @@ qspray_arith_qspray <- function(e1, e2) {
     "*" = qspray_from_list(
       qspray_mult(e1@powers, e1@coeffs, e2@powers, e2@coeffs)
     ),
-    "/" = if(isNamespaceLoaded("ratioOfQsprays")) {
+    "/" = if(requireNamespace("ratioOfQsprays")) {
       ratioOfQsprays::as.ratioOfQsprays(e1) / 
         ratioOfQsprays::as.ratioOfQsprays(e2) 
     } else {

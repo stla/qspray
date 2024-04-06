@@ -37,7 +37,7 @@ qone <- function() {
 #' @title Polynomial variable
 #' @description Create a polynomial variable.
 #'
-#' @param n nonnegative integer, the index of the variable
+#' @param n positive integer, the index of the variable
 #'
 #' @return A \code{qspray} object.
 #' @export

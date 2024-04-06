@@ -38,7 +38,7 @@ showQspray <- function(showMonomial, compact = FALSE) {
 }
 
 #' @title Print a monomial
-#' @description Print a monomial like \code{"x1x3^2"}.
+#' @description Print a monomial like \code{"x1.x3^2"}.
 #'
 #' @param var a string, usually a letter such as \code{"x"} or \code{"X"}, to 
 #'   denote the unindexed variables
@@ -62,7 +62,7 @@ showMonomialCanonical <- function(var) {
       } else {
         ""
       }
-    }, character(1L)), collapse = "")
+    }, character(1L)), collapse = ".")
   }
 }
 

@@ -29,6 +29,7 @@ LinkingTo:
     BH,
     Rcpp,
     RcppArmadillo
+Suggests: ratioOfQsprays
 Encoding: UTF-8
 RoxygenNote: 7.3.1
 SystemRequirements: C++ 17, gmp, mpfr
