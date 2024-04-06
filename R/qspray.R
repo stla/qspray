@@ -12,19 +12,42 @@ setClass(
 )
 
 powersMatrix <- function(qspray) {
-  do.call(rbind, lapply(qspray@powers, grow, n = arity(qspray)))
+  n <- arity(qspray)
+  if(n == -Inf) {
+    matrix(NA_integer, 0L, 0L)
+  } else {
+    do.call(rbind, lapply(qspray@powers, grow, n = n))
+  }
 }
 
-showQspray <- function(qspray) {
-  if(length(qspray@coeffs) == 0L) {
-    return("0")
-  }
+#' @title Ordered 'qspray'
+#' @description Reorders the terms of a \code{qspray} object according to the 
+#'   lexicographic order of the powers. 
+#'
+#' @param qspray a \code{qspray} object
+#'
+#' @return A \code{qspray} object. It defined the same polynomial as the 
+#'   input \code{qspray} object but it is ordered.
+#' @export
+#'
+#' @examples
+#' qspray <- rQspray()
+#' qspray == orderedQspray(qspray) # should be TRUE
+orderedQspray <- function(qspray) {
   M <- powersMatrix(qspray)
   if(ncol(M) > 0L) {
     lex <- lexorder(M)
     qspray@powers <- qspray@powers[lex]
     qspray@coeffs <- qspray@coeffs[lex]
   }
+  qspray
+}
+
+showQspray <- function(qspray) {
+  if(length(qspray@coeffs) == 0L) {
+    return("0")
+  }
+  qspray <- orderedQspray(qspray)
   powers <- vapply(qspray@powers, toString, FUN.VALUE = character(1L))
   coeffs <- as.bigq(qspray@coeffs)
   plus <- vapply(coeffs, function(x) x >= 0L, FUN.VALUE = logical(1L))

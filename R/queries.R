@@ -78,7 +78,7 @@ isConstantQspray <- function(qspray) {
 #' @return A Boolean value.
 #' @export
 isQzero <- function(qspray) {
-  isConstantQspray(qspray) && (getConstantTerm(qspray) == 0L)
+  arity(qspray) == -Inf
 }
 
 #' @title Whether a qspray polynomial is the unit polynomial

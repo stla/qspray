@@ -1,23 +1,12 @@
-grow <- function(powers, n) {
-  c(powers, integer(n - length(powers)))
-}
-
-lexorder <- function(M){
-  do.call(
-    function(...) order(..., decreasing = TRUE), 
-    lapply(seq_len(ncol(M)), function(i) M[, i])
-  )
-}
-
-orderedQspray <- function(qspray, d) {
-  powers <- qspray@powers
-  Mpowers <- do.call(rbind, lapply(powers, grow, n = d))
-  ordr <- lexorder(Mpowers)
-  list(
-    "powers" = Mpowers[ordr, , drop = FALSE], 
-    "coeffs" = qspray@coeffs[ordr]
-  )
-}
+# orderedQspray <- function(qspray, d) {
+#   powers <- qspray@powers
+#   Mpowers <- do.call(rbind, lapply(powers, grow, n = d))
+#   ordr <- lexorder(Mpowers)
+#   list(
+#     "powers" = Mpowers[ordr, , drop = FALSE], 
+#     "coeffs" = qspray@coeffs[ordr]
+#   )
+# }
 
 lexLeading <- function(M, i = 1L, b = seq_len(nrow(M))) {
   if(nrow(M) == 1L || i > ncol(M)) {

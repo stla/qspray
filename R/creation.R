@@ -1,3 +1,21 @@
+#' @title Random 'qspray'
+#' @description Generates a random \code{qspray} object.
+#' 
+#' @return A \code{qspray} object with at more 10 terms and at more 3 variables.
+#' @export
+rQspray <- function() {
+  maxNterms     <- 10L
+  maxNvariables <- 3L
+  probs <- c(1/2, 1/8, 1/8, 1/8, 1/8)
+  powers <- 
+    sample.int(5L, maxNterms*maxNvariables, replace = TRUE, prob = probs) - 1L
+  powers <- matrix(powers, nrow = maxNterms, ncol = maxNvariables)
+  powers <- Rows(powers)
+  coeffs <- sample(as.character(-5L:5L), maxNterms, replace = TRUE)
+  qsprayMaker(powers = powers, coeffs = coeffs)
+}
+
+
 #' @title The null qspray polynomial
 #' @description Returns the qspray polynomial identically equal to 0.
 #' @return A \code{qspray} object.

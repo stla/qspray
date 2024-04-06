@@ -96,3 +96,20 @@ Columns <- function(M) {
     M[, j]
   })
 }
+
+Rows <- function(M) {
+  lapply(seq_len(nrow(M)), function(i) {
+    M[i, ]
+  })
+}
+
+grow <- function(powers, n) {
+  c(powers, integer(n - length(powers)))
+}
+
+lexorder <- function(M){
+  do.call(
+    function(...) order(..., decreasing = TRUE), 
+    lapply(seq_len(ncol(M)), function(i) M[, i])
+  )
+}
