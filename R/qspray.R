@@ -165,7 +165,7 @@ qspray_arith_qspray <- function(e1, e2) {
         ratioOfQsprays::as.ratioOfQsprays(e2) 
     } else {
       stop(
-        "Division of qspray objects is possible only with the ",
+        "Division of 'qspray' objects is possible only with the ",
         "'ratioOfQsprays' package."
       )
     },
