@@ -132,8 +132,7 @@ setMethod(
       "qspray", 
       powers = e1@powers, coeffs = as.character(-as.bigq(e1@coeffs))
     )
-    attributes(qspray) <- attributes(e1)
-    qspray
+    passShowAttributes(e1, qspray)
   }
 )
 
@@ -149,8 +148,7 @@ qspray_arith_character <- function(e1, e2) {
       "Binary operator %s not defined for these two objects.", dQuote(.Generic)
     ))
   )
-  attributes(qspray) <- attributes(e1)
-  qspray
+  passShowAttributes(e1, qspray)
 }
 
 qspray_arith_qspray <- function(e1, e2) {
@@ -177,16 +175,13 @@ qspray_arith_qspray <- function(e1, e2) {
       "Binary operator %s not defined for qspray objects.", dQuote(.Generic)
     ))
   )
-  attributes(qspray) <- attributes(e2)
-  qspray
+  passShowAttributes(e2, qspray)
 }
 
-qsprayPower <- function(qspray, n) {
+qsprayPower <- function(e1, n) {
   stopifnot(isPositiveInteger(n))
-  attrs <- attributes(qspray)
-  qspray <- qspray_power(qspray@powers, qspray@coeffs, n)
-  attributes(qspray) <- attrs
-  qspray
+  qspray <- qspray_power(e1@powers, e1@coeffs, n)
+  passShowAttributes(e1, qspray)
 }
 
 qspray_arith_gmp <- function(e1, e2) {
@@ -200,7 +195,7 @@ qspray_arith_gmp <- function(e1, e2) {
       "Binary operator %s not defined for these two objects.", dQuote(.Generic)
     ))
   )
-  attributes(qspray) <- attributes(e1)
+  passShowAttributes(e1, qspray)
   qspray
 }
 
@@ -216,8 +211,7 @@ qspray_arith_numeric <- function(e1, e2) {
       "Binary operator %s not defined for these two objects.", dQuote(.Generic)
     ))
   )
-  attributes(qspray) <- attributes(e1)
-  qspray
+  passShowAttributes(e1, qspray)
 }
 
 character_arith_qspray <- function(e1, e2) {
@@ -230,8 +224,7 @@ character_arith_qspray <- function(e1, e2) {
       "Binary operator %s not defined for these two objects.", dQuote(.Generic)
     ))
   )
-  attributes(qspray) <- attributes(e2)
-  qspray
+  passShowAttributes(e2, qspray)
 }
 
 gmp_arith_qspray <- function(e1, e2) {
@@ -244,8 +237,7 @@ gmp_arith_qspray <- function(e1, e2) {
       "Binary operator %s not defined for these two objects.", dQuote(.Generic)
     ))
   )
-  attributes(qspray) <- attributes(e2)
-  qspray
+  passShowAttributes(e2, qspray)
 }
 
 numeric_arith_qspray <- function(e1, e2) {
@@ -258,8 +250,7 @@ numeric_arith_qspray <- function(e1, e2) {
       "Binary operator %s not defined for these two objects.", dQuote(.Generic)
     ))
   )
-  attributes(qspray) <- attributes(e2)
-  qspray
+  passShowAttributes(e2, qspray)
 }
 
 setMethod(

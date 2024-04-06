@@ -1,3 +1,8 @@
+passShowAttributes <- function(source, target) {
+  lapply("x", function(a) attr(target, a) <<- attr(source, a))
+  target
+}
+
 isString <- function(x) {
   is.character(x) && length(x) == 1L && !is.na(x)
 }

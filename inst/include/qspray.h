@@ -259,19 +259,19 @@ namespace QSPRAY {
       return Q;
     }
 
-    Qspray<T> operator+=(Qspray<T>& Q2) {
-      const Qspray<T> Q3 = Q2;
-      Qspray<T> Q(S);
-      Q += Q3;
-      S = Q.get();
-      return Q;
-    }
+    // Qspray<T> operator+=(Qspray<T>& Q2) {
+    //   const Qspray<T> Q3 = Q2;
+    //   Qspray<T> Q(S);
+    //   Q += Q3;
+    //   S = Q.get();
+    //   return Q;
+    // }
 
-    Qspray<T> operator+(Qspray<T>& Q2) {
-      const Qspray<T> Q3 = Q2;
-      Qspray<T> Q(S);
-      return Q + Q3;
-    }
+    // Qspray<T> operator+(Qspray<T>& Q2) {
+    //   const Qspray<T> Q3 = Q2;
+    //   Qspray<T> Q(S);
+    //   return Q + Q3;
+    // }
 
     Qspray<T> operator-=(const Qspray<T>& Q2) {
       typename std::unordered_map<powers,T,PowersHasher> S2 = Q2.S;
@@ -294,24 +294,25 @@ namespace QSPRAY {
       return Q;
     }
 
-    Qspray<T> operator-=(Qspray<T>& Q2) {
-      const Qspray<T> Q3 = Q2;
-      Qspray<T> Q(S);
-      Q -= Q3;
-      S = Q.get();
-      return Q;
-    }
+    // Qspray<T> operator-=(Qspray<T>& Q2) {
+    //   const Qspray<T> Q3 = Q2;
+    //   Qspray<T> Q(S);
+    //   Q -= Q3;
+    //   S = Q.get();
+    //   return Q;
+    // }
 
-    Qspray<T> operator-(Qspray<T>& Q2) {
-      const Qspray<T> Q3 = Q2;
-      Qspray<T> Q(S);
-      return Q - Q3;
-    }
+    // Qspray<T> operator-(Qspray<T>& Q2) {
+    //   const Qspray<T> Q3 = Q2;
+    //   Qspray<T> Q(S);
+    //   return Q - Q3;
+    // }
 
     Qspray<T> operator*=(const Qspray<T>& Q) {
       typename std::unordered_map<powers,T,PowersHasher> S2 = Q.S;
       typename std::unordered_map<powers,T,PowersHasher> Sout;
-      typename std::unordered_map<powers,T,PowersHasher>::const_iterator it1, it2, it;
+      typename std::unordered_map<powers,T,PowersHasher>::const_iterator it1, it2;
+      typename std::unordered_map<powers,T,PowersHasher>::iterator it;
       const T zero(0);
       powers powssum;
       signed int i;
@@ -365,19 +366,19 @@ namespace QSPRAY {
       return Q;
     }
 
-    Qspray<T> operator*=(Qspray<T>& Q2) {
-      const Qspray<T> Q3 = Q2;
-      Qspray<T> Q(S);
-      Q *= Q3;
-      S = Q.get();
-      return Q;
-    }
+    // Qspray<T> operator*=(Qspray<T>& Q2) {
+    //   const Qspray<T> Q3 = Q2;
+    //   Qspray<T> Q(S);
+    //   Q *= Q3;
+    //   S = Q.get();
+    //   return Q;
+    // }
 
-    Qspray<T> operator*(Qspray<T>& Q2) {
-      const Qspray<T> Q3 = Q2;
-      Qspray<T> Q(S);
-      return Q * Q3;
-    }
+    // Qspray<T> operator*(Qspray<T>& Q2) {
+    //   const Qspray<T> Q3 = Q2;
+    //   Qspray<T> Q(S);
+    //   return Q * Q3;
+    // }
 
     Qspray<T> power(unsigned int n) {
       typename std::unordered_map<powers,T,PowersHasher> u;
