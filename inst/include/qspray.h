@@ -114,6 +114,14 @@ namespace QSPRAY {
       singleton[pows] = x;
       S = singleton;
     }
+
+    Qspray(int k)
+    {
+      typename std::unordered_map<powers,T,PowersHasher> singleton;
+      powers pows(0);
+      singleton[pows] = T(k);
+      S = singleton;
+    }
     
     // methods ----------
     std::unordered_map<powers,T,PowersHasher> get() {
