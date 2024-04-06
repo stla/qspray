@@ -213,7 +213,17 @@ namespace QSPRAY {
       }
     }
 
+    bool operator==(Qspray<T>& Q2) {
+      const Qspray<T> Q = Qspray(S);
+      return Q2 == Q;
+    }
+
     bool operator!=(const Qspray<T>& Q2) {
+      Qspray<T> Q = Qspray(S);
+      return !(Q == Q2);
+    }
+
+    bool operator!=(Qspray<T>& Q2) {
       Qspray<T> Q = Qspray(S);
       return !(Q == Q2);
     }
@@ -278,12 +288,12 @@ namespace QSPRAY {
       powers powssum;
       signed int i;
       for(it1 = S.begin(); it1 != S.end(); ++it1) {
-        const T r1 = it1->second;
+        T r1 = it1->second;
         if(r1 != zero) {
           powers pows1 = it1->first;
           signed int n1 = pows1.size();
           for(it2 = S2.begin(); it2 != S2.end(); ++it2) {
-            const gmpq r2 = it2->second;
+            gmpq r2 = it2->second;
             if(r2 != zero) {
               powers pows2 = it2->first;
               signed int n2 = pows2.size();
