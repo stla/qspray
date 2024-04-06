@@ -44,7 +44,10 @@ qone <- function() {
 #' @examples 
 #' qlone(2)
 qlone <- function(n) {
-  stopifnot(isNonnegativeInteger(n))
+  stopifnot(isPositiveInteger(n))
+  if(n == 0) {
+    return(qone())
+  }
   powers <- integer(n)
   powers[n] <- 1L
   new("qspray", powers = list(powers), coeffs = "1")

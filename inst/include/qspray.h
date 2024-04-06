@@ -263,6 +263,7 @@ namespace QSPRAY {
       const Qspray<T> Q3 = Q2;
       Qspray<T> Q(S);
       Q += Q3;
+      S = Q.get();
       return Q;
     }
 
@@ -297,6 +298,7 @@ namespace QSPRAY {
       const Qspray<T> Q3 = Q2;
       Qspray<T> Q(S);
       Q -= Q3;
+      S = Q.get();
       return Q;
     }
 
@@ -367,6 +369,7 @@ namespace QSPRAY {
       const Qspray<T> Q3 = Q2;
       Qspray<T> Q(S);
       Q *= Q3;
+      S = Q.get();
       return Q;
     }
 
@@ -390,6 +393,7 @@ namespace QSPRAY {
         n >>= 1;
         Q *= Q;
       }
+      S = Result.get();
       return Result;
     }
 
