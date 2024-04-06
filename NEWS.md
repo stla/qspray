@@ -1,5 +1,9 @@
 # qspray 2.2.0
 
+- The `show` method has been changed. The monomial previously printed as `x^(2,0,3)` is not printed as `x1^2.x3^3`.
+
+- New helper functions to construct a custom `show` method.
+
 - New function `substituteQspray`, to substitute some variables in a polynomial.
 
 - New function `composeQspray`, to get the polynomial obtained by substituting the variables of a polynomial with polynomials.
