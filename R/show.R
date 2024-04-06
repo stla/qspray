@@ -91,6 +91,12 @@ showMonomial <- function(var = "x") {
 #'
 #' @return A function which prints a \code{qspray} object.
 #' @export
+#' 
+#' @note The \code{show} method for \code{qspray} objects uses
+#'   \code{showQsprayCanonical("x")} by default.
+#'   But this can be controlled as follows. If a
+#'   \code{qspray} object has an attribute \code{"x"}, then the value
+#'   of this attribute will replace \code{"x"} in the \code{show} output.
 #'
 #' @examples
 #' qspray <- rQspray()

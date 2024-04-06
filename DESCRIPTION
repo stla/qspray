@@ -29,7 +29,6 @@ LinkingTo:
     BH,
     Rcpp,
     RcppArmadillo
-Suggests: ratioOfQsprays
 Encoding: UTF-8
 RoxygenNote: 7.3.1
 SystemRequirements: C++ 17, gmp, mpfr
@@ -48,5 +47,6 @@ Collate:
     'transformation.R'
     'yacas.R'
 Suggests: 
+    ratioOfQsprays, 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

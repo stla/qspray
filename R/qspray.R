@@ -14,7 +14,9 @@ setClass(
 setMethod(
   "show", "qspray", 
   function(object) {
-    cat(showQsprayCanonical("x")(object), "\n")
+    x <- attr(object, "x")
+    if(is.null(x)) x <- "x"
+    cat(showQsprayCanonical(x)(object), "\n")
   }
 )
 

@@ -15,7 +15,7 @@ A function which takes as argument a sequence of exponents and
   which prints the corresponding monomial.
 }
 \description{
-Print a monomial like \code{"x1x3^2"}.
+Print a monomial like \code{"x1.x3^2"}.
 }
 \examples{
 showMonomialCanonical("X")(c(1, 0, 2))

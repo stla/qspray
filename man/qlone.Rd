@@ -7,7 +7,7 @@
 qlone(n)
 }
 \arguments{
-\item{n}{nonnegative integer, the index of the variable}
+\item{n}{positive integer, the index of the variable}
 }
 \value{
 A \code{qspray} object.
