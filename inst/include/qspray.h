@@ -259,6 +259,19 @@ namespace QSPRAY {
       return Q;
     }
 
+    Qspray<T> operator+=(Qspray<T>& Q2) {
+      const Qspray<T> Q3 = Q2;
+      Qspray<T> Q(S);
+      Q += Q3;
+      return Q;
+    }
+
+    Qspray<T> operator+(Qspray<T>& Q2) {
+      const Qspray<T> Q3 = Q2;
+      Qspray<T> Q(S);
+      return Q + Q3;
+    }
+
     Qspray<T> operator-=(const Qspray<T>& Q2) {
       typename std::unordered_map<powers,T,PowersHasher> S2 = Q2.S;
       typename std::unordered_map<powers,T,PowersHasher>::const_iterator it;
@@ -280,10 +293,23 @@ namespace QSPRAY {
       return Q;
     }
 
+    Qspray<T> operator-=(Qspray<T>& Q2) {
+      const Qspray<T> Q3 = Q2;
+      Qspray<T> Q(S);
+      Q -= Q3;
+      return Q;
+    }
+
+    Qspray<T> operator-(Qspray<T>& Q2) {
+      const Qspray<T> Q3 = Q2;
+      Qspray<T> Q(S);
+      return Q - Q3;
+    }
+
     Qspray<T> operator*=(const Qspray<T>& Q) {
       typename std::unordered_map<powers,T,PowersHasher> S2 = Q.S;
       typename std::unordered_map<powers,T,PowersHasher> Sout;
-      typename std::unordered_map<powers,T,PowersHasher>::const_iterator it1, it2;
+      typename std::unordered_map<powers,T,PowersHasher>::const_iterator it1, it2, it;
       const T zero(0);
       powers powssum;
       signed int i;
@@ -317,11 +343,14 @@ namespace QSPRAY {
                 }
               }
               Sout[powssum] += r1 * r2;
-              if(Sout[powssum] == zero) {
-                Sout.erase(powssum);
-              }
             }
           }
+        }
+      }
+      // remove the possibly zero terms
+      for(it = Sout.begin(); it != Sout.end(); ++it) {
+        if(it->second == zero) { 
+          Sout.erase(it->first);
         }
       }
       S = Sout;
@@ -332,6 +361,19 @@ namespace QSPRAY {
       Qspray<T> Q(S);
       Q *= Q2;
       return Q;
+    }
+
+    Qspray<T> operator*=(Qspray<T>& Q2) {
+      const Qspray<T> Q3 = Q2;
+      Qspray<T> Q(S);
+      Q *= Q3;
+      return Q;
+    }
+
+    Qspray<T> operator*(Qspray<T>& Q2) {
+      const Qspray<T> Q3 = Q2;
+      Qspray<T> Q(S);
+      return Q * Q3;
     }
 
     Qspray<T> power(unsigned int n) {
