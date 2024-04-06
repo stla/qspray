@@ -1,10 +1,10 @@
 #' @title Random 'qspray'
 #' @description Generates a random \code{qspray} object.
 #' 
-#' @return A \code{qspray} object with at more 10 terms and at more 3 variables.
+#' @return A \code{qspray} object with at most 4 terms and at most 3 variables.
 #' @export
 rQspray <- function() {
-  maxNterms     <- 10L
+  maxNterms     <- 4L
   maxNvariables <- 3L
   probs <- c(1/2, 1/8, 1/8, 1/8, 1/8)
   powers <- 

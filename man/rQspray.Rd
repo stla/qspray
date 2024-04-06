@@ -7,7 +7,7 @@
 rQspray()
 }
 \value{
-A \code{qspray} object with at more 10 terms and at more 3 variables.
+A \code{qspray} object with at most 4 terms and at most 3 variables.
 }
 \description{
 Generates a random \code{qspray} object.
