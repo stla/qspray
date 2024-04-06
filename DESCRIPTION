@@ -42,6 +42,7 @@ Collate:
     'qspray.R'
     'qsprayDivision.R'
     'queries.R'
+    'show.R'
     'symmetricPolynomials.R'
     'transformation.R'
     'yacas.R'

@@ -11,37 +11,10 @@ setClass(
   slots = c(powers = "list", coeffs = "character")
 )
 
-powersMatrix <- function(qspray) {
-  n <- arity(qspray)
-  if(n == -Inf) {
-    matrix(NA_integer, 0L, 0L)
-  } else {
-    do.call(rbind, lapply(qspray@powers, grow, n = n))
-  }
-}
-
-showQspray <- function(qspray) {
-  if(length(qspray@coeffs) == 0L) {
-    return("0")
-  }
-  qspray <- orderedQspray(qspray)
-  powers <- vapply(qspray@powers, toString, FUN.VALUE = character(1L))
-  coeffs <- as.bigq(qspray@coeffs)
-  plus <- vapply(coeffs, function(x) x >= 0L, FUN.VALUE = logical(1L))
-  signs <- c(ifelse(plus[-1L], " + ", " - "), "")
-  abscoeffs <- as.character(abs(coeffs))
-  terms <- paste0(
-    ifelse(abscoeffs == "1", "", paste0(abscoeffs, "*")), 
-    "x^(", powers, ")"
-  )
-  leader <- if(plus[1L]) "" else "-"
-  paste0(c(leader, c(rbind(terms, signs))), collapse = "")
-}
-
 setMethod(
   "show", "qspray", 
   function(object) {
-    cat(showQspray(object), "\n")
+    cat(showQsprayCanonical("x")(object), "\n")
   }
 )
 

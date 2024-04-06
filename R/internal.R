@@ -73,6 +73,19 @@ arity <- function(qspray) {
   suppressWarnings(max(lengths(qspray@powers)))
 }
 
+grow <- function(powers, n) {
+  c(powers, integer(n - length(powers)))
+}
+
+powersMatrix <- function(qspray) {
+  n <- arity(qspray)
+  if(n == -Inf) {
+    matrix(NA_integer, 0L, 0L)
+  } else {
+    do.call(rbind, lapply(qspray@powers, grow, n = n))
+  }
+}
+
 #' @importFrom utils head
 #' @noRd
 removeTrailingZeros <- function(x) {
@@ -101,10 +114,6 @@ Rows <- function(M) {
   lapply(seq_len(nrow(M)), function(i) {
     M[i, ]
   })
-}
-
-grow <- function(powers, n) {
-  c(powers, integer(n - length(powers)))
 }
 
 lexorder <- function(M){
