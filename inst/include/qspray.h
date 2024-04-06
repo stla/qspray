@@ -293,7 +293,7 @@ namespace QSPRAY {
           powers pows1 = it1->first;
           signed int n1 = pows1.size();
           for(it2 = S2.begin(); it2 != S2.end(); ++it2) {
-            gmpq r2 = it2->second;
+            T r2 = it2->second;
             if(r2 != zero) {
               powers pows2 = it2->first;
               signed int n2 = pows2.size();
