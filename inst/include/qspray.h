@@ -202,6 +202,11 @@ namespace QSPRAY {
       }
     }
 
+    bool operator!=(const Qspray<T>& Q2) {
+      Qspray<T> Q = Qspray(S);
+      return !(Q == Q2);
+    }
+
     Qspray<T> operator-() {
       typename std::unordered_map<powers,T,PowersHasher>::const_iterator it;
       powers pows;  
