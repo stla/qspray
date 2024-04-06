@@ -80,7 +80,7 @@ grow <- function(powers, n) {
 powersMatrix <- function(qspray) {
   n <- arity(qspray)
   if(n == -Inf) {
-    matrix(NA_integer, 0L, 0L)
+    matrix(NA_integer_, 0L, 0L)
   } else {
     do.call(rbind, lapply(qspray@powers, grow, n = n))
   }

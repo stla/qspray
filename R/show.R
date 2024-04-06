@@ -80,7 +80,7 @@ showMonomialCanonical <- function(var) {
 #' showMonomial("X")(c(1, 0, 2))
 showMonomial <- function(var = "x") {
   function(exponents) {
-    paste0(sprintf("%s^(", var), powers, ")") 
+    paste0(sprintf("%s^(", var), exponents, ")") 
   }
 }
 
