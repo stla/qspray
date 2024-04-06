@@ -51,7 +51,8 @@ showQspray <- function(showMonomial, compact = FALSE) {
 #' showMonomialCanonical("X")(c(1, 0, 2))
 showMonomialCanonical <- function(var) {
   function(exponents) {
-    paste0(vapply(seq_along(exponents[exponents != 0L]), function(i) {
+    exponents <- exponents[exponents != 0L]
+    paste0(vapply(seq_along(exponents), function(i) {
       e <- exponents[i]
       if(e == 1L) {
         sprintf("%s%d", var, i)
