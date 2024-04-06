@@ -11,10 +11,12 @@ rQspray <- function() {
     sample.int(5L, maxNterms*maxNvariables, replace = TRUE, prob = probs) - 1L
   powers <- matrix(powers, nrow = maxNterms, ncol = maxNvariables)
   powers <- Rows(powers)
-  coeffs <- sample(as.character(-5L:5L), maxNterms, replace = TRUE)
+  probs <- rep(1/10, 11L) / 2
+  probs[6L] <- 0.5
+  coeffs <- 
+    sample(as.character(-5L:5L), maxNterms, replace = TRUE, prob = probs)
   qsprayMaker(powers = powers, coeffs = coeffs)
 }
-
 
 #' @title The null qspray polynomial
 #' @description Returns the qspray polynomial identically equal to 0.
