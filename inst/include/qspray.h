@@ -91,7 +91,6 @@ namespace QSPRAY {
 
   typedef std::unordered_map<powers, gmpq, PowersHasher> qspray;
 
-
   // -------------------------------------------------------------------------- //
   template<typename T>
   class Qspray {
@@ -108,9 +107,13 @@ namespace QSPRAY {
       : S(S_) 
         {}
 
-    Qspray(int k)
-      : S(scalarQspray(T(k)))
-        {}
+    Qspray(T x)
+    {
+      typename std::unordered_map<powers,T,PowersHasher> singleton;
+      powers pows(0);
+      singleton[pows] = x;
+      S = singleton;
+    }
     
     // methods ----------
     std::unordered_map<powers,T,PowersHasher> get() {
@@ -427,13 +430,13 @@ namespace QSPRAY {
     }
   }
 
-  template <typename T>
-  Qspray<T> scalarQspray(T x) {
-    typename std::unordered_map<powers,T,PowersHasher> singleton;
-    powers pows(0);
-    singleton[pows] = x;
-    return Qspray<T>(singleton);
-  }
+  // template <typename T>
+  // Qspray<T> scalarQspray(T x) {
+  //   typename std::unordered_map<powers,T,PowersHasher> singleton;
+  //   powers pows(0);
+  //   singleton[pows] = x;
+  //   return Qspray<T>(singleton);
+  // }
 
   // -------------------------------------------------------------------------- //
   namespace internal {
