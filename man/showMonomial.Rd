@@ -4,10 +4,10 @@
 \alias{showMonomial}
 \title{Print a monomial}
 \usage{
-showMonomial(var = "x")
+showMonomial(x = "x")
 }
 \arguments{
-\item{var}{a string, usually a letter such as \code{"x"} or \code{"X"}, to 
+\item{x}{a string, usually a letter such as \code{"x"} or \code{"X"}, to 
 denote the variable}
 }
 \value{

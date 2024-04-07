@@ -1,6 +1,10 @@
 passShowAttributes <- function(source, target) {
-  lapply("x", function(a) attr(target, a) <<- attr(source, a))
+  lapply("showQspray", function(a) attr(target, a) <<- attr(source, a))
   target
+}
+
+`%||%` <- function(x, y) {
+  if(is.null(x)) y else x
 }
 
 isString <- function(x) {

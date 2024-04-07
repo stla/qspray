@@ -4,10 +4,10 @@
 \alias{showMonomialCanonical}
 \title{Print a monomial}
 \usage{
-showMonomialCanonical(var)
+showMonomialCanonical(x)
 }
 \arguments{
-\item{var}{a string, usually a letter such as \code{"x"} or \code{"X"}, to 
+\item{x}{a string, usually a letter such as \code{"x"} or \code{"X"}, to 
 denote the unindexed variables}
 }
 \value{
@@ -15,7 +15,7 @@ A function which takes as argument a sequence of exponents and
   which prints the corresponding monomial.
 }
 \description{
-Print a monomial like \code{"x1.x3^2"}.
+Prints a monomial like \code{"x1.x3^2"}.
 }
 \examples{
 showMonomialCanonical("X")(c(1, 0, 2))

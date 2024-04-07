@@ -4,10 +4,10 @@
 \alias{showQsprayCanonical}
 \title{Print a 'qspray' object}
 \usage{
-showQsprayCanonical(var, ...)
+showQsprayCanonical(x, ...)
 }
 \arguments{
-\item{var}{a string, usually a letter such as \code{"x"} or \code{"X"}, 
+\item{x}{a string, usually a letter such as \code{"x"} or \code{"X"}, 
 which denotes the unindexed variables}
 
 \item{...}{arguments passed to \code{\link{showQspray}}, such as 

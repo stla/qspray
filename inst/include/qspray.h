@@ -177,15 +177,18 @@ namespace QSPRAY {
 
     void clean() {
       T zero(0);
-      for(const auto& term : S) {
-        powers pows = term.first;
-        T coeff     = term.second;
-        S.erase(pows);
+      typename std::unordered_map<powers,T,PowersHasher>::const_iterator it;
+      std::unordered_map<powers,T,PowersHasher> SS;
+      for(it = S.begin(); it != S.end(); it++) {
+        powers pows = it->first;
+        T coeff     = it->second;
+        //S.erase(pows);
         if(coeff != zero) {
           utils::simplifyPowers(pows);
-          S[pows] = coeff;
+          SS[pows] = coeff;
         }
       }
+      S = SS;
     }
 
     bool operator==(const Qspray<T>& Q) {
@@ -232,8 +235,7 @@ namespace QSPRAY {
       typename std::unordered_map<powers,T,PowersHasher>::const_iterator it;
       powers pows;  
       for(it = S.begin(); it != S.end(); ++it) {
-        pows = it->first;
-        S[pows] = -it->second;
+        S[it->first] = -it->second;
       }
       return Qspray<T>(S);
     }
@@ -382,17 +384,18 @@ namespace QSPRAY {
 
     Qspray<T> power(unsigned int n) {
       typename std::unordered_map<powers,T,PowersHasher> u;
-      powers pows(0);
-      T      one(1);
-      u[pows] = one;
+      powers empty(0);
+      u[empty] = T(1);
       Qspray<T> Result(u);
       Qspray<T> Q(S);
       while(n) {
         if(n & 1) {
           Result *= Q;
+          Result.clean();
         }
         n >>= 1;
         Q *= Q;
+        Q.clean();
       }
       S = Result.get();
       return Result;
@@ -586,6 +589,11 @@ namespace QSPRAY {
   static inline std::pair<Qspray<gmpq>,Qspray<gmpq>> qsprayDivision(
     Qspray<gmpq>& p, Qspray<gmpq>& g
   ) {
+    if(g.isConstant()) {
+      p.scale(1 / g.constantTerm());
+      Qspray<gmpq> r(gmpq(0));
+      return std::pair<Qspray<gmpq>,Qspray<gmpq>>(p, r);
+    }
     int d = std::max<int>(p.numberOfVariables(), g.numberOfVariables());
     Rcpp::List LTg = internal::leadingTerm(g, d);
     Qspray<gmpq> q;

@@ -1,6 +1,6 @@
 # qspray 2.2.0
 
-- The `show` method has been changed. The monomial previously printed as `x^(2,0,3)` is not printed as `x1^2.x3^3`.
+- The `show` method has been changed. The monomial previously printed as `"x^(2,0,3)"` is not printed as `"x1^2.x3^3"`. It is possible to change the letter denoting the unindexed variables of a `qspray` object (`"x"` by default) by setting the attribute `"x"` of this `qspray` object to the letter (or the string) you want.
 
 - New helper functions to construct a custom `show` method.
 
