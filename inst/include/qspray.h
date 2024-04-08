@@ -168,8 +168,8 @@ namespace QSPRAY {
       if(nterms == 0) {
         result = true;
       } else if(nterms == 1) {
-        powers empty(0);
-        if(auto search = S.find(empty); search != S.end()) {
+        powers emptyVector(0);
+        if(auto search = S.find(emptyVector); search != S.end()) {
           result = true;
         }
       }
@@ -177,8 +177,8 @@ namespace QSPRAY {
     }
 
     T constantTerm() {
-      powers empty(0);
-      return S[empty];
+      powers emptyVector(0);
+      return S[emptyVector];
     }
 
     void clean() {

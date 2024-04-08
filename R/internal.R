@@ -3,6 +3,30 @@ passShowAttributes <- function(source, target) {
   target
 }
 
+#' @title (internal) Make a 'qspray' object from a list
+#' @description This function is for internal usage. It is exported because 
+#'   it is also used for internal usage in the \strong{jack} package.
+#'
+#' @param qspray_as_list list returned by the Rcpp function 
+#'   \code{returnQspray}
+#'
+#' @return A \code{qspray} object.
+#' @export
+qspray_from_list <- function(qspray_as_list) {
+  powers <- qspray_as_list[["powers"]]
+  if(is.null(powers)) {
+    new(
+      "qspray", 
+      powers = list(), coeffs = character(0L)
+    )
+  } else {
+    new(
+      "qspray", 
+      powers = powers, coeffs = qspray_as_list[["coeffs"]]
+    )
+  }
+}
+
 `%||%` <- function(x, y) {
   if(is.null(x)) y else x
 }

@@ -93,21 +93,6 @@ qsprayMaker <- function(powers, coeffs, string = NULL) {
   qspray_from_list(qspray_maker(powers, as.character(coeffs)))
 }
 
-qspray_from_list <- function(qspray_as_list) {
-  powers <- qspray_as_list[["powers"]]
-  if(is.null(powers)) {
-    new(
-      "qspray", 
-      powers = list(), coeffs = character(0L)
-    )
-  } else {
-    new(
-      "qspray", 
-      powers = powers, coeffs = qspray_as_list[["coeffs"]]
-    )
-  }
-}
-
 stringToQspray <- function(p){
   stopifnot(isString(p))
   p <- gsub("\\)\\s*-\\s*(\\d*/*\\d*)\\s*", ")+-\\1", p)

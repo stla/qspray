@@ -33,7 +33,7 @@ Rcpp::List BBdivisionRcpp(
     while(i < ngs && !divoccured) {
       Rcpp::List LTg = LTgs(i);
       if(QSPRAY::internal::divides(LTg, LTp)) {
-        Rcpp::List g  = gs(i);
+        Rcpp::List g = gs(i);
         Qspray<gmpq> gspray(makeQspray(g["powers"], g["coeffs"]));
         Qspray<gmpq> qtnt = QSPRAY::internal::quotient(LTp, LTg);
         p -= qtnt * gspray;
@@ -48,7 +48,7 @@ Rcpp::List BBdivisionRcpp(
       gmpq coef(coeff);
       powers pows(powsRcpp.begin(), powsRcpp.end());
       QSPRAY::utils::simplifyPowers(pows);
-      qspray LTpspray;
+      Polynomial<gmpq> LTpspray;
       LTpspray[pows] = coef;
       Qspray<gmpq> ltp(LTpspray);
       r += ltp;

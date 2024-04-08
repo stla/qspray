@@ -33,8 +33,8 @@ Rcpp::StringVector evalQxspray(const Rcpp::List Powers,
                                const Rcpp::StringVector coeffs,
                                const Rcpp::StringVector v_re,
                                const Rcpp::StringVector v_im) {
-  Qspray<gmpq> Q = makeQspray(Powers, coeffs);
-  qspray S       = Q.get();
+  Qspray<gmpq> Q     = makeQspray(Powers, coeffs);
+  Polynomial<gmpq> S = Q.get();
 
   std::vector<qcplx> v;
   int n = v_re.size();
@@ -48,12 +48,12 @@ Rcpp::StringVector evalQxspray(const Rcpp::List Powers,
   powers pows;
   gmpq coef;
 
-  qcplx result(gmpq("0"), gmpq("0"));
+  qcplx result(gmpq(0), gmpq(0));
 
   for(auto it = S.begin(); it != S.end(); ++it) {
     pows = it->first;
     coef = it->second;
-    qcplx term(coef, gmpq("0"));
+    qcplx term(coef, gmpq(0));
     int i = 0;
     for(auto ci = pows.begin(); ci != pows.end(); ++ci) {
       term = qxmult(term, qxpow(v[i++], *ci));
@@ -61,5 +61,8 @@ Rcpp::StringVector evalQxspray(const Rcpp::List Powers,
     result += term;
   }
 
-  return Rcpp::StringVector::create(QSPRAY::utils::q2str(result.real()), QSPRAY::utils::q2str(result.imag()));
+  return Rcpp::StringVector::create(
+    QSPRAY::utils::q2str(result.real()), 
+    QSPRAY::utils::q2str(result.imag())
+  );
 }
