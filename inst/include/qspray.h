@@ -119,15 +119,15 @@ namespace QSPRAY {
       S = singleton;
     }
 
-    Qspray(int k)
-    {
-      Polynomial<T> singleton;
-      if(k != 0) {
-        powers emptyVector(0);
-        singleton[emptyVector] = T(k);        
-      }
-      S = singleton;
-    }
+    // Qspray(int k)
+    // {
+    //   Polynomial<T> singleton;
+    //   if(k != 0) {
+    //     powers emptyVector(0);
+    //     singleton[emptyVector] = T(k);        
+    //   }
+    //   S = singleton;
+    // }
     
     // methods --------------------------------------------
     Polynomial<T> get() {
