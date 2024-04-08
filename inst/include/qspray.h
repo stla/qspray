@@ -415,7 +415,7 @@ namespace QSPRAY {
         Q *= Q;
         b *= 2;
       }
-      S = Result.get();
+      // S = Result.get();
       return Result;
     }
 
@@ -469,6 +469,18 @@ namespace QSPRAY {
     }
 
   };
+
+  // -------------------------------------------------------------------------- //
+  template <typename T>
+  static inline Qspray<T> Qlone(unsigned int n) {
+    typename std::unordered_map<powers,T,PowersHasher> S;
+    powers pows(n);
+    if(n >= 1) {
+      pows[n-1] = 1;      
+    }
+    S[pows] = T(1);
+    return Qspray<T>(S);
+  }
 
   // -------------------------------------------------------------------------- //
   static inline Qspray<gmpq> makeQspray(
