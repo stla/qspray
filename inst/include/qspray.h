@@ -3,11 +3,12 @@
 
 #include <RcppArmadillo.h>
 #include <boost/multiprecision/gmp.hpp>
-#include <complex.h>
+//#include <complex.h>
 typedef std::vector<signed int>                             powers;
 typedef boost::multiprecision::mpq_rational                 gmpq;
 typedef boost::multiprecision::mpz_int                      gmpi;
 typedef std::complex<gmpq>                                  qcplx;
+
 
 
 // -------------------------------------------------------------------------- //
@@ -89,13 +90,14 @@ namespace QSPRAY {
     }
   };
 
-  typedef std::unordered_map<powers, gmpq, PowersHasher> qspray;
+  template <typename CoeffT>
+  using Polynomial = std::unordered_map<powers, CoeffT, PowersHasher>;
 
   // -------------------------------------------------------------------------- //
   template<typename T>
   class Qspray {
 
-    std::unordered_map<powers,T,PowersHasher> S;
+    Polynomial<T> S;
 
   public:
     // constructors ---------------------------------------
@@ -103,13 +105,13 @@ namespace QSPRAY {
       : S()
         {}
 
-    Qspray(const std::unordered_map<powers,T,PowersHasher>& S_) 
+    Qspray(const Polynomial<T>& S_) 
       : S(S_) 
         {}
 
     Qspray(T x)
     {
-      typename std::unordered_map<powers,T,PowersHasher> singleton;
+      Polynomial<T> singleton;
       powers empty(0);
       singleton[empty] = x;
       S = singleton;
@@ -117,14 +119,14 @@ namespace QSPRAY {
 
     Qspray(int k)
     {
-      typename std::unordered_map<powers,T,PowersHasher> singleton;
+      Polynomial<T> singleton;
       powers pows(0);
       singleton[pows] = T(k);
       S = singleton;
     }
     
     // methods --------------------------------------------
-    std::unordered_map<powers,T,PowersHasher> get() {
+    Polynomial<T> get() {
       return S;
     } 
 
@@ -133,7 +135,7 @@ namespace QSPRAY {
     }
 
     bool isNull() { // the same as empty() if the Qspray is clean
-      typename std::unordered_map<powers,T,PowersHasher>::const_iterator it;
+      typename Polynomial<T>::const_iterator it;
       T zero(0);
       bool result = true;
       for(it = S.begin(); it != S.end(); ++it) {
@@ -177,8 +179,8 @@ namespace QSPRAY {
 
     void clean() {
       T zero(0);
-      typename std::unordered_map<powers,T,PowersHasher>::const_iterator it;
-      std::unordered_map<powers,T,PowersHasher> SS;
+      typename Polynomial<T>::const_iterator it;
+      Polynomial<T> SS;
       for(it = S.begin(); it != S.end(); it++) {
         powers pows = it->first;
         T coeff     = it->second;
@@ -191,12 +193,12 @@ namespace QSPRAY {
     }
 
     bool operator==(const Qspray<T>& Q) {
-      typename std::unordered_map<powers,T,PowersHasher> SS(S);
-      typename std::unordered_map<powers,T,PowersHasher> S2(Q.S);
+      Polynomial<T> SS(S);
+      Polynomial<T> S2(Q.S);
       if(S.size() != S2.size()) {
         return false;
       }
-      typename std::unordered_map<powers,T,PowersHasher>::const_iterator it;
+      typename Polynomial<T>::const_iterator it;
       powers pows;
       for(it = S.begin(); it != S.end(); ++it) {
         pows = it->first;
@@ -231,7 +233,7 @@ namespace QSPRAY {
     }
 
     Qspray<T> operator-() {
-      typename std::unordered_map<powers,T,PowersHasher>::const_iterator it;
+      typename Polynomial<T>::const_iterator it;
       powers pows;  
       for(it = S.begin(); it != S.end(); ++it) {
         S[it->first] = -it->second;
@@ -240,8 +242,8 @@ namespace QSPRAY {
     }
 
     Qspray<T> operator+=(const Qspray<T>& Q) {
-      typename std::unordered_map<powers,T,PowersHasher> S2 = Q.S;
-      typename std::unordered_map<powers,T,PowersHasher>::const_iterator it;
+      Polynomial<T> S2 = Q.S;
+      typename Polynomial<T>::const_iterator it;
       powers pows;
       const T zero(0);
       for(it = S2.begin(); it != S2.end(); ++it) {
@@ -275,8 +277,8 @@ namespace QSPRAY {
     // }
 
     Qspray<T> operator-=(const Qspray<T>& Q2) {
-      typename std::unordered_map<powers,T,PowersHasher> S2 = Q2.S;
-      typename std::unordered_map<powers,T,PowersHasher>::const_iterator it;
+      Polynomial<T> S2 = Q2.S;
+      typename Polynomial<T>::const_iterator it;
       powers pows;
       const T zero(0);
       for(it = S2.begin(); it != S2.end(); ++it) {
@@ -310,10 +312,10 @@ namespace QSPRAY {
     // }
 
     Qspray<T> operator*=(const Qspray<T>& Q) {
-      typename std::unordered_map<powers,T,PowersHasher> S2 = Q.S;
-      typename std::unordered_map<powers,T,PowersHasher> Sout;
-      typename std::unordered_map<powers,T,PowersHasher>::const_iterator it1, it2;
-      typename std::unordered_map<powers,T,PowersHasher>::iterator it;
+      Polynomial<T> S2 = Q.S;
+      Polynomial<T> Sout;
+      typename Polynomial<T>::const_iterator it1, it2;
+      typename Polynomial<T>::iterator it;
       const T zero(0);
       powers powssum;
       signed int i;
@@ -397,7 +399,7 @@ namespace QSPRAY {
     // }
 
     Qspray<T> power(unsigned int n) {
-      typename std::unordered_map<powers,T,PowersHasher> u;
+      Polynomial<T> u;
       powers empty(0);
       u[empty] = T(1);
       Qspray<T> Result(u);
@@ -420,7 +422,7 @@ namespace QSPRAY {
     }
 
     void scale(T lambda) {
-      typename std::unordered_map<powers,T,PowersHasher>::const_iterator it;
+      typename Polynomial<T>::const_iterator it;
       if(lambda == T(0)) {
         for(it = S.begin(); it != S.end(); ++it) {
           S.erase(it->first);
@@ -433,8 +435,8 @@ namespace QSPRAY {
     }
     
     Qspray<T> deriv(std::vector<unsigned int> n) {
-      typename std::unordered_map<powers,T,PowersHasher> Sprime;
-      typename std::unordered_map<powers,T,PowersHasher>::const_iterator it;
+      Polynomial<T> Sprime;
+      typename Polynomial<T>::const_iterator it;
       powers v;
       signed int j, J, nj, expnt;
       signed int N = n.size();
@@ -473,7 +475,7 @@ namespace QSPRAY {
   // -------------------------------------------------------------------------- //
   template <typename T>
   static inline Qspray<T> Qlone(unsigned int n) {
-    typename std::unordered_map<powers,T,PowersHasher> S;
+    Polynomial<T> S;
     powers pows(n);
     if(n >= 1) {
       pows[n-1] = 1;      
@@ -486,7 +488,7 @@ namespace QSPRAY {
   static inline Qspray<gmpq> makeQspray(
     const Rcpp::List& Powers, const Rcpp::StringVector& coeffs
   ) {
-    qspray S;
+    Polynomial<gmpq> S;
     for(int i = 0; i < Powers.size(); i++) {
       Rcpp::IntegerVector Exponents = Powers(i);
       gmpq coeff(Rcpp::as<std::string>(coeffs(i)));
@@ -502,7 +504,7 @@ namespace QSPRAY {
     // segfault ('memory not mapped').  So we check for 'S' being zero
     // size and, if so, return a special Nil value.  This corresponds to
     // an empty spray object.
-    qspray S = Q.get();
+    Polynomial<gmpq> S = Q.get();
 
     if(S.size() == 0) {
       return Rcpp::List::create(Rcpp::Named("powers") = R_NilValue,
@@ -530,7 +532,7 @@ namespace QSPRAY {
 
   // template <typename T>
   // Qspray<T> scalarQspray(T x) {
-  //   typename std::unordered_map<powers,T,PowersHasher> singleton;
+  //   Polynomial<T> singleton;
   //   powers pows(0);
   //   singleton[pows] = x;
   //   return Qspray<T>(singleton);
@@ -562,7 +564,7 @@ namespace QSPRAY {
     }
 
     static Rcpp::List leadingTerm(Qspray<gmpq>& Q, int d) {
-      qspray S = Q.get();
+      Polynomial<gmpq> S = Q.get();
       std::vector<powers> pows;
       std::vector<gmpq>   coeffs;
       pows.reserve(S.size());
@@ -607,7 +609,7 @@ namespace QSPRAY {
       gmpq qcoeff_g(coeff_g);
       Rcpp::IntegerVector powsRcpp = pows_f - pows_g;
       gmpq qcoeff = qcoeff_f / qcoeff_g;
-      qspray S;
+      Polynomial<gmpq> S;
       powers pows(powsRcpp.begin(), powsRcpp.end());
       QSPRAY::utils::simplifyPowers(pows);
       S[pows] = qcoeff;
@@ -644,7 +646,7 @@ namespace QSPRAY {
         gmpq   coef(coeff);
         powers pows(powsRcpp.begin(), powsRcpp.end());
         QSPRAY::utils::simplifyPowers(pows);
-        qspray LTpspray;
+        Polynomial<gmpq> LTpspray;
         LTpspray[pows] = coef;
         Qspray<gmpq> ltp(LTpspray);
         r += ltp;

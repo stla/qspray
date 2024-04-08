@@ -6,7 +6,7 @@ using namespace QSPRAY;
 
 // -------------------------------------------------------------------------- //
 Qspray<gmpq> prepare(const Rcpp::List& Powers, const Rcpp::StringVector& coeffs) {
-  qspray S;
+  Polynomial<gmpq> S;
 
   for(signed int i = 0; i < Powers.size(); i++) {
     Rcpp::IntegerVector Exponents = Powers(i);
@@ -18,7 +18,7 @@ Qspray<gmpq> prepare(const Rcpp::List& Powers, const Rcpp::StringVector& coeffs)
     }
   }
   // Now remove zero entries:
-  qspray::iterator it = S.begin();
+  Polynomial<gmpq>::iterator it = S.begin();
   while(it != S.end()) {
     if(it->second == 0) {
       it = S.erase(it);  //  in C++11, erase() returns *next* iterator
@@ -108,3 +108,5 @@ Rcpp::List qspray_power(const Rcpp::List& Powers,
    Qspray<gmpq> Q = makeQspray(Powers, coeffs);
    return returnQspray(Q.power(n));
 }
+
+
