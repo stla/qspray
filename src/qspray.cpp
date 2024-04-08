@@ -109,3 +109,5 @@ Rcpp::List qspray_power(const Rcpp::List& Powers,
    return returnQspray(Q.power(n));
 }
 
+
+

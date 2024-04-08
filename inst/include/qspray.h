@@ -402,12 +402,12 @@ namespace QSPRAY {
       u[empty] = T(1);
       Qspray<T> Result(u);
       Qspray<T> Q(S);
-      unsigned int b = 1, p = 0;
+      unsigned int n0 = n, b = 1, p = 0;
       while(n) {
         if(n & 1) {
           Result *= Q;
           p += b;
-          if(p+1 == n) {
+          if(p == n0) {
             break;
           }
         }
