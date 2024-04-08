@@ -98,7 +98,7 @@ namespace QSPRAY {
     std::unordered_map<powers,T,PowersHasher> S;
 
   public:
-    // constructors -----
+    // constructors ---------------------------------------
     Qspray()
       : S()
         {}
@@ -110,8 +110,8 @@ namespace QSPRAY {
     Qspray(T x)
     {
       typename std::unordered_map<powers,T,PowersHasher> singleton;
-      powers pows(0);
-      singleton[pows] = x;
+      powers empty(0);
+      singleton[empty] = x;
       S = singleton;
     }
 
@@ -123,7 +123,7 @@ namespace QSPRAY {
       S = singleton;
     }
     
-    // methods ----------
+    // methods --------------------------------------------
     std::unordered_map<powers,T,PowersHasher> get() {
       return S;
     } 
@@ -132,7 +132,7 @@ namespace QSPRAY {
       return S.empty();
     }
 
-    bool isNull() {
+    bool isNull() { // the same as empty() if the Qspray is clean
       typename std::unordered_map<powers,T,PowersHasher>::const_iterator it;
       T zero(0);
       bool result = true;
@@ -162,8 +162,8 @@ namespace QSPRAY {
       if(nterms == 0) {
         result = true;
       } else if(nterms == 1) {
-        powers pows(0);
-        if(auto search = S.find(pows); search != S.end()) {
+        powers empty(0);
+        if(auto search = S.find(empty); search != S.end()) {
           result = true;
         }
       }
@@ -171,8 +171,8 @@ namespace QSPRAY {
     }
 
     T constantTerm() {
-      powers pows(0);
-      return S[pows];
+      powers empty(0);
+      return S[empty];
     }
 
     void clean() {
@@ -182,7 +182,6 @@ namespace QSPRAY {
       for(it = S.begin(); it != S.end(); it++) {
         powers pows = it->first;
         T coeff     = it->second;
-        //S.erase(pows);
         if(coeff != zero) {
           utils::simplifyPowers(pows);
           SS[pows] = coeff;
@@ -323,11 +322,25 @@ namespace QSPRAY {
         if(r1 != zero) {
           powers pows1 = it1->first;
           signed int n1 = pows1.size();
+
+          // Rcpp::Rcout << "--- POWS 1 ---\n";
+          // for(int i = 0; i < n1; i++) {
+          //   Rcpp::Rcout << pows1[i] << " --- ";
+          // }
+          // Rcpp::Rcout << "\n";
+
           for(it2 = S2.begin(); it2 != S2.end(); ++it2) {
             T r2 = it2->second;
             if(r2 != zero) {
               powers pows2 = it2->first;
               signed int n2 = pows2.size();
+
+              // Rcpp::Rcout << "--- POWS 2 ---\n";
+              // for(int i = 0; i < n2; i++) {
+              //   Rcpp::Rcout << pows2[i] << " --- ";
+              // }
+              // Rcpp::Rcout << "\n";
+
               powssum.clear();
               if(n1 < n2) {
                 powers gpows = QSPRAY::utils::growPowers(pows1, n1, n2);
@@ -358,6 +371,7 @@ namespace QSPRAY {
           Sout.erase(it->first);
         }
       }
+      //
       S = Sout;
       return Qspray<T>(Sout);
     }
@@ -388,14 +402,18 @@ namespace QSPRAY {
       u[empty] = T(1);
       Qspray<T> Result(u);
       Qspray<T> Q(S);
+      unsigned int b = 1, p = 0;
       while(n) {
         if(n & 1) {
           Result *= Q;
-          Result.clean();
+          p += b;
+          if(p+1 == n) {
+            break;
+          }
         }
         n >>= 1;
         Q *= Q;
-        Q.clean();
+        b *= 2;
       }
       S = Result.get();
       return Result;
@@ -467,7 +485,7 @@ namespace QSPRAY {
   }
 
   // -------------------------------------------------------------------------- //
-  static inline Rcpp::List returnQspray(Qspray<gmpq> Q) {  // used to return a list to R
+  static inline Rcpp::List returnQspray(Qspray<gmpq> Q) {  // to return a list to R
     // *Comment RH*: In this function, returning a zero-row matrix results in a
     // segfault ('memory not mapped').  So we check for 'S' being zero
     // size and, if so, return a special Nil value.  This corresponds to

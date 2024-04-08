@@ -130,3 +130,12 @@ showQsprayCanonical <- function(x, ...) {
   }
   x
 }
+
+getShowQspray <- function(qspray) {
+  showOpts <- attr(qspray, "showOpts")
+  attr(showOpts, "showQspray") %||%
+    attr(attr(showOpts, "showSymbolicQspray"), "showQspray") %||%
+    showQsprayCanonical(
+      attr(showOpts, "x") %||% attr(showOpts, "x") %||% "x"
+    )
+}
