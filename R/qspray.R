@@ -1,15 +1,15 @@
 #' @useDynLib qspray, .registration=TRUE
 #' @importFrom Rcpp evalCpp
-#' @importFrom methods setMethod setClass new
+#' @importFrom methods setMethod setClass new canCoerce as
 #' @importFrom gmp as.bigq factorialZ asNumeric
 #' @importFrom purrr transpose
 #' @importFrom utils globalVariables
 #' @include qspray.R
 NULL
 
-if(getRversion() >= "2.15.1") {
-  globalVariables("as.ratioOfQsprays")
-}
+# if(getRversion() >= "2.15.1") {
+#   globalVariables("as.ratioOfQsprays")
+# }
 
 setClass(
   "qspray",
@@ -163,19 +163,30 @@ qspray_arith_qspray <- function(e1, e2) {
     "*" = qspray_from_list(
       qspray_mult(e1@powers, e1@coeffs, e2@powers, e2@coeffs)
     ),
-    "/" = tryCatch({
-        as.ratioOfQsprays(e1) / as.ratioOfQsprays(e2)
-    }, error = function(e) {
-      x <- ifelse(
-        "ratioOfQsprays" %in% rownames(installed.packages()),
-        "loaded",
-        "installed"
-      )
-      stop(
-        "Division of 'qspray' objects is possible only with the ",
-        "'ratioOfQsprays' package, and this package is not ", x, "."
-      )
-    }),
+    "/" = {
+      if(canCoerce(e1, "ratioOfQsprays")) {
+        as(e1, "ratioOfQsprays") / as(e2, "ratioOfQsprays") 
+      } else {
+        x <- "loaded"
+        stop(
+          "Division of 'qspray' objects is possible only with the ",
+          "'ratioOfQsprays' package, and this package is not ", x, "."
+        )
+      }
+    },
+    # "/" = tryCatch({
+    #     as.ratioOfQsprays(e1) / as.ratioOfQsprays(e2)
+    # }, error = function(e) {
+    #   x <- ifelse(
+    #     "ratioOfQsprays" %in% rownames(installed.packages()),
+    #     "loaded",
+    #     "installed"
+    #   )
+    #   stop(
+    #     "Division of 'qspray' objects is possible only with the ",
+    #     "'ratioOfQsprays' package, and this package is not ", x, "."
+    #   )
+    # }),
     stop(gettextf(
       "Binary operator %s not defined for qspray objects.", dQuote(.Generic)
     ))

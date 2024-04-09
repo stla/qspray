@@ -60,8 +60,10 @@ getCoefficient <- function(qspray, exponents) {
   }
   if(inherits(qspray, "qspray")) {
     as.bigq(coeff)
-  } else if(inherits(qspray, "symbolicQspray")) {
-    as.ratioOfQsprays(coeff)
+  } else if(
+    inherits(qspray, "symbolicQspray") && canCoerce(coeff, "ratioOfQsprays")
+  ) {
+    as(coeff, "ratioOfQsprays")
   } else {
     stop(
       "The function `getCoefficient` is not applicable for this type ",
