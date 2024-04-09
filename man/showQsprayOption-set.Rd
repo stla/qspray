@@ -27,5 +27,5 @@ qspray
 # this is identical to:
 showQsprayOption(qspray, "showMonomial") <- showMonomialCanonical("a")
 # and also identical to:
-showQsprayOption(qspray, "showQspray") <- showMQsprayCanonical("a")
+showQsprayOption(qspray, "showQspray") <- showQsprayCanonical("a")
 }
