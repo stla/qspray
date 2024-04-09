@@ -10,7 +10,7 @@ orderedQspray(qspray)
 \item{qspray}{a \code{qspray} object}
 }
 \value{
-A \code{qspray} object. It defined the same polynomial as the 
+A \code{qspray} object. It defines the same polynomial as the 
   input \code{qspray} object but it is ordered.
 }
 \description{

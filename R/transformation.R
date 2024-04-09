@@ -4,7 +4,7 @@
 #'
 #' @param qspray a \code{qspray} object
 #'
-#' @return A \code{qspray} object. It defined the same polynomial as the 
+#' @return A \code{qspray} object. It defines the same polynomial as the 
 #'   input \code{qspray} object but it is ordered.
 #' @export
 #'
@@ -42,7 +42,7 @@ derivQspray <- function(qspray, i, derivative = 1) {
   stopifnot(isNonnegativeInteger(i))
   stopifnot(isPositiveInteger(derivative))
   if(i > arity(qspray)) {
-    return(as.qspray(0))
+    return(as.qspray(0L))
   }
   n    <- integer(length = i)
   n[i] <- as.integer(derivative)
@@ -73,7 +73,7 @@ dQspray <- function(qspray, orders) {
   }
   orders <- removeTrailingZeros(orders)
   if(length(orders) > arity(qspray)) {
-    return(as.qspray(0))
+    return(as.qspray(0L))
   }
   n    <- as.integer(orders)
   drv  <- qspray_deriv(qspray@powers, qspray@coeffs, n)
