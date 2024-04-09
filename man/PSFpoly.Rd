@@ -2,7 +2,7 @@
 % Please edit documentation in R/symmetricPolynomials.R
 \name{PSFpoly}
 \alias{PSFpoly}
-\title{Power sum function}
+\title{Power sum polynomial}
 \usage{
 PSFpoly(m, lambda)
 }

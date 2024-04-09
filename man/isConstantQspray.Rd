@@ -2,7 +2,7 @@
 % Please edit documentation in R/queries.R
 \name{isConstantQspray}
 \alias{isConstantQspray}
-\title{Whether a qspray polynomial is constant}
+\title{Whether a 'qspray' polynomial is constant}
 \usage{
 isConstantQspray(qspray)
 }

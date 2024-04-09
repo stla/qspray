@@ -2,7 +2,7 @@
 % Please edit documentation in R/queries.R
 \name{getConstantTerm}
 \alias{getConstantTerm}
-\title{Get the constant term of a qspray polynomial.}
+\title{Get the constant term of a 'qspray' polynomial.}
 \usage{
 getConstantTerm(qspray)
 }
@@ -13,5 +13,5 @@ getConstantTerm(qspray)
 A \code{bigq} number.
 }
 \description{
-Get the constant term of a qspray polynomial.
+Get the constant term of a 'qspray' polynomial.
 }

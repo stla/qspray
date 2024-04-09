@@ -1,4 +1,4 @@
-#' @title Power sum function
+#' @title Power sum polynomial
 #' @description Returns a power sum function as a polynomial.
 #'
 #' @param m integer, the number of variables
@@ -50,9 +50,8 @@ MSFpoly <- function(m, lambda) {
   kappa                    <- numeric(m)
   kappa[seq_along(lambda)] <- lambda
   perms <- Permn(kappa)
-  n     <- nrow(perms)
-  powers <- lapply(1L:n, function(i) perms[i, ])
-  coeffs <- rep("1", n)
+  powers <- Rows(perms)
+  coeffs <- rep("1", nrow(perms))
   qsprayMaker(powers, coeffs)
 }
 
@@ -124,11 +123,13 @@ MSPcombination <- function(qspray, check = TRUE) {
 #'
 #' @return A character string.
 #' @export
+#' 
+#' @seealso \code{\link{MSPcombination}}
 #'
 #' @examples
 #' library(qspray)
 #' qspray <- PSFpoly(4, c(3, 1)) + ESFpoly(4, c(2, 2)) + 4L
-#' compactSymmetricQspray(qspray)
+#' compactSymmetricQspray(qspray, check = TRUE)
 compactSymmetricQspray <- function(qspray, check = FALSE) {
   combo <- MSPcombination(qspray, check = check)
   f <- showCoefficient(qspray)
@@ -163,9 +164,8 @@ ESFpoly <- function(m, lambda) {
     kappa <- integer(m)
     kappa[seq_len(lambda[k])] <- rep(1L, lambda[k])
     perms <- Permn(kappa)
-    n <- nrow(perms)
-    powers <- lapply(1L:n, function(i) perms[i, ])
-    ek <- qsprayMaker(powers = powers, coeffs = rep("1", n))
+    powers <- Rows(perms)
+    ek <- qsprayMaker(powers = powers, coeffs = rep("1", nrow(perms)))
     out <- out * ek
   }
   out

@@ -2,7 +2,7 @@
 % Please edit documentation in R/queries.R
 \name{getCoefficient}
 \alias{getCoefficient}
-\title{Get coefficient}
+\title{Get a coefficient}
 \usage{
 getCoefficient(qspray, exponents)
 }
@@ -15,7 +15,8 @@ getCoefficient(qspray, exponents)
 The coefficient as a \code{bigq} number.
 }
 \description{
-Get the coefficient corresponding to the given exponents.
+Get the coefficient corresponding to the given sequence of 
+  exponents.
 }
 \examples{
 library(qspray)

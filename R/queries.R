@@ -6,7 +6,11 @@
 #' @return An integer.
 #' @export
 numberOfVariables <- function(qspray) {
-  max(0L, arity(qspray))
+  if(inherits(qspray, "qspray") || inherits(qspray, "symbolicQspray")) {
+    max(0L, arity(qspray))
+  } else if(inherits(qspray, "ratioOfQsprays")) {
+    max(0L, arity(qspray@numerator), arity(qspray@denominator))
+  }
 }
 
 #' @title Number of terms in a 'qspray' polynomial
@@ -21,8 +25,9 @@ numberOfTerms <- function(qspray) {
   length(qspray@powers)
 }
 
-#' @title Get coefficient
-#' @description Get the coefficient corresponding to the given exponents.
+#' @title Get a coefficient
+#' @description Get the coefficient corresponding to the given sequence of 
+#'   exponents.
 #' 
 #' @param qspray a \code{qspray} object
 #' @param exponents a vector of exponents
@@ -30,6 +35,7 @@ numberOfTerms <- function(qspray) {
 #' @return The coefficient as a \code{bigq} number.
 #' @export
 #' @importFrom gmp as.bigq
+#' @importFrom methods canCoerce
 #'
 #' @examples
 #' library(qspray)
@@ -72,7 +78,7 @@ getCoefficient <- function(qspray, exponents) {
   }
 }
 
-#' @title Get the constant term of a qspray polynomial.
+#' @title Get the constant term of a 'qspray' polynomial.
 #'
 #' @param qspray a \code{qspray} object
 #'
@@ -82,7 +88,7 @@ getConstantTerm <- function(qspray) {
   getCoefficient(qspray, integer(0L))
 }
 
-#' @title Whether a qspray polynomial is constant
+#' @title Whether a 'qspray' polynomial is constant
 #' @description Checks whether a \code{qspray} object defines a constant 
 #'   polynomial.
 #'
@@ -159,4 +165,3 @@ collinearQsprays <- function(qspray1, qspray2) {
   r <- coeffs2[1L] / coeffs1[1L]
   all(r * coeffs1 == coeffs2)
 }
-

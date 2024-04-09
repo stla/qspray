@@ -1,5 +1,5 @@
 passShowAttributes <- function(source, target) {
-  lapply("showQspray", function(a) attr(target, a) <<- attr(source, a))
+  lapply("showOpts", function(a) attr(target, a) <<- attr(source, a))
   target
 }
 
@@ -95,13 +95,6 @@ isPartition <- function(lambda){
     all(diff(lambda) <= 0)
 }
 
-lexorder <- function(M) {
-  do.call(
-    order, 
-    c(lapply(seq_len(ncol(M)), function(i) M[, i]), decreasing = TRUE)
-  )
-}
-
 arity <- function(qspray) {
   suppressWarnings(max(lengths(qspray@powers)))
 }
@@ -152,6 +145,13 @@ Rows <- function(M) {
 lexorder <- function(M){
   do.call(
     function(...) order(..., decreasing = TRUE), 
-    lapply(seq_len(ncol(M)), function(i) M[, i])
+    Columns(M)
   )
 }
+
+# lexorder <- function(M) {
+#   do.call(
+#     order, 
+#     c(lapply(seq_len(ncol(M)), function(i) M[, i]), decreasing = TRUE)
+#   )
+# }

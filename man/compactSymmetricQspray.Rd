@@ -22,5 +22,8 @@ Prints a symmetric qspray polynomial as a linear combination of
 \examples{
 library(qspray)
 qspray <- PSFpoly(4, c(3, 1)) + ESFpoly(4, c(2, 2)) + 4L
-compactSymmetricQspray(qspray)
+compactSymmetricQspray(qspray, check = TRUE)
+}
+\seealso{
+\code{\link{MSPcombination}}
 }

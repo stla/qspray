@@ -3,7 +3,6 @@
 #' @importFrom methods setMethod setClass new canCoerce as
 #' @importFrom gmp as.bigq factorialZ asNumeric
 #' @importFrom purrr transpose
-#' @importFrom utils globalVariables
 #' @include qspray.R
 NULL
 
