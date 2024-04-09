@@ -145,7 +145,7 @@ showMonomial <- function(x = "x") {
 #' @note The \code{show} method for \code{qspray} objects uses
 #'   \code{showQsprayCanonical("x")} by default.
 #'   But this can be controlled with the help of the function 
-#'   \code{\link{showQsprayOption}}.
+#'   \code{\link{showQsprayOption-set}}.
 #'
 #' @examples
 #' qspray <- rQspray()
