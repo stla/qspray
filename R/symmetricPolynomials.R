@@ -114,7 +114,7 @@ MSPcombination <- function(qspray, check = TRUE) {
   out
 }
 
-#' @title Pretty symmetric qspray
+#' @title Compact symmetric qspray
 #' @description Prints a symmetric qspray polynomial as a linear combination of 
 #'   the monomial symmetric polynomials. 
 #'
@@ -128,9 +128,9 @@ MSPcombination <- function(qspray, check = TRUE) {
 #' @examples
 #' library(qspray)
 #' qspray <- PSFpoly(4, c(3, 1)) + ESFpoly(4, c(2, 2)) + 4L
-#' prettySymmetricQspray(qspray)
-prettySymmetricQspray <- function(qspray, check = FALSE) {
-  combo   <- MSPcombination(qspray, check = check)
+#' compactSymmetricQspray(qspray)
+compactSymmetricQspray <- function(qspray, check = FALSE) {
+  combo <- MSPcombination(qspray, check = check)
   f <- showCoefficient(qspray)
   toPaste <- unlist(lapply(combo, function(t) {
     coeff  <- f(t[["coeff"]])

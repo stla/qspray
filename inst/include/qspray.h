@@ -404,8 +404,8 @@ namespace QSPRAY {
 
     Qspray<T> power(unsigned int n) {
       Polynomial<T> u;
-      powers empty(0);
-      u[empty] = T(1);
+      powers emptyVector(0);
+      u[emptyVector] = T(1);
       Qspray<T> Result(u);
       Qspray<T> Q(S);
       unsigned int n0 = n, b = 1, p = 0;
