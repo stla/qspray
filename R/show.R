@@ -67,7 +67,9 @@ showMonomialCanonical <- function(x) {
 
 showMonomialUnivariate <- function(x) {
   function(e) {
-    if(e == 1L) {
+    if(length(e) == 0L) {
+      ""
+    } else if(e == 1L) {
       x
     } else {
       sprintf("%s^%d", x, e)
