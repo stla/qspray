@@ -30,6 +30,18 @@ setGeneric(
   }
 )
 
+#' @name showCoefficient
+#' @aliases showCoefficient,qspray-method 
+#' @docType methods
+#' @title Function which prints the coefficients
+#' @description This method is for internal usage. For any \code{qspray} 
+#'   object, it returns a function which takes as argument a coefficient 
+#'   and which returns the string formed by this coefficient surrounded by
+#'   parentheses.
+#'
+#' @param x a \code{qspray} object 
+#'
+#' @return A function which associates a character string to the coefficients.
 #' @export
 setMethod(
   "showCoefficient", "qspray", 
