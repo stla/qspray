@@ -17,7 +17,7 @@ monomial}
 A function which prints a \code{qspray} object.
 }
 \description{
-Print a \code{qspray} object given a function which prints 
+Prints a \code{qspray} object given a function which prints 
   the monomials.
 }
 \seealso{

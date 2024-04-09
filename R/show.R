@@ -1,5 +1,5 @@
 #' @title Print a 'qspray' object
-#' @description Print a \code{qspray} object given a function which prints 
+#' @description Prints a \code{qspray} object given a function which prints 
 #'   the monomials.
 #'
 #' @param showMonomial a function which takes as argument a sequence of 
@@ -50,6 +50,9 @@ showQspray <- function(showMonomial, compact = FALSE) {
 #'   which prints the corresponding monomial.
 #' @export
 #'
+#' @seealso \code{\link{showQsprayCanonical}}, 
+#'   \code{\link{showMonomialUnivariate}} 
+#' 
 #' @examples
 #' showMonomialCanonical("X")(c(1, 0, 2))
 showMonomialCanonical <- function(x) {
@@ -65,6 +68,19 @@ showMonomialCanonical <- function(x) {
   }
 }
 
+#' @title Print a univariate monomial
+#' @description Prints a univariate monomial.
+#'
+#' @param x a string, usually a letter such as \code{"x"} or \code{"X"}, to 
+#'   denote the variable
+#'
+#' @return A function which takes as argument an exponent and 
+#'   which prints the corresponding monomial.
+#'   
+#' @seealso \code{\link{showMonomialCanonical}}, 
+#'   \code{\link{showQsprayUnivariate}} 
+#'   
+#' @export
 showMonomialUnivariate <- function(x) {
   function(e) {
     if(length(e) == 0L) {
@@ -82,16 +98,21 @@ showMonomialUnivariate <- function(x) {
 #'
 #' @param x a string, usually a letter such as \code{"x"} or \code{"X"}, to 
 #'   denote the variable
+#' @param ... arguments passed to \code{\link{showQspray}}, such as 
+#'   \code{compact=TRUE}
 #'
 #' @return A function which prints a univariate \code{qspray} object.
 #' @export
-showQsprayUnivariate <- function(x) {
-  showQspray(showMonomialUnivariate(x = x))
+#' 
+#' @seealso \code{\link{showMonomialUnivariate}}, \code{\link{showQspray}} 
+showQsprayUnivariate <- function(x, ...) {
+  showQspray(showMonomialUnivariate(x = x), ...)
 }
 
-
 #' @title Print a monomial
-#' @description Print a monomial like \code{"x^(1, 0, 2)"}.
+#' @description Prints a monomial like \code{"x^(1, 0, 2)"}. This way of 
+#'   showing a monomial was used by default in previous versions of this 
+#'   package.
 #'
 #' @param x a string, usually a letter such as \code{"x"} or \code{"X"}, to 
 #'   denote the variable
@@ -99,6 +120,8 @@ showQsprayUnivariate <- function(x) {
 #' @return A function which takes as argument a sequence of exponents and 
 #'   which prints the corresponding monomial.
 #' @export
+#'
+#' @seealso \code{\link{showMonomialCanonical}}, \code{\link{showQspray}} 
 #'
 #' @examples
 #' showMonomial("X")(c(1, 0, 2))
@@ -121,9 +144,8 @@ showMonomial <- function(x = "x") {
 #' 
 #' @note The \code{show} method for \code{qspray} objects uses
 #'   \code{showQsprayCanonical("x")} by default.
-#'   But this can be controlled as follows. If a
-#'   \code{qspray} object has an attribute \code{"x"}, then the value
-#'   of this attribute will replace \code{"x"} in the \code{show} output.
+#'   But this can be controlled with the help of the function 
+#'   \code{\link{`showQsprayOption<-`}}.
 #'
 #' @examples
 #' qspray <- rQspray()
@@ -132,8 +154,8 @@ showQsprayCanonical <- function(x, ...) {
   showQspray(showMonomialCanonical(x), ...)
 }
 
-#' @title Set show option to a 'qspray' object
-#' @description Set show option to a \code{qspray} object
+#' @title Set a show option to a 'qspray' object
+#' @description Set a show option to a \code{qspray} object
 #' 
 #' @param x a \code{qspray} object
 #' @param which which option to set; this can be \code{"x"}, 
@@ -144,9 +166,13 @@ showQsprayCanonical <- function(x, ...) {
 #' @export
 #'
 #' @examples
-#' qspray <- rQspray()
+#' ( qspray <- rQspray() )
 #' showQsprayOption(qspray, "x") <- "a"
 #' qspray
+#' # this is identical to:
+#' showQsprayOption(qspray, "showMonomial") <- showMonomialCanonical("a")
+#' # and also identical to:
+#' showQsprayOption(qspray, "showQspray") <- showMQsprayCanonical("a")
 `showQsprayOption<-` <- function(x, which, value) {
   which <- match.arg(which, c("x", "showMonomial", "showQspray"))
   showOpts <- attr(x, "showOpts") %||% TRUE
@@ -172,7 +198,6 @@ getShowQspray <- function(qspray) {
   attr(showOpts, "showQspray") %||%
     attr(attr(showOpts, "showSymbolicQspray"), "showQspray") %||%
     showQsprayCanonical(
-      x = attr(showOpts, "x") %||% attr(showOpts, "x") %||% "x",
-      qspray = qspray
+      x = attr(showOpts, "x") %||% "x"
     )
 }

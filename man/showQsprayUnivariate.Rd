@@ -2,18 +2,23 @@
 % Please edit documentation in R/show.R
 \name{showQsprayUnivariate}
 \alias{showQsprayUnivariate}
-\title{Print a monomial for a univariate polynomial}
+\title{Print a univariate polynomial}
 \usage{
-showQsprayUnivariate(x)
+showQsprayUnivariate(x, ...)
 }
 \arguments{
 \item{x}{a string, usually a letter such as \code{"x"} or \code{"X"}, to 
 denote the variable}
+
+\item{...}{arguments passed to \code{\link{showQspray}}, such as 
+\code{compact=TRUE}}
 }
 \value{
-A function which takes as argument an exponent and 
-  which prints the corresponding monomial.
+A function which prints a univariate \code{qspray} object.
 }
 \description{
-Prints a monomial like \code{"x^5"}.
+Prints a polynomial by printing monomials like \code{"x^5"}.
+}
+\seealso{
+\code{\link{showMonomialUnivariate}}, \code{\link{showQspray}}
 }

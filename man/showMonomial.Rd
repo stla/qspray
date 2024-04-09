@@ -15,8 +15,13 @@ A function which takes as argument a sequence of exponents and
   which prints the corresponding monomial.
 }
 \description{
-Print a monomial like \code{"x^(1, 0, 2)"}.
+Prints a monomial like \code{"x^(1, 0, 2)"}. This way of 
+  showing a monomial was used by default in previous versions of this 
+  package.
 }
 \examples{
 showMonomial("X")(c(1, 0, 2))
+}
+\seealso{
+\code{\link{showMonomialCanonical}}, \code{\link{showQspray}}
 }

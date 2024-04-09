@@ -22,9 +22,8 @@ Print a \code{qspray} object given a string for the variable.
 \note{
 The \code{show} method for \code{qspray} objects uses
   \code{showQsprayCanonical("x")} by default.
-  But this can be controlled as follows. If a
-  \code{qspray} object has an attribute \code{"x"}, then the value
-  of this attribute will replace \code{"x"} in the \code{show} output.
+  But this can be controlled with the help of the function 
+  \code{\link{`showQsprayOption<-`}}.
 }
 \examples{
 qspray <- rQspray()

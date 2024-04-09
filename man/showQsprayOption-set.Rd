@@ -2,7 +2,7 @@
 % Please edit documentation in R/show.R
 \name{showQsprayOption<-}
 \alias{showQsprayOption<-}
-\title{Set show option to a 'qspray' object}
+\title{Set a show option to a 'qspray' object}
 \usage{
 showQsprayOption(x, which) <- value
 }
@@ -18,10 +18,14 @@ showQsprayOption(x, which) <- value
 This returns the updated \code{qspray}.
 }
 \description{
-Set show option to a \code{qspray} object
+Set a show option to a \code{qspray} object
 }
 \examples{
-qspray <- rQspray()
+( qspray <- rQspray() )
 showQsprayOption(qspray, "x") <- "a"
 qspray
+# this is identical to:
+showQsprayOption(qspray, "showMonomial") <- showMonomialCanonical("a")
+# and also identical to:
+showQsprayOption(qspray, "showQspray") <- showMQsprayCanonical("a")
 }

@@ -20,3 +20,7 @@ Prints a monomial like \code{"x1.x3^2"}.
 \examples{
 showMonomialCanonical("X")(c(1, 0, 2))
 }
+\seealso{
+\code{\link{showQsprayCanonical}}, 
+  \code{\link{showMonomialUnivariate}}
+}
