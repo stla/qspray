@@ -11,7 +11,8 @@
 #' @export
 #' @importFrom gmp as.bigq
 #' 
-#' @seealso \code{\link{showQsprayCanonical}}, \code{\link{showMonomial}} 
+#' @seealso \code{\link{showQsprayCanonical}}, \code{\link{showMonomial}}, 
+#'   \code{\link{showQsprayOption<-}}.
 showQspray <- function(showMonomial, compact = FALSE) {
   function(qspray) {
     if(length(qspray@coeffs) == 0L) {
@@ -51,7 +52,7 @@ showQspray <- function(showMonomial, compact = FALSE) {
 #' @export
 #'
 #' @seealso \code{\link{showQsprayCanonical}}, 
-#'   \code{\link{showMonomialUnivariate}} 
+#'   \code{\link{showMonomialUnivariate}}, \code{\link{showQsprayOption<-}}. 
 #' 
 #' @examples
 #' showMonomialCanonical("X")(c(1, 0, 2))
@@ -104,7 +105,8 @@ showMonomialUnivariate <- function(x) {
 #' @return A function which prints a univariate \code{qspray} object.
 #' @export
 #' 
-#' @seealso \code{\link{showMonomialUnivariate}}, \code{\link{showQspray}} 
+#' @seealso \code{\link{showMonomialUnivariate}}, \code{\link{showQspray}}, 
+#'   \code{\link{showQsprayOption<-}}.
 showQsprayUnivariate <- function(x, ...) {
   showQspray(showMonomialUnivariate(x = x), ...)
 }

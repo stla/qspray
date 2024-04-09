@@ -20,5 +20,6 @@ A function which prints a univariate \code{qspray} object.
 Prints a polynomial by printing monomials like \code{"x^5"}.
 }
 \seealso{
-\code{\link{showMonomialUnivariate}}, \code{\link{showQspray}}
+\code{\link{showMonomialUnivariate}}, \code{\link{showQspray}}, 
+  \code{\link{showQsprayOption<-}}.
 }

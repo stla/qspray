@@ -19,5 +19,5 @@ Creates a polynomial variable. Using this function is the main
 \examples{
 x <- qlone(1)
 y <- qlone(2)
-(x + y)^2
+(x + y) * (x - y)
 }

@@ -22,5 +22,5 @@ showMonomialCanonical("X")(c(1, 0, 2))
 }
 \seealso{
 \code{\link{showQsprayCanonical}}, 
-  \code{\link{showMonomialUnivariate}}
+  \code{\link{showMonomialUnivariate}}, \code{\link{showQsprayOption<-}}.
 }
