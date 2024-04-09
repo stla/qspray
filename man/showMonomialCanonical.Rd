@@ -4,11 +4,15 @@
 \alias{showMonomialCanonical}
 \title{Print a monomial}
 \usage{
-showMonomialCanonical(x)
+showMonomialCanonical(x, qspray)
 }
 \arguments{
 \item{x}{a string, usually a letter such as \code{"x"} or \code{"X"}, to 
 denote the unindexed variables}
+
+\item{qspray}{a \code{qspray} object; its influence on the output depends 
+only on whether it is univariate, in which case the string given in the 
+argument \code{x} will not be indexed}
 }
 \value{
 A function which takes as argument a sequence of exponents and 

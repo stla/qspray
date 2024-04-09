@@ -4,11 +4,13 @@
 \alias{showMonomial}
 \title{Print a monomial}
 \usage{
-showMonomial(x = "x")
+showMonomial(x = "x", qspray)
 }
 \arguments{
 \item{x}{a string, usually a letter such as \code{"x"} or \code{"X"}, to 
 denote the variable}
+
+\item{qspray}{ignored}
 }
 \value{
 A function which takes as argument a sequence of exponents and 

@@ -196,9 +196,9 @@ namespace QSPRAY {
       S = SS;
     }
 
-    bool operator==(const Qspray<T>& Q) {
+    bool operator==(const Qspray<T>& Q2) {
       Polynomial<T> SS(S);
-      Polynomial<T> S2(Q.S);
+      Polynomial<T> S2(Q2.S);
       if(S.size() != S2.size()) {
         return false;
       }
@@ -442,16 +442,16 @@ namespace QSPRAY {
       Polynomial<T> Sprime;
       typename Polynomial<T>::const_iterator it;
       powers v;
-      signed int j, J, nj, expnt;
+      signed int j, J, nj;
       signed int N = n.size();
       T zero(0);
       for(it = S.begin(); it != S.end(); ++it) {
-        std::vector<signed int> exponents = it->first;
+        powers exponents = it->first;
         J = exponents.size();
         if(J < N) {
           continue;
         }
-        T coeff = S[it->first];
+        T coeff = it->second;
         for(j = 0; j < N; j++) {
           nj = n[j];
           while((nj > 0) && (coeff != zero)) { // while loop because it might not run at all
@@ -462,9 +462,9 @@ namespace QSPRAY {
         }
         if(coeff != zero) {
           v.clear();
+          v.reserve(J);
           for(j = 0; j < J; j++) {
-            expnt = exponents[j];
-            v.push_back(expnt);
+            v.emplace_back(exponents[j]);
           }
           QSPRAY::utils::simplifyPowers(v);
           Sprime[v] += coeff;  // increment because v is not row-unique any more

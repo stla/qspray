@@ -9,6 +9,7 @@
 #'
 #' @return A function which prints a \code{qspray} object.
 #' @export
+#' @importFrom gmp as.bigq
 #' 
 #' @seealso \code{\link{showQsprayCanonical}}, \code{\link{showMonomial}} 
 showQspray <- function(showMonomial, compact = FALSE) {
@@ -19,8 +20,10 @@ showQspray <- function(showMonomial, compact = FALSE) {
     qspray <- orderedQspray(qspray)
     nterms <- length(qspray@coeffs)
     constantTerm <- getConstantTerm(qspray)
-    monomials <- vapply(qspray@powers, showMonomial, FUN.VALUE = character(1L))
-    coeffs <- gmp::as.bigq(qspray@coeffs)
+    monomials <- vapply(
+      qspray@powers, showMonomial, FUN.VALUE = character(1L)
+    )
+    coeffs <- as.bigq(qspray@coeffs)
     plus <- vapply(coeffs, function(x) x >= 0L, FUN.VALUE = logical(1L))
     plusSign <- ifelse(compact, "+", " + ")
     minusSign <- ifelse(compact, "-", " - ")
@@ -42,6 +45,9 @@ showQspray <- function(showMonomial, compact = FALSE) {
 #'
 #' @param x a string, usually a letter such as \code{"x"} or \code{"X"}, to 
 #'   denote the unindexed variables
+#' @param qspray a \code{qspray} object; its influence on the output depends 
+#'   only on whether it is univariate, in which case the string given in the 
+#'   argument \code{x} will not be indexed
 #'
 #' @return A function which takes as argument a sequence of exponents and 
 #'   which prints the corresponding monomial.
@@ -49,14 +55,18 @@ showQspray <- function(showMonomial, compact = FALSE) {
 #'
 #' @examples
 #' showMonomialCanonical("X")(c(1, 0, 2))
-showMonomialCanonical <- function(x) {
+showMonomialCanonical <- function(x, qspray) {
+  univariate <- numberOfVariables(qspray) == 1L
   function(exponents) {
     paste0(vapply(which(exponents != 0L), function(i) {
       e <- exponents[i]
+      if(univariate) {
+        i <- ""
+      }
       if(e == 1L) {
-        sprintf("%s%d", x, i)
+        sprintf("%s%s", x, i)
       } else {
-        sprintf("%s%d^%d", x, i, e)
+        sprintf("%s%s^%d", x, i, e)
       }
     }, character(1L)), collapse = ".")
   }
@@ -67,6 +77,7 @@ showMonomialCanonical <- function(x) {
 #'
 #' @param x a string, usually a letter such as \code{"x"} or \code{"X"}, to 
 #'   denote the variable
+#' @param qspray ignored
 #'
 #' @return A function which takes as argument a sequence of exponents and 
 #'   which prints the corresponding monomial.
@@ -74,7 +85,7 @@ showMonomialCanonical <- function(x) {
 #'
 #' @examples
 #' showMonomial("X")(c(1, 0, 2))
-showMonomial <- function(x = "x") {
+showMonomial <- function(x = "x", qspray) {
   function(exponents) {
     paste0(sprintf("%s^(", x), exponents, ")") 
   }
@@ -100,8 +111,8 @@ showMonomial <- function(x = "x") {
 #' @examples
 #' qspray <- rQspray()
 #' showQsprayCanonical("X")(qspray)
-showQsprayCanonical <- function(x, ...) {
-  showQspray(showMonomialCanonical(x), ...)
+showQsprayCanonical <- function(x, qspray, ...) {
+  showQspray(showMonomialCanonical(x, qspray), ...)
 }
 
 #' @title Set show option to a 'qspray' object
@@ -122,7 +133,7 @@ showQsprayCanonical <- function(x, ...) {
 `showQsprayOption<-` <- function(x, which, value) {
   which <- match.arg(which, c("x", "showMonomial", "showQspray"))
   if(which == "x") {
-    attr(x, "showQspray") <- showQsprayCanonical(x = value)
+    attr(x, "showQspray") <- showQsprayCanonical(x = value, qspray = x)
   } else if(which == "showMonomial") {
     attr(x, "showQspray") <- showQspray(showMonomial = value)
   } else {
@@ -136,6 +147,7 @@ getShowQspray <- function(qspray) {
   attr(showOpts, "showQspray") %||%
     attr(attr(showOpts, "showSymbolicQspray"), "showQspray") %||%
     showQsprayCanonical(
-      attr(showOpts, "x") %||% attr(showOpts, "x") %||% "x"
+      x = attr(showOpts, "x") %||% attr(showOpts, "x") %||% "x",
+      qspray = qspray
     )
 }

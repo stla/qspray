@@ -4,7 +4,7 @@
 \alias{showQsprayCanonical}
 \title{Print a 'qspray' object}
 \usage{
-showQsprayCanonical(x, ...)
+showQsprayCanonical(x, qspray, ...)
 }
 \arguments{
 \item{x}{a string, usually a letter such as \code{"x"} or \code{"X"}, 
