@@ -75,17 +75,16 @@ showMonomialUnivariate <- function(x) {
   }
 }
 
-#' @title Print a monomial for a univariate polynomial
-#' @description Prints a monomial like \code{"x^5"}.
+#' @title Print a univariate polynomial
+#' @description Prints a polynomial by printing monomials like \code{"x^5"}.
 #'
 #' @param x a string, usually a letter such as \code{"x"} or \code{"X"}, to 
 #'   denote the variable
 #'
-#' @return A function which takes as argument an exponent and 
-#'   which prints the corresponding monomial.
+#' @return A function which prints a univariate \code{qspray} object.
 #' @export
 showQsprayUnivariate <- function(x) {
-  showQspray(showMonomialUnivariate(x = value))
+  showQspray(showMonomialUnivariate(x = x))
 }
 
 
