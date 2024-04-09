@@ -131,10 +131,11 @@ MSPcombination <- function(qspray, check = TRUE) {
 #' prettySymmetricQspray(qspray)
 prettySymmetricQspray <- function(qspray, check = FALSE) {
   combo   <- MSPcombination(qspray, check = check)
+  f <- showCoefficient(qspray)
   toPaste <- unlist(lapply(combo, function(t) {
-    coeff  <- as.character(t[["coeff"]])
+    coeff  <- f(t[["coeff"]])
     lambda <- toString(t[["lambda"]])
-    sprintf("(%s) * M[%s]", coeff, lambda)
+    sprintf("%s * M[%s]", coeff, lambda)
   }))
   paste0(toPaste, collapse = " + ")
 }

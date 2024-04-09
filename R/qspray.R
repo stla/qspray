@@ -24,6 +24,23 @@ setMethod(
   }
 )
 
+setGeneric(
+  "showCoefficient", function(x) {
+    NULL
+  }
+)
+
+#' @export
+setMethod(
+  "showCoefficient", "qspray", 
+  function(x) {
+    function(coeff) {
+      sprintf("(%s)", as.character(coeff))
+    }
+  }
+)
+
+
 as.qspray.character <- function(x) {
   stopifnot(isFraction(x))
   if(as.bigq(x) == 0L) {
