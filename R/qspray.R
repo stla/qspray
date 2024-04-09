@@ -19,8 +19,10 @@ setClass(
 setMethod(
   "show", "qspray", 
   function(object) {
-    showOpts <- attr(object, "showOpts")
-    f <- attr(showOpts, "showQspray") %||% showQsprayCanonical("x", object)
+    if(is.null(attr(object, "showOpts"))) {
+      showQsprayOption(object, "x") <- "x"
+    }
+    f <- attr(attr(object, "showOpts"), "showQspray")
     cat(f(object), "\n")
   }
 )
