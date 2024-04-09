@@ -5,7 +5,7 @@ passShowAttributes <- function(source, target) {
 
 #' @title (internal) Make a 'qspray' object from a list
 #' @description This function is for internal usage. It is exported because 
-#'   it is also used for internal usage in the \strong{jack} package.
+#'   it is also used for internal usage in others packages.
 #'
 #' @param qspray_as_list list returned by the Rcpp function 
 #'   \code{returnQspray}

@@ -9,6 +9,18 @@ numberOfVariables <- function(qspray) {
   max(0L, arity(qspray))
 }
 
+#' @title Number of terms in a 'qspray' polynomial
+#' @description Number of terms in the polynomial defined by a 
+#'   \code{qspray} object.
+#'
+#' @param qspray a \code{qspray} object
+#'
+#' @return An integer.
+#' @export
+numberOfTerms <- function(qspray) {
+  length(qspray@powers)
+}
+
 #' @title Get coefficient
 #' @description Get the coefficient corresponding to the given exponents.
 #' 
@@ -34,16 +46,27 @@ getCoefficient <- function(qspray, exponents) {
   exponents <- removeTrailingZeros(exponents)
   n <- arity(qspray)
   if(length(exponents) > n) {
-    return(as.bigq(0L))
-  }
-  powers <- vapply(qspray@powers, function(pows) {
-    toString(grow(pows, n))
-  }, character(1L))
-  i <- match(toString(grow(exponents, n)), powers)
-  if(is.na(i)) {
-    as.bigq(0L)
+    coeff <- 0L
   } else {
-    as.bigq(qspray@coeffs[i])
+    powers <- vapply(qspray@powers, function(pows) {
+      toString(grow(pows, n))
+    }, character(1L))
+    i <- match(toString(grow(exponents, n)), powers)
+    if(is.na(i)) {
+      coeff <- 0L
+    } else {
+      coeff <- qspray@coeffs[[i]]
+    }
+  }
+  if(inherits(qspray, "qspray")) {
+    as.bigq(coeff)
+  } else if(inherits(qspray, "symbolicQspray")) {
+    as.ratioOfQsprays(coeff)
+  } else {
+    stop(
+      "The function `getCoefficient` is not applicable for this type ",
+      "of polynomial."
+    )
   }
 }
 

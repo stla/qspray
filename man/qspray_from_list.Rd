@@ -15,5 +15,5 @@ A \code{qspray} object.
 }
 \description{
 This function is for internal usage. It is exported because 
-  it is also used for internal usage in the \strong{jack} package.
+  it is also used for internal usage in others packages.
 }

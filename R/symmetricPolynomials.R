@@ -69,6 +69,7 @@ MSFpoly <- function(m, lambda) {
 #'   term \code{coeff * MSFpoly(n, lambda)}, where \code{n} is the number of 
 #'   variables in the symmetric polynomial.
 #' @export
+#' @importFrom methods as canCoerce
 #'
 #' @examples
 #' qspray <- PSFpoly(4, c(3, 1)) + ESFpoly(4, c(2, 2)) + 4L
@@ -93,12 +94,18 @@ MSPcombination <- function(qspray, check = TRUE) {
     )
   }
   if(check) {
+    cl <- class(qspray)[1L]
+    if(!canCoerce(qzero(), cl)) {
+      stop(
+        "Cannot check symmetry for this type of polynomials."
+      )
+    }
     n <- arity(qspray)
-    check <- qzero()
+    check <- as(qzero(), cl)
     for(t in out) {
       coeff  <- t[["coeff"]]
       lambda <- t[["lambda"]]
-      check  <- check + coeff * MSFpoly(n, lambda)
+      check  <- check + coeff * as(MSFpoly(n, lambda), cl)
     }
     if(check != qspray) {
       stop("The polynomial is not symmetric.")
