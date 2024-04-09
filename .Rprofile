@@ -1,3 +1,7 @@
+rox <- function() {
+  roxygen2::roxygenise()
+}
+
 myinstall <- function() {
   try(pkgload::unload("qspray"))
   if(rstudioapi::isAvailable()) {

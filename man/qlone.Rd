@@ -13,8 +13,11 @@ qlone(n)
 A \code{qspray} object.
 }
 \description{
-Create a polynomial variable.
+Creates a polynomial variable. Using this function is the main 
+  way to build \code{qspray} objects.
 }
 \examples{
-qlone(2)
+x <- qlone(1)
+y <- qlone(2)
+(x + y) * (x - y)
 }

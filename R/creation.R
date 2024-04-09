@@ -18,16 +18,16 @@ rQspray <- function() {
   qsprayMaker(powers = powers, coeffs = coeffs)
 }
 
-#' @title The null qspray polynomial
-#' @description Returns the qspray polynomial identically equal to 0.
+#' @title The null 'qspray' polynomial
+#' @description Returns the \code{qspray} polynomial identically equal to 0.
 #' @return A \code{qspray} object.
 #' @export
 qzero <- function() {
   as.qspray(0L)
 }
 
-#' @title The unit qspray polynomial
-#' @description Returns the qspray polynomial identically equal to 1.
+#' @title The unit 'qspray' polynomial
+#' @description Returns the \code{qspray} polynomial identically equal to 1.
 #' @return A \code{qspray} object.
 #' @export
 qone <- function() {
@@ -35,14 +35,17 @@ qone <- function() {
 }
 
 #' @title Polynomial variable
-#' @description Create a polynomial variable.
+#' @description Creates a polynomial variable. Using this function is the main 
+#'   way to build \code{qspray} objects.
 #'
 #' @param n positive integer, the index of the variable
 #'
 #' @return A \code{qspray} object.
 #' @export
 #' @examples 
-#' qlone(2)
+#' x <- qlone(1)
+#' y <- qlone(2)
+#' (x + y) * (x - y)
 qlone <- function(n) {
   stopifnot(isPositiveInteger(n))
   if(n == 0) {
@@ -109,4 +112,3 @@ stringToQspray <- function(p){
     "powers" = powers, "coeffs" = coeffs
   )
 }
-

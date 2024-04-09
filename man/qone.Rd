@@ -2,7 +2,7 @@
 % Please edit documentation in R/creation.R
 \name{qone}
 \alias{qone}
-\title{The unit qspray polynomial}
+\title{The unit 'qspray' polynomial}
 \usage{
 qone()
 }
@@ -10,5 +10,5 @@ qone()
 A \code{qspray} object.
 }
 \description{
-Returns the qspray polynomial identically equal to 1.
+Returns the \code{qspray} polynomial identically equal to 1.
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/creation.R
 \name{qzero}
 \alias{qzero}
-\title{The null qspray polynomial}
+\title{The null 'qspray' polynomial}
 \usage{
 qzero()
 }
@@ -10,5 +10,5 @@ qzero()
 A \code{qspray} object.
 }
 \description{
-Returns the qspray polynomial identically equal to 0.
+Returns the \code{qspray} polynomial identically equal to 0.
 }
