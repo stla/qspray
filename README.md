@@ -26,14 +26,14 @@ to start by introducing the generating variables with the help of the
 x <- qlone(1); y <- qlone(2); z <- qlone(3)
 pol <- 4*x^2 + "1/2"*y - 5*x*y*z
 pol
-## 4*x^(2) - 5*x^(1, 1, 1) + 1/2*x^(0, 1)
+## 4*x^2 - 5*xyz + 1/2*y
 ```
 
 Or maybe you prefer to define the polynomial by giving it as a string:
 
 ``` r
 qsprayMaker(string = "4 x^(2) + 1/2 x^(0, 1) - 5 x^(1, 1, 1)")
-## 4*x^(2) - 5*x^(1, 1, 1) + 1/2*x^(0, 1)
+## 4*x^2 - 5*xyz + 1/2*y
 ```
 
 As you want, but this method is not highly robust.
@@ -42,19 +42,19 @@ Some arithmetic on this polynomial:
 
 ``` r
 -pol
-## -4*x^(2) + 5*x^(1, 1, 1) - 1/2*x^(0, 1)
+## -4*x^2 + 5*xyz - 1/2*y
 2 * pol
-## 8*x^(2) - 10*x^(1, 1, 1) + x^(0, 1)
+## 8*x^2 - 10*xyz + y
 pol / 2
-## 2*x^(2) - 5/2*x^(1, 1, 1) + 1/4*x^(0, 1)
+## 2*x^2 - 5/2*xyz + 1/4*y
 "5/3" * pol
-## 20/3*x^(2) - 25/3*x^(1, 1, 1) + 5/6*x^(0, 1)
+## 20/3*x^2 - 25/3*xyz + 5/6*y
 pol + 5
-## 4*x^(2) - 5*x^(1, 1, 1) + 1/2*x^(0, 1) + 5*x^()
+## 4*x^2 - 5*xyz + 1/2*y + 5
 pol - "2/5"
-## 4*x^(2) - 5*x^(1, 1, 1) + 1/2*x^(0, 1) - 2/5*x^()
+## 4*x^2 - 5*xyz + 1/2*y - 2/5
 pol^2
-## 16*x^(4) - 40*x^(3, 1, 1) + 25*x^(2, 2, 2) + 4*x^(2, 1) - 5*x^(1, 2, 1) + 1/4*x^(0, 2)
+## 16*x^4 - 40*x^3yz + 25*x^2y^2z^2 + 4*x^2y - 5*xy^2z + 1/4*y^2
 ```
 
 Two polynomials can be added and multiplied:
@@ -63,11 +63,11 @@ Two polynomials can be added and multiplied:
 pol1 <- pol
 pol2 <- pol
 pol1 + pol2
-## 8*x^(2) - 10*x^(1, 1, 1) + x^(0, 1)
+## 8*x^2 - 10*xyz + y
 pol1 - pol2
 ## 0
 pol1 * pol2
-## 16*x^(4) - 40*x^(3, 1, 1) + 25*x^(2, 2, 2) + 4*x^(2, 1) - 5*x^(1, 2, 1) + 1/4*x^(0, 2)
+## 16*x^4 - 40*x^3yz + 25*x^2y^2z^2 + 4*x^2y - 5*xy^2z + 1/4*y^2
 ```
 
 Use `evalQspray` to evaluate a polynomial for some values of the
@@ -92,6 +92,45 @@ You can pass the strings you want as the arguments of this functions:
 ``` r
 f("x", "y", "z")
 ## [1] "(8*x^2-10*x*y*z+y)/2"
+```
+
+You can control the way of printing a `qspray` with the help of the
+function `showQsprayOption<-`. By default, the monomials of a `qspray`
+are printed like `x^2yz^3` if there are at most three variables,
+otherwise they are printed like `x1^2.x2.x3^3`:
+
+``` r
+set.seed(3141)
+( qspray <- rQspray() ) # a random qspray
+## -2*x^4y^3z^4 - 4*y^2z^2
+qspray + qlone(4)^99
+## -2*x1^4.x2^3.x3^4 - 4*x2^2.x3^2 + x4^99
+```
+
+If you want to always use the second way, you can do:
+
+``` r
+showQsprayOption(qspray, "x") <- "x"
+qspray
+## -2*x1^4.x2^3.x3^4 - 4*x2^2.x3^2
+```
+
+If you want to restore the way `qspray` were printed in previous
+versions, you can do
+
+``` r
+showQsprayOption(qspray, "showMonomial") <- showMonomialOld()
+qspray
+## -2*x^(4, 3, 4) - 4*x^(0, 2, 2)
+```
+
+When an arithmetic operation is performed between two `qspray` objects,
+the show options of the first one are passed to the result, *if
+possible*:
+
+``` r
+qspray + qlone(4)^99
+## -2*x^(4, 3, 4) - 4*x^(0, 2, 2) + x^(0, 0, 0, 99)
 ```
 
 The package also provides a function which returns the exact value of
@@ -124,8 +163,8 @@ f <- qsprayMaker(string = "x^(3) - 2 x^(1,1)")
 g <- qsprayMaker(string = "x^(2,1) - 2 x^(0,2) + x^(1)")
 groebner(list(f, g))
 ## [[1]]
-## x^(1) - 2*x^(0, 2) 
+## x - 2*y^2 
 ## 
 ## [[2]]
-## x^(0, 3)
+## y^3
 ```

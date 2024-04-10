@@ -29,4 +29,7 @@ qspray
 showQsprayOption(qspray, "showMonomial") <- showMonomialX1X2X3("a")
 # and also identical to:
 showQsprayOption(qspray, "showQspray") <- showQsprayX1X2X3("a")
+# old show method:
+showQsprayOption(qspray, "showMonomial") <- showMonomialOld()
+qspray
 }

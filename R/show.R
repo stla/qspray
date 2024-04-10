@@ -120,8 +120,7 @@ showMonomialXYZ <- function(letters = c("x", "y", "z"), collapse = "") {
 #' @title Print a polynomial
 #' @description Prints a polynomial by printing monomials like \code{"x^2yz"}.
 #'
-#' @param letters a vector of strings, usually some letters such as \code{"x"}
-#'   and \code{"y"}, to denote the variables
+#' @param letters,collapse see \code{\link{showMonomialXYZ}}
 #' @param ... arguments passed to \code{\link{showQspray}}, such as 
 #'   \code{compact=TRUE}
 #'
@@ -135,8 +134,8 @@ showMonomialXYZ <- function(letters = c("x", "y", "z"), collapse = "") {
 #' 
 #' @seealso \code{\link{showMonomialXYZ}}, \code{\link{showQspray}}, 
 #'   \code{\link{showQsprayOption<-}}.
-showQsprayXYZ <- function(letters = c("x", "y", "z"), ...) {
-  showQspray(showMonomialXYZ(letters), ...)
+showQsprayXYZ <- function(letters = c("x", "y", "z"), collapse = "", ...) {
+  showQspray(showMonomialXYZ(letters, collapse), ...)
 }
 
 #' @title Print a monomial
@@ -155,9 +154,9 @@ showQsprayXYZ <- function(letters = c("x", "y", "z"), ...) {
 #'   \code{\link{showQspray}}, \code{\link{showQsprayOption<-}}. 
 #'
 #' @examples
-#' showMonomial("X")(c(1, 0, 2))
-#' showMonomial("X")(NULL)
-showMonomial <- function(x = "x") {
+#' showMonomialOld("X")(c(1, 0, 2))
+#' showMonomialOld("X")(NULL)
+showMonomialOld <- function(x = "x") {
   function(exponents) {
     paste0(sprintf("%s^(", x), toString(exponents), ")") 
   }
@@ -166,8 +165,7 @@ showMonomial <- function(x = "x") {
 #' @title Print a 'qspray' object
 #' @description Print a \code{qspray} object given a string for the variable.
 #'
-#' @param x a string, usually a letter such as \code{"x"} or \code{"X"}, 
-#'   which denotes the non-indexed variables
+#' @param x,collapse see \code{\link{showMonomialX1X2X3}}
 #' @param ... arguments passed to \code{\link{showQspray}}, such as 
 #'   \code{compact=TRUE}
 #'
@@ -181,8 +179,8 @@ showMonomial <- function(x = "x") {
 #' set.seed(3141)
 #' ( qspray <- rQspray() )
 #' showQsprayX1X2X3("X")(qspray)
-showQsprayX1X2X3 <- function(x, ...) {
-  showQspray(showMonomialX1X2X3(x), ...)
+showQsprayX1X2X3 <- function(x = "x", collapse = ".", ...) {
+  showQspray(showMonomialX1X2X3(x, collapse), ...)
 }
 
 #' @title Set a show option to a 'qspray' object
@@ -205,6 +203,9 @@ showQsprayX1X2X3 <- function(x, ...) {
 #' showQsprayOption(qspray, "showMonomial") <- showMonomialX1X2X3("a")
 #' # and also identical to:
 #' showQsprayOption(qspray, "showQspray") <- showQsprayX1X2X3("a")
+#' # old show method:
+#' showQsprayOption(qspray, "showMonomial") <- showMonomialOld()
+#' qspray
 `showQsprayOption<-` <- function(x, which, value) {
   which <- match.arg(which, c("x", "showMonomial", "showQspray", "inheritable"))
   showOpts <- attr(x, "showOpts") %||% TRUE

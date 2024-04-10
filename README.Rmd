@@ -82,6 +82,40 @@ You can pass the strings you want as the arguments of this functions:
 f("x", "y", "z")
 ```
 
+You can control the way of printing a `qspray` with the help of the function 
+`showQsprayOption<-`. By default, the monomials of a `qspray` are printed like 
+`x^2yz^3` if there are at most three variables, otherwise they are printed like
+`x1^2.x2.x3^3`: 
+
+```{r}
+set.seed(3141)
+( qspray <- rQspray() ) # a random qspray
+qspray + qlone(4)^99
+```
+
+If you want to always use the second way, you can do:
+
+```{r}
+showQsprayOption(qspray, "x") <- "x"
+qspray
+```
+
+If you want to restore the way `qspray` were printed in previous versions, 
+you can do
+
+```{r}
+showQsprayOption(qspray, "showMonomial") <- showMonomialOld()
+qspray
+```
+
+When an arithmetic operation is performed between two `qspray` objects, 
+the show options of the first one are passed to the result, *if possible*:
+
+```{r}
+qspray + qlone(4)^99
+```
+
+
 The package also provides a function which returns the exact value of the 
 integral of a polynomial with rational coefficients over a simplex with 
 rational vertices:

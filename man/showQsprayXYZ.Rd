@@ -4,11 +4,10 @@
 \alias{showQsprayXYZ}
 \title{Print a polynomial}
 \usage{
-showQsprayXYZ(letters = c("x", "y", "z"), ...)
+showQsprayXYZ(letters = c("x", "y", "z"), collapse = "", ...)
 }
 \arguments{
-\item{letters}{a vector of strings, usually some letters such as \code{"x"}
-and \code{"y"}, to denote the variables}
+\item{letters, collapse}{see \code{\link{showMonomialXYZ}}}
 
 \item{...}{arguments passed to \code{\link{showQspray}}, such as 
 \code{compact=TRUE}}

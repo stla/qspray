@@ -4,11 +4,10 @@
 \alias{showQsprayX1X2X3}
 \title{Print a 'qspray' object}
 \usage{
-showQsprayX1X2X3(x, ...)
+showQsprayX1X2X3(x = "x", collapse = ".", ...)
 }
 \arguments{
-\item{x}{a string, usually a letter such as \code{"x"} or \code{"X"}, 
-which denotes the non-indexed variables}
+\item{x, collapse}{see \code{\link{showMonomialX1X2X3}}}
 
 \item{...}{arguments passed to \code{\link{showQspray}}, such as 
 \code{compact=TRUE}}
