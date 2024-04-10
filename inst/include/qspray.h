@@ -349,17 +349,27 @@ namespace QSPRAY {
 
               powssum.clear();
               if(n1 < n2) {
-                powers gpows = QSPRAY::utils::growPowers(pows1, n1, n2);
+                //powers gpows = QSPRAY::utils::growPowers(pows1, n1, n2);
                 powssum.reserve(n2);
-                for(i = 0; i < n2; i++) {
-                  powssum.emplace_back(gpows[i] + pows2[i]);
+                for(i = 0; i < n1; i++) {
+                  powssum.emplace_back(pows1[i] + pows2[i]);
+                }
+                for(i = n1; i < n2; i++) {
+                  powssum.emplace_back(pows2[i]);
                 }
               } else if(n1 > n2) {
-                powers gpows = QSPRAY::utils::growPowers(pows2, n2, n1);
                 powssum.reserve(n1);
-                for(i = 0; i < n1; i++) {
-                  powssum.emplace_back(pows1[i] + gpows[i]);
+                for(i = 0; i < n2; i++) {
+                  powssum.emplace_back(pows1[i] + pows2[i]);
                 }
+                for(i = n2; i < n1; i++) {
+                  powssum.emplace_back(pows1[i]);
+                }
+                // powers gpows = QSPRAY::utils::growPowers(pows2, n2, n1);
+                // powssum.reserve(n1);
+                // for(i = 0; i < n1; i++) {
+                //   powssum.emplace_back(pows1[i] + gpows[i]);
+                // }
               } else {
                 powssum.reserve(n1);
                 for(i = 0; i < n1; i++) {
