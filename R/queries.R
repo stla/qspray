@@ -24,6 +24,11 @@ setGeneric(
   }
 )
 setGeneric(
+  "isUnivariate", function(x) {
+    NULL
+  }
+)
+setGeneric(
   "isQzero", function(qspray) {
     NULL
   }
@@ -150,6 +155,25 @@ setMethod(
   "isConstant", "qspray", 
   function(x) {
     numberOfVariables(x) == 0L
+  }
+)
+
+#' @name isUnivariate
+#' @aliases isUnivariate,qspray-method
+#' @docType methods
+#' @title Whether a 'qspray' is univariate
+#' @description Checks whether a \code{qspray} object defines a
+#'   univariate polynomial.
+#'
+#' @param x a \code{qspray} object
+#'
+#' @return A Boolean value.
+#' @export
+#' @note It is considered that a constant \code{qspray} is univariate.
+setMethod(
+  "isUnivariate", "qspray",
+  function(x) {
+    numberOfVariables(x) %in% c(0L, 1L)
   }
 )
 
