@@ -210,8 +210,7 @@ qspray_arith_qspray <- function(e1, e2) {
 
 qsprayPower <- function(e1, n) {
   stopifnot(isPositiveInteger(n))
-  qspray <- qspray_power(e1@powers, e1@coeffs, n)
-  passShowAttributes(e1, qspray)
+  qspray_power(e1@powers, e1@coeffs, n)
 }
 
 qspray_arith_gmp <- function(e1, e2) {
