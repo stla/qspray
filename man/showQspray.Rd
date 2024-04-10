@@ -4,14 +4,18 @@
 \alias{showQspray}
 \title{Print a 'qspray' object}
 \usage{
-showQspray(showMonomial, compact = FALSE)
+showQspray(showMonomial, compact = FALSE, multiplication = "*")
 }
 \arguments{
 \item{showMonomial}{a function which takes as argument a sequence of 
 exponents and which returns a string representing the corresponding 
 monomial}
 
-\item{compact}{a Boolean value}
+\item{compact}{a Boolean value; if \code{TRUE}, then the \code{+} sign 
+and the \code{-} sign will not be surrounded by spaces}
+
+\item{multiplication}{used to separate the coefficient and the monomial 
+within a term}
 }
 \value{
 A function which prints a \code{qspray} object.
@@ -23,7 +27,8 @@ Prints a \code{qspray} object given a function which prints
 \examples{
 set.seed(3141)
 ( qspray <- rQspray() )
-showQspray(showMonomialX1X2X3("X"), compact = TRUE)(qspray)
+f <- showQspray(showMonomialX1X2X3("X"), compact = TRUE)
+f(qspray)
 }
 \seealso{
 \code{\link{showQsprayX1X2X3}}, \code{\link{showQsprayXYZ}}, 

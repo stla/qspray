@@ -5,7 +5,10 @@
 #' @param showMonomial a function which takes as argument a sequence of 
 #'   exponents and which returns a string representing the corresponding 
 #'   monomial
-#' @param compact a Boolean value
+#' @param compact a Boolean value; if \code{TRUE}, then the \code{+} sign 
+#'   and the \code{-} sign will not be surrounded by spaces
+#' @param multiplication used to separate the coefficient and the monomial 
+#'   within a term
 #'
 #' @return A function which prints a \code{qspray} object.
 #' @export
@@ -17,14 +20,15 @@
 #' @examples
 #' set.seed(3141)
 #' ( qspray <- rQspray() )
-#' showQspray(showMonomialX1X2X3("X"), compact = TRUE)(qspray)
-showQspray <- function(showMonomial, compact = FALSE) {
+#' f <- showQspray(showMonomialX1X2X3("X"), compact = TRUE)
+#' f(qspray)
+showQspray <- function(showMonomial, compact = FALSE, multiplication = "*") {
   function(qspray) {
-    if(length(qspray@coeffs) == 0L) {
+    if(isQzero(qspray)) {
       return("0")
     }
     qspray <- orderedQspray(qspray)
-    nterms <- length(qspray@coeffs)
+    nterms <- numberOfTerms(qspray)
     constantTerm <- getConstantTerm(qspray)
     monomials <- vapply(
       qspray@powers, showMonomial, FUN.VALUE = character(1L)
@@ -36,7 +40,7 @@ showQspray <- function(showMonomial, compact = FALSE) {
     signs <- c(ifelse(plus[-1L], plusSign, minusSign), "")
     abscoeffs <- as.character(abs(coeffs))
     terms <- paste0(
-      ifelse(abscoeffs == "1", "", paste0(abscoeffs, "*")), monomials
+      ifelse(abscoeffs == "1", "", paste0(abscoeffs, multiplication)), monomials
     )
     if(constantTerm != 0L) {
       terms[nterms] <- as.character(abs(constantTerm))
@@ -63,7 +67,7 @@ showQspray <- function(showMonomial, compact = FALSE) {
 #' 
 #' @examples
 #' showMonomialX1X2X3("X")(c(1, 0, 2))
-#' showMonomialX1X2X3("X")(c(1, 0, 2), collapse = "*")
+#' showMonomialX1X2X3("X", collapse = "*")(c(1, 0, 2))
 #' showMonomialX1X2X3("X")(c(1, 0, 2)) == 
 #'   showMonomialXYZ(c("X1", "X2", "X3"))(c(1, 0, 2))
 #' showMonomialX1X2X3()(NULL)
@@ -98,7 +102,7 @@ showMonomialX1X2X3 <- function(x = "x", collapse = ".") {
 #' @examples
 #' showMonomialXYZ()(c(1, 0, 2))
 #' showMonomialXYZ()(NULL)
-#' showMonomialXYZ()(c(1, 0, 2, 3)) # no error
+#' showMonomialXYZ(collapse = "*")(c(1, 0, 2, 3)) # no error
 showMonomialXYZ <- function(letters = c("x", "y", "z"), collapse = "") {
   function(exponents) {
     paste0(vapply(which(exponents != 0L), function(i) {
