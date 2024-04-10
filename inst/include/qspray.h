@@ -372,14 +372,15 @@ namespace QSPRAY {
         }
       }
       // remove the possibly zero terms
+      Polynomial<T> SSout;
       for(it = Sout.begin(); it != Sout.end(); ++it) {
-        if(it->second == zero) { 
-          Sout.erase(it->first);
+        if(it->second != zero) { 
+          SSout[it->first] = it->second;
         }
       }
       //
-      S = Sout;
-      return Qspray<T>(Sout);
+      S = SSout;
+      return Qspray<T>(SSout);
     }
 
     Qspray<T> operator*(const Qspray<T>& Q2) {
