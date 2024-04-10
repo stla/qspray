@@ -77,7 +77,7 @@ setMethod(
 )
 
 #' @name getCoefficient
-#' @aliases getCoefficient,qspray-method 
+#' @aliases getCoefficient,qspray,numeric-method 
 #' @docType methods
 #' @title Get a coefficient in a 'qspray' polynomial
 #' @description Get the coefficient corresponding to the given sequence of 

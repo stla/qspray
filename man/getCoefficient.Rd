@@ -3,7 +3,7 @@
 \docType{methods}
 \name{getCoefficient}
 \alias{getCoefficient}
-\alias{getCoefficient,qspray-method}
+\alias{getCoefficient,qspray,numeric-method}
 \title{Get a coefficient in a 'qspray' polynomial}
 \usage{
 \S4method{getCoefficient}{qspray,numeric}(qspray, exponents)
