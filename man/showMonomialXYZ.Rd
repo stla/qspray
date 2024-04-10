@@ -20,6 +20,7 @@ Prints a monomial like \code{"xz^2"}.
 \examples{
 showMonomialXYZ()(c(1, 0, 2))
 showMonomialXYZ()(NULL)
+showMonomialXYZ()(c(1, 0, 2, 3)) # no error
 }
 \seealso{
 \code{\link{showQsprayXYZ}}, 

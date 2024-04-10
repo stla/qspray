@@ -19,9 +19,11 @@ Prints a monomial like \code{"x1.x3^2"}.
 }
 \examples{
 showMonomialX1X2X3("X")(c(1, 0, 2))
+showMonomialX1X2X3("X")(c(1, 0, 2)) == 
+  showMonomialXYZ(c("X1", "X2", "X3"))(c(1, 0, 2))
 showMonomialX1X2X3()(NULL)
 }
 \seealso{
 \code{\link{showQsprayX1X2X3}}, 
-  \code{\link{showMonomialUnivariate}}, \code{\link{showQsprayOption<-}}.
+  \code{\link{showMonomialXYZ}}, \code{\link{showQsprayOption<-}}.
 }
