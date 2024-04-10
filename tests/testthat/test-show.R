@@ -2,11 +2,13 @@ test_that("show", {
   set.seed(3141L)
   q1 <- rQspray()
   expect_identical(Print(q1), "-2*x^4y^3z^4 - 4*y^2z^2 ")
+  expect_identical(Print(q1+qlone(4)), "-2*x1^4.x2^3.x3^4 - 4*x2^2.x3^2 + x4 ")
   showQsprayOption(q1, "x") <- "A"
   expect_identical(Print(q1), "-2*A1^4.A2^3.A3^4 - 4*A2^2.A3^2 ")
+  expect_identical(Print(q1+qlone(4)), "-2*A1^4.A2^3.A3^4 - 4*A2^2.A3^2 + A4 ")
   q2 <- rQspray()
   expect_identical(
-    Print(q1+q2), 
+    Print(q1 + q2), 
     "-2*A1^4.A2^3.A3^4 + 5*A1^4.A2 - A2^2.A3^3 - 4*A2^2.A3^2 - 3 "
   )
   
