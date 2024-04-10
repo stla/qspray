@@ -11,8 +11,13 @@
 #' @export
 #' @importFrom gmp as.bigq
 #' 
-#' @seealso \code{\link{showQsprayX1X2X3}}, \code{\link{showMonomial}}, 
+#' @seealso \code{\link{showQsprayX1X2X3}}, \code{\link{showQsprayXYZ}}, 
 #'   \code{\link{showQsprayOption<-}}.
+#'   
+#' @examples
+#' set.seed(3141)
+#' ( qspray <- rQspray() )
+#' showQspray(showMonomialX1X2X3("X"), compact = TRUE)(qspray)
 showQspray <- function(showMonomial, compact = FALSE) {
   function(qspray) {
     if(length(qspray@coeffs) == 0L) {
@@ -56,7 +61,8 @@ showQspray <- function(showMonomial, compact = FALSE) {
 #' 
 #' @examples
 #' showMonomialX1X2X3("X")(c(1, 0, 2))
-showMonomialX1X2X3 <- function(x) {
+#' showMonomialX1X2X3()(NULL)
+showMonomialX1X2X3 <- function(x = "x") {
   function(exponents) {
     paste0(vapply(which(exponents != 0L), function(i) {
       e <- exponents[i]
@@ -84,6 +90,7 @@ showMonomialX1X2X3 <- function(x) {
 #' 
 #' @examples
 #' showMonomialXYZ()(c(1, 0, 2))
+#' showMonomialXYZ()(NULL)
 showMonomialXYZ <- function(letters = c("x", "y", "z")) {
   function(exponents) {
     paste0(vapply(which(exponents != 0L), function(i) {
@@ -108,6 +115,11 @@ showMonomialXYZ <- function(letters = c("x", "y", "z")) {
 #' @return A function which prints a \code{qspray} object.
 #' @export
 #' 
+#' @examples
+#' set.seed(3141)
+#' ( qspray <- rQspray() )
+#' showQsprayXYZ(c("X", "Y", "Z"))(qspray)
+#' 
 #' @seealso \code{\link{showMonomialXYZ}}, \code{\link{showQspray}}, 
 #'   \code{\link{showQsprayOption<-}}.
 showQsprayXYZ <- function(letters = c("x", "y", "z"), ...) {
@@ -126,14 +138,15 @@ showQsprayXYZ <- function(letters = c("x", "y", "z"), ...) {
 #'   which prints the corresponding monomial.
 #' @export
 #'
-#' @seealso \code{\link{showMonomialX1X2X3}}, \code{\link{showQspray}}, 
-#'   \code{\link{showQsprayOption<-}}. 
+#' @seealso \code{\link{showMonomialX1X2X3}}, \code{\link{showMonomialXYZ}}, 
+#'   \code{\link{showQspray}}, \code{\link{showQsprayOption<-}}. 
 #'
 #' @examples
 #' showMonomial("X")(c(1, 0, 2))
+#' showMonomial("X")(NULL)
 showMonomial <- function(x = "x") {
   function(exponents) {
-    paste0(sprintf("%s^(", x), exponents, ")") 
+    paste0(sprintf("%s^(", x), toString(exponents), ")") 
   }
 }
 
@@ -152,7 +165,8 @@ showMonomial <- function(x = "x") {
 #'  help of the function \code{\link{showQsprayOption<-}}.
 #'
 #' @examples
-#' qspray <- rQspray()
+#' set.seed(3141)
+#' ( qspray <- rQspray() )
 #' showQsprayX1X2X3("X")(qspray)
 showQsprayX1X2X3 <- function(x, ...) {
   showQspray(showMonomialX1X2X3(x), ...)
@@ -170,6 +184,7 @@ showQsprayX1X2X3 <- function(x, ...) {
 #' @export
 #'
 #' @examples
+#' set.seed(3141)
 #' ( qspray <- rQspray() )
 #' showQsprayOption(qspray, "x") <- "a"
 #' qspray
@@ -181,27 +196,44 @@ showQsprayX1X2X3 <- function(x, ...) {
   which <- match.arg(which, c("x", "showMonomial", "showQspray"))
   showOpts <- attr(x, "showOpts") %||% TRUE
   attr(showOpts, which) <- value
-  if(which == "x") {
-    univariate <- isUnivariate(x)
-    attr(showOpts, "showQspray") <- if(univariate) {
-      showQsprayXYZ(letters = value)
-    } else {
-      showQsprayX1X2X3(x = value)
-    }
-  } else if(which == "showMonomial") {
-    attr(showOpts, "showQspray") <- showQspray(showMonomial = value)
+  if(which != "showQspray") {
+    if(which == "x") {
+      univariate <- isUnivariate(qspray)
+      if(univariate) {
+        sM <- showMonomialXYZ(letters = value)
+      } else {
+        sM <- showMonomialX1X2X3(x = value)
+      }
+      attr(showOpts, "showMonomial") <- sM
+      sQ <- showQspray(showMonomial = sM)
+    } else if(which == "showMonomial") {
+      sQ <- showQspray(showMonomial = value)
+    } 
   } else {
-    attr(showOpts, "showQspray") <- value
+    sQ <- value
   }
+  attr(showOpts, "showQspray") <- sQ
   attr(x, "showOpts") <- showOpts
   x
 }
 
 getShowQspray <- function(qspray) {
   showOpts <- attr(qspray, "showOpts")
-  attr(showOpts, "showQspray") %||%
-    attr(attr(showOpts, "showSymbolicQspray"), "showQspray") %||%
-    showQsprayX1X2X3(
-      x = attr(showOpts, "x") %||% "x"
-    )
+  sQ <- attr(showOpts, "showQspray") 
+  if(is.null(sQ)) {
+    sQ <- attr(attr(showOpts, "showSymbolicQspray"), "showQspray")
+    if(is.null(sQ)) {
+      trivariate <- numberOfVariables(qspray) <= 3L
+      if(trivariate){ 
+        sM <- showMonomialXYZ()
+      } else {
+        sM <- showMonomialX1X2X3(attr(showOpts, "x") %||% "x")
+      }
+      showQsprayOption(qspray, "showMonomial") <- sM
+      sQ <- attr(showOpts, "showQspray")
+    } else {
+      showQsprayOption(qspray, "showQspray") <- sQ
+    }
+  } 
+  sQ
 }

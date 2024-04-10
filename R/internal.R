@@ -1,5 +1,9 @@
 passShowAttributes <- function(source, target) {
-  lapply("showOpts", function(a) attr(target, a) <<- attr(source, a))
+  n1 <- numberOfVariables(source)
+  n2 <- numberOfVariables(target)
+  if(n1 >= n2) {
+    attr(target, "showOpts") <- attr(source, "showOpts")
+  } 
   target
 }
 

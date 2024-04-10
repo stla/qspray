@@ -24,6 +24,7 @@ The way to print \code{qspray} objects can be controlled with the
  help of the function \code{\link{showQsprayOption<-}}.
 }
 \examples{
-qspray <- rQspray()
+set.seed(3141)
+( qspray <- rQspray() )
 showQsprayX1X2X3("X")(qspray)
 }

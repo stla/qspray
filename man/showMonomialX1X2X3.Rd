@@ -4,7 +4,7 @@
 \alias{showMonomialX1X2X3}
 \title{Print a monomial}
 \usage{
-showMonomialX1X2X3(x)
+showMonomialX1X2X3(x = "x")
 }
 \arguments{
 \item{x}{a string, usually a letter such as \code{"x"} or \code{"X"}, to 
@@ -19,6 +19,7 @@ Prints a monomial like \code{"x1.x3^2"}.
 }
 \examples{
 showMonomialX1X2X3("X")(c(1, 0, 2))
+showMonomialX1X2X3()(NULL)
 }
 \seealso{
 \code{\link{showQsprayX1X2X3}}, 

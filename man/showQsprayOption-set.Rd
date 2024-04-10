@@ -21,6 +21,7 @@ This returns the updated \code{qspray}.
 Set a show option to a \code{qspray} object
 }
 \examples{
+set.seed(3141)
 ( qspray <- rQspray() )
 showQsprayOption(qspray, "x") <- "a"
 qspray

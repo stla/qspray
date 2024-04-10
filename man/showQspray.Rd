@@ -20,7 +20,12 @@ A function which prints a \code{qspray} object.
 Prints a \code{qspray} object given a function which prints 
   the monomials.
 }
+\examples{
+set.seed(3141)
+( qspray <- rQspray() )
+showQspray(showMonomialX1X2X3("X"), compact = TRUE)(qspray)
+}
 \seealso{
-\code{\link{showQsprayX1X2X3}}, \code{\link{showMonomial}}, 
+\code{\link{showQsprayX1X2X3}}, \code{\link{showQsprayXYZ}}, 
   \code{\link{showQsprayOption<-}}.
 }

@@ -19,6 +19,12 @@ A function which prints a \code{qspray} object.
 \description{
 Prints a polynomial by printing monomials like \code{"x^2yz"}.
 }
+\examples{
+set.seed(3141)
+( qspray <- rQspray() )
+showQsprayXYZ(c("X", "Y", "Z"))(qspray)
+
+}
 \seealso{
 \code{\link{showMonomialXYZ}}, \code{\link{showQspray}}, 
   \code{\link{showQsprayOption<-}}.

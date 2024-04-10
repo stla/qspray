@@ -19,6 +19,7 @@ Prints a monomial like \code{"xz^2"}.
 }
 \examples{
 showMonomialXYZ()(c(1, 0, 2))
+showMonomialXYZ()(NULL)
 }
 \seealso{
 \code{\link{showQsprayXYZ}}, 

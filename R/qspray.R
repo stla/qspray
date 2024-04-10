@@ -18,11 +18,6 @@ setClass(
 setMethod(
   "show", "qspray", 
   function(object) {
-    if(is.null(attr(object, "showOpts"))) {
-      trivariate <- numberOfVariables(object) <= 3
-      showQsprayOption(object, "showQspray") <- 
-        if(trivariate) showQsprayXYZ() else showQsprayX1X2X3("x")
-    }
     f <- getShowQspray(object)#attr(attr(object, "showOpts"), "showQspray")
     cat(f(object), "\n")
   }

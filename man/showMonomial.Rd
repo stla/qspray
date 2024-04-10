@@ -21,8 +21,9 @@ Prints a monomial like \code{"x^(1, 0, 2)"}. This way of
 }
 \examples{
 showMonomial("X")(c(1, 0, 2))
+showMonomial("X")(NULL)
 }
 \seealso{
-\code{\link{showMonomialX1X2X3}}, \code{\link{showQspray}}, 
-  \code{\link{showQsprayOption<-}}.
+\code{\link{showMonomialX1X2X3}}, \code{\link{showMonomialXYZ}}, 
+  \code{\link{showQspray}}, \code{\link{showQsprayOption<-}}.
 }
