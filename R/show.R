@@ -50,7 +50,9 @@ showQspray <- function(showMonomial, compact = FALSE) {
 #' @description Prints a monomial like \code{"x1.x3^2"}.
 #'
 #' @param x a string, usually a letter such as \code{"x"} or \code{"X"}, to 
-#'   denote the unindexed variables
+#'   denote the non-indexed variables
+#' @param collapse a string to denote the symbol representing the 
+#'   multiplication, e.g. \code{"*"} or \code{""}
 #'
 #' @return A function which takes as argument a sequence of exponents and 
 #'   which prints the corresponding monomial.
@@ -61,10 +63,11 @@ showQspray <- function(showMonomial, compact = FALSE) {
 #' 
 #' @examples
 #' showMonomialX1X2X3("X")(c(1, 0, 2))
+#' showMonomialX1X2X3("X")(c(1, 0, 2), collapse = "*")
 #' showMonomialX1X2X3("X")(c(1, 0, 2)) == 
 #'   showMonomialXYZ(c("X1", "X2", "X3"))(c(1, 0, 2))
 #' showMonomialX1X2X3()(NULL)
-showMonomialX1X2X3 <- function(x = "x") {
+showMonomialX1X2X3 <- function(x = "x", collapse = ".") {
   function(exponents) {
     paste0(vapply(which(exponents != 0L), function(i) {
       e <- exponents[i]
@@ -73,7 +76,7 @@ showMonomialX1X2X3 <- function(x = "x") {
       } else {
         sprintf("%s%s^%d", x, i, e)
       }
-    }, character(1L)), collapse = ".")
+    }, character(1L)), collapse = collapse)
   }
 }
 
@@ -82,6 +85,8 @@ showMonomialX1X2X3 <- function(x = "x") {
 #'
 #' @param letters a vector of strings, usually some letters such as \code{"x"} 
 #'   and \code{"y"}, to denote the variables
+#' @param collapse a string to denote the symbol representing the 
+#'   multiplication, e.g. \code{"*"} or \code{"."}
 #'
 #' @return A function which takes as argument a sequence of exponents and 
 #'   which prints the corresponding monomial.
@@ -94,7 +99,7 @@ showMonomialX1X2X3 <- function(x = "x") {
 #' showMonomialXYZ()(c(1, 0, 2))
 #' showMonomialXYZ()(NULL)
 #' showMonomialXYZ()(c(1, 0, 2, 3)) # no error
-showMonomialXYZ <- function(letters = c("x", "y", "z")) {
+showMonomialXYZ <- function(letters = c("x", "y", "z"), collapse = "") {
   function(exponents) {
     paste0(vapply(which(exponents != 0L), function(i) {
       e <- exponents[i]
@@ -104,7 +109,7 @@ showMonomialXYZ <- function(letters = c("x", "y", "z")) {
       } else {
         sprintf("%s^%d", letter, e)
       }
-    }, character(1L)), collapse = "")
+    }, character(1L)), collapse = collapse)
   }
 }
 

@@ -4,11 +4,14 @@
 \alias{showMonomialX1X2X3}
 \title{Print a monomial}
 \usage{
-showMonomialX1X2X3(x = "x")
+showMonomialX1X2X3(x = "x", collapse = ".")
 }
 \arguments{
 \item{x}{a string, usually a letter such as \code{"x"} or \code{"X"}, to 
-denote the unindexed variables}
+denote the non-indexed variables}
+
+\item{collapse}{a string to denote the symbol representing the 
+multiplication, e.g. \code{"*"} or \code{""}}
 }
 \value{
 A function which takes as argument a sequence of exponents and 
@@ -19,6 +22,7 @@ Prints a monomial like \code{"x1.x3^2"}.
 }
 \examples{
 showMonomialX1X2X3("X")(c(1, 0, 2))
+showMonomialX1X2X3("X")(c(1, 0, 2), collapse = "*")
 showMonomialX1X2X3("X")(c(1, 0, 2)) == 
   showMonomialXYZ(c("X1", "X2", "X3"))(c(1, 0, 2))
 showMonomialX1X2X3()(NULL)

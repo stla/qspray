@@ -4,11 +4,14 @@
 \alias{showMonomialXYZ}
 \title{Print a monomial}
 \usage{
-showMonomialXYZ(letters = c("x", "y", "z"))
+showMonomialXYZ(letters = c("x", "y", "z"), collapse = "")
 }
 \arguments{
 \item{letters}{a vector of strings, usually some letters such as \code{"x"} 
 and \code{"y"}, to denote the variables}
+
+\item{collapse}{a string to denote the symbol representing the 
+multiplication, e.g. \code{"*"} or \code{"."}}
 }
 \value{
 A function which takes as argument a sequence of exponents and 
