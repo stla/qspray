@@ -230,7 +230,7 @@ getShowQspray <- function(qspray) {
         sM <- showMonomialX1X2X3(attr(showOpts, "x") %||% "x")
       }
       showQsprayOption(qspray, "showMonomial") <- sM
-      sQ <- attr(showOpts, "showQspray")
+      sQ <- attr(attr(qspray, "showOpts"), "showQspray")
     } else {
       showQsprayOption(qspray, "showQspray") <- sQ
     }
