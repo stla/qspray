@@ -198,7 +198,7 @@ showQsprayX1X2X3 <- function(x, ...) {
   attr(showOpts, which) <- value
   if(which != "showQspray") {
     if(which == "x") {
-      univariate <- isUnivariate(qspray)
+      univariate <- isUnivariate(x)
       if(univariate) {
         sM <- showMonomialXYZ(letters = value)
       } else {

@@ -180,7 +180,7 @@ qspray_arith_character <- function(e1, e2) {
 
 #' @importFrom utils installed.packages
 qspray_arith_qspray <- function(e1, e2) {
-  qspray <- switch(
+  x <- switch(
     .Generic,
     "+" = qspray_from_list(
       qspray_add(e1@powers, e1@coeffs, e2@powers, e2@coeffs)
@@ -195,31 +195,17 @@ qspray_arith_qspray <- function(e1, e2) {
       if(canCoerce(e1, "ratioOfQsprays")) {
         as(e1, "ratioOfQsprays") / as(e2, "ratioOfQsprays") 
       } else {
-        x <- "loaded"
         stop(
           "Division of 'qspray' objects is possible only with the ",
-          "'ratioOfQsprays' package, and this package is not ", x, "."
+          "'ratioOfQsprays' package, and this package is not loaded."
         )
       }
     },
-    # "/" = tryCatch({
-    #     as.ratioOfQsprays(e1) / as.ratioOfQsprays(e2)
-    # }, error = function(e) {
-    #   x <- ifelse(
-    #     "ratioOfQsprays" %in% rownames(installed.packages()),
-    #     "loaded",
-    #     "installed"
-    #   )
-    #   stop(
-    #     "Division of 'qspray' objects is possible only with the ",
-    #     "'ratioOfQsprays' package, and this package is not ", x, "."
-    #   )
-    # }),
     stop(gettextf(
       "Binary operator %s not defined for qspray objects.", dQuote(.Generic)
     ))
   )
-  passShowAttributes(e2, qspray)
+  passShowAttributes(e1, x)
 }
 
 qsprayPower <- function(e1, n) {
