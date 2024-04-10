@@ -6,7 +6,7 @@
 \alias{isConstant,qspray-method}
 \title{Whether a 'qspray' polynomial is constant}
 \usage{
-isConstant(x)
+\S4method{isConstant}{qspray}(x)
 }
 \arguments{
 \item{x}{a \code{qspray} object}

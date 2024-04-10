@@ -6,7 +6,7 @@
 \alias{numberOfTerms,qspray-method}
 \title{Number of terms in a 'qspray' polynomial}
 \usage{
-numberOfTerms(qspray)
+\S4method{numberOfTerms}{qspray}(qspray)
 }
 \arguments{
 \item{qspray}{a \code{qspray} object}

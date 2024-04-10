@@ -4,9 +4,9 @@
 \name{getCoefficient}
 \alias{getCoefficient}
 \alias{getCoefficient,qspray-method}
-\title{Get a coefficient}
+\title{Get a coefficient in a 'qspray' polynomial}
 \usage{
-getCoefficient(qspray, exponents)
+\S4method{getCoefficient}{qspray,numeric}(qspray, exponents)
 }
 \arguments{
 \item{qspray}{a \code{qspray} object}

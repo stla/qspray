@@ -6,7 +6,7 @@
 \alias{isQzero,qspray-method}
 \title{Whether a qspray polynomial is null}
 \usage{
-isQzero(qspray)
+\S4method{isQzero}{qspray}(qspray)
 }
 \arguments{
 \item{qspray}{a \code{qspray} object}

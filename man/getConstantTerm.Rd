@@ -4,9 +4,9 @@
 \name{getConstantTerm}
 \alias{getConstantTerm}
 \alias{getConstantTerm,qspray-method}
-\title{Get the constant term of a 'qspray' polynomial.}
+\title{Get the constant term of a 'qspray' polynomial}
 \usage{
-getConstantTerm(qspray)
+\S4method{getConstantTerm}{qspray}(qspray)
 }
 \arguments{
 \item{qspray}{a \code{qspray} object}
@@ -15,5 +15,5 @@ getConstantTerm(qspray)
 A \code{bigq} number.
 }
 \description{
-Get the constant term of a 'qspray' polynomial.
+Get the constant term of a \code{qspray} polynomial.
 }

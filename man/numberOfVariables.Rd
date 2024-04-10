@@ -6,7 +6,7 @@
 \alias{numberOfVariables,qspray-method}
 \title{Number of variables in a 'qspray' polynomial}
 \usage{
-numberOfVariables(x)
+\S4method{numberOfVariables}{qspray}(x)
 }
 \arguments{
 \item{x}{a \code{qspray} object}

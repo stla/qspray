@@ -9,7 +9,7 @@ setGeneric(
   }
 )
 setGeneric(
-  "getCoefficient", function(qspray) {
+  "getCoefficient", function(qspray, exponents) {
     NULL
   }
 )
@@ -46,9 +46,12 @@ setGeneric(
 #' @export
 #' @note The number of variables in the \code{qspray} object \code{qlone(d)} 
 #'   is \code{d}, not \code{1}.
-numberOfVariables <- function(x) {
-  max(0L, arity(x))
-}
+setMethod(
+  "numberOfVariables", "qspray", 
+  function(x) {
+    max(0L, arity(x))
+  }
+)
 
 #' @name numberOfTerms
 #' @aliases numberOfTerms,qspray-method 
@@ -61,14 +64,17 @@ numberOfVariables <- function(x) {
 #'
 #' @return An integer.
 #' @export
-numberOfTerms <- function(qspray) {
-  length(qspray@powers)
-}
+setMethod(
+  "numberOfTerms", "qspray", 
+  function(qspray) {
+    length(qspray@powers)
+  }
+)
 
 #' @name getCoefficient
 #' @aliases getCoefficient,qspray-method 
 #' @docType methods
-#' @title Get a coefficient
+#' @title Get a coefficient in a 'qspray' polynomial
 #' @description Get the coefficient corresponding to the given sequence of 
 #'   exponents.
 #' 
@@ -89,38 +95,45 @@ numberOfTerms <- function(qspray) {
 #' getCoefficient(p, c(0, 1))
 #' getCoefficient(p, 0) # the constant term
 #' getCoefficient(p, 3)
-getCoefficient <- function(qspray, exponents) {
-  stopifnot(isExponents(exponents))
-  exponents <- removeTrailingZeros(exponents)
-  n <- arity(qspray)
-  if(length(exponents) > n) {
-    coeff <- 0L
-  } else {
-    powers <- vapply(qspray@powers, function(pows) {
-      toString(grow(pows, n))
-    }, character(1L))
-    i <- match(toString(grow(exponents, n)), powers)
-    if(is.na(i)) {
+setMethod(
+  "getCoefficient", c("qspray", "numeric"), 
+  function(qspray, exponents) {
+    stopifnot(isExponents(exponents))
+    exponents <- removeTrailingZeros(exponents)
+    n <- arity(qspray)
+    if(length(exponents) > n) {
       coeff <- 0L
     } else {
-      coeff <- qspray@coeffs[[i]]
+      powers <- vapply(qspray@powers, function(pows) {
+        toString(grow(pows, n))
+      }, character(1L))
+      i <- match(toString(grow(exponents, n)), powers)
+      if(is.na(i)) {
+        coeff <- 0L
+      } else {
+        coeff <- qspray@coeffs[[i]]
+      }
     }
+    as.bigq(coeff)
   }
-  as.bigq(coeff)
-}
+)
 
 #' @name getConstantTerm
 #' @aliases getConstantTerm,qspray-method 
 #' @docType methods
-#' @title Get the constant term of a 'qspray' polynomial.
+#' @title Get the constant term of a 'qspray' polynomial
+#' @description Get the constant term of a \code{qspray} polynomial.
 #'
 #' @param qspray a \code{qspray} object
 #'
 #' @return A \code{bigq} number.
 #' @export
-getConstantTerm <- function(qspray) {
-  getCoefficient(qspray, integer(0L))
-}
+setMethod(
+  "getConstantTerm", "qspray", 
+  function(qspray) {
+    getCoefficient(qspray, integer(0L))
+  }
+)
 
 #' @name isConstant
 #' @aliases isConstant,qspray-method 
@@ -133,9 +146,12 @@ getConstantTerm <- function(qspray) {
 #'
 #' @return A Boolean value.
 #' @export
-isConstant <- function(x) {
-  numberOfVariables(x) == 0L
-}
+setMethod(
+  "isConstant", "qspray", 
+  function(x) {
+    numberOfVariables(x) == 0L
+  }
+)
 
 #' @name isQzero
 #' @aliases isQzero,qspray-method 
@@ -148,9 +164,12 @@ isConstant <- function(x) {
 #'
 #' @return A Boolean value.
 #' @export
-isQzero <- function(qspray) {
-  arity(qspray) == -Inf
-}
+setMethod(
+  "isQzero", "qspray", 
+  function(qspray) {
+    arity(qspray) == -Inf
+  }
+)
 
 #' @name isQone
 #' @aliases isQone,qspray-method 
@@ -163,9 +182,12 @@ isQzero <- function(qspray) {
 #'
 #' @return A Boolean value.
 #' @export
-isQone <- function(qspray) {
-  isConstant(qspray) && getConstantTerm(qspray) == 1L
-}
+setMethod(
+  "isQone", "qspray", 
+  function(qspray) {
+    isConstant(qspray) && getConstantTerm(qspray) == 1L
+  }
+)
 
 #' @title Whether two qsprays are collinear
 #' @description Checks whether two qsprays are collinear, that is, whether 
