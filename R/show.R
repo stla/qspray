@@ -181,7 +181,7 @@ showQsprayCanonical <- function(x, ...) {
   showOpts <- attr(x, "showOpts") %||% TRUE
   attr(showOpts, which) <- value
   if(which == "x") {
-    univariate <- numberOfVariables(x) == 1L
+    univariate <- isUnivariate(x)
     attr(showOpts, "showQspray") <- if(univariate) {
       showQsprayUnivariate(x = value)
     } else {
