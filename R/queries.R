@@ -1,18 +1,58 @@
+setGeneric(
+  "numberOfVariables", function(x) {
+    NULL
+  }
+)
+setGeneric(
+  "numberOfTerms", function(qspray) {
+    NULL
+  }
+)
+setGeneric(
+  "getCoefficient", function(qspray) {
+    NULL
+  }
+)
+setGeneric(
+  "getConstantTerm", function(qspray) {
+    NULL
+  }
+)
+setGeneric(
+  "isConstant", function(x) {
+    NULL
+  }
+)
+setGeneric(
+  "isQzero", function(qspray) {
+    NULL
+  }
+)
+setGeneric(
+  "isQone", function(qspray) {
+    NULL
+  }
+)
+
+#' @name numberOfVariables
+#' @aliases numberOfVariables,qspray-method 
+#' @docType methods
 #' @title Number of variables in a 'qspray' polynomial
 #' @description Number of variables involved in a \code{qspray} object.
 #'
-#' @param qspray a \code{qspray} object
+#' @param x a \code{qspray} object
 #'
 #' @return An integer.
 #' @export
-numberOfVariables <- function(qspray) {
-  if(inherits(qspray, "qspray") || inherits(qspray, "symbolicQspray")) {
-    max(0L, arity(qspray))
-  } else if(inherits(qspray, "ratioOfQsprays")) {
-    max(0L, arity(qspray@numerator), arity(qspray@denominator))
-  }
+#' @note The number of variables in the \code{qspray} object \code{qlone(d)} 
+#'   is \code{d}, not \code{1}.
+numberOfVariables <- function(x) {
+  max(0L, arity(x))
 }
 
+#' @name numberOfTerms
+#' @aliases numberOfTerms,qspray-method 
+#' @docType methods
 #' @title Number of terms in a 'qspray' polynomial
 #' @description Number of terms in the polynomial defined by a 
 #'   \code{qspray} object.
@@ -25,6 +65,9 @@ numberOfTerms <- function(qspray) {
   length(qspray@powers)
 }
 
+#' @name getCoefficient
+#' @aliases getCoefficient,qspray-method 
+#' @docType methods
 #' @title Get a coefficient
 #' @description Get the coefficient corresponding to the given sequence of 
 #'   exponents.
@@ -35,7 +78,6 @@ numberOfTerms <- function(qspray) {
 #' @return The coefficient as a \code{bigq} number.
 #' @export
 #' @importFrom gmp as.bigq
-#' @importFrom methods canCoerce
 #'
 #' @examples
 #' library(qspray)
@@ -64,20 +106,12 @@ getCoefficient <- function(qspray, exponents) {
       coeff <- qspray@coeffs[[i]]
     }
   }
-  if(inherits(qspray, "qspray")) {
-    as.bigq(coeff)
-  } else if(
-    inherits(qspray, "symbolicQspray") && canCoerce(coeff, "ratioOfQsprays")
-  ) {
-    as(coeff, "ratioOfQsprays")
-  } else {
-    stop(
-      "The function `getCoefficient` is not applicable for this type ",
-      "of polynomial."
-    )
-  }
+  as.bigq(coeff)
 }
 
+#' @name getConstantTerm
+#' @aliases getConstantTerm,qspray-method 
+#' @docType methods
 #' @title Get the constant term of a 'qspray' polynomial.
 #'
 #' @param qspray a \code{qspray} object
@@ -88,18 +122,24 @@ getConstantTerm <- function(qspray) {
   getCoefficient(qspray, integer(0L))
 }
 
+#' @name isConstant
+#' @aliases isConstant,qspray-method 
+#' @docType methods
 #' @title Whether a 'qspray' polynomial is constant
 #' @description Checks whether a \code{qspray} object defines a constant 
 #'   polynomial.
 #'
-#' @param qspray a \code{qspray} object
+#' @param x a \code{qspray} object
 #'
 #' @return A Boolean value.
 #' @export
-isConstantQspray <- function(qspray) {
-  numberOfVariables(qspray) == 0L
+isConstant <- function(x) {
+  numberOfVariables(x) == 0L
 }
 
+#' @name isQzero
+#' @aliases isQzero,qspray-method 
+#' @docType methods
 #' @title Whether a qspray polynomial is null
 #' @description Checks whether a \code{qspray} object defines the zero 
 #'   polynomial.
@@ -112,6 +152,9 @@ isQzero <- function(qspray) {
   arity(qspray) == -Inf
 }
 
+#' @name isQone
+#' @aliases isQone,qspray-method 
+#' @docType methods
 #' @title Whether a qspray polynomial is the unit polynomial
 #' @description Checks whether a \code{qspray} object defines the unit 
 #'   polynomial.
@@ -121,7 +164,7 @@ isQzero <- function(qspray) {
 #' @return A Boolean value.
 #' @export
 isQone <- function(qspray) {
-  isConstantQspray(qspray) && (getConstantTerm(qspray) == 1L)
+  isConstant(qspray) && getConstantTerm(qspray) == 1L
 }
 
 #' @title Whether two qsprays are collinear

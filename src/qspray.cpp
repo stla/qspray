@@ -108,3 +108,4 @@ Rcpp::List qspray_power(const Rcpp::List& Powers,
    Qspray<gmpq> Q = makeQspray(Powers, coeffs);
    return returnQspray(Q.power(n));
 }
+
