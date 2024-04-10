@@ -168,3 +168,13 @@ groebner(list(f, g))
 ## [[2]]
 ## y^3
 ```
+
+## Packages using ‘qspray’
+
+There are packages depending on the **qspray** package (some of them are
+not on CRAN yet):
+
+- [jack](https://github.com/stla/jackR)
+- [resultant](https://github.com/stla/resultant)
+- [ratioOfQsprays](https://github.com/stla/ratioOfQsprays)
+- [symbolicQspray](https://github.com/stla/symbolicQspray)
