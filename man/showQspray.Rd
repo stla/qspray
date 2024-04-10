@@ -21,6 +21,6 @@ Prints a \code{qspray} object given a function which prints
   the monomials.
 }
 \seealso{
-\code{\link{showQsprayCanonical}}, \code{\link{showMonomial}}, 
+\code{\link{showQsprayX1X2X3}}, \code{\link{showMonomial}}, 
   \code{\link{showQsprayOption<-}}.
 }

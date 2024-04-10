@@ -25,7 +25,7 @@ Set a show option to a \code{qspray} object
 showQsprayOption(qspray, "x") <- "a"
 qspray
 # this is identical to:
-showQsprayOption(qspray, "showMonomial") <- showMonomialCanonical("a")
+showQsprayOption(qspray, "showMonomial") <- showMonomialX1X2X3("a")
 # and also identical to:
-showQsprayOption(qspray, "showQspray") <- showQsprayCanonical("a")
+showQsprayOption(qspray, "showQspray") <- showQsprayX1X2X3("a")
 }

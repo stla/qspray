@@ -23,6 +23,6 @@ Prints a monomial like \code{"x^(1, 0, 2)"}. This way of
 showMonomial("X")(c(1, 0, 2))
 }
 \seealso{
-\code{\link{showMonomialCanonical}}, \code{\link{showQspray}}, 
+\code{\link{showMonomialX1X2X3}}, \code{\link{showQspray}}, 
   \code{\link{showQsprayOption<-}}.
 }
