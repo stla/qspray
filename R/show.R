@@ -232,8 +232,8 @@ setDefaultShowQsprayOption <- function(qspray) {
     showQsprayOption(qspray, "showMonomial") <- showMonomialXYZ()
   } else {
     showQsprayOption(qspray, "x") <- "x"
+    showQsprayOption(qspray, "inheritable") <- TRUE
   }
-  showQsprayOption(qspray, "inheritable") <- TRUE
   invisible(qspray)
 }
 
