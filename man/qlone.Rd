@@ -22,4 +22,8 @@ y <- qlone(2)
 p <- x * (x - y)
 q <- y * (x - y)
 p + q
+p = (x + y) * x
+q = (x + y) * y
+p - q
+(x + y) * (x - y)
 }
