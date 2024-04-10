@@ -123,7 +123,8 @@ showQsprayUnivariate <- function(x, ...) {
 #'   which prints the corresponding monomial.
 #' @export
 #'
-#' @seealso \code{\link{showMonomialCanonical}}, \code{\link{showQspray}} 
+#' @seealso \code{\link{showMonomialCanonical}}, \code{\link{showQspray}}, 
+#'   \code{\link{showQsprayOption<-}}. 
 #'
 #' @examples
 #' showMonomial("X")(c(1, 0, 2))
