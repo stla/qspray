@@ -1,3 +1,6 @@
+#' @include qspray.R
+NULL
+
 #' @title Ordered 'qspray'
 #' @description Reorders the terms of a \code{qspray} object according to the 
 #'   lexicographic order of the powers. 
@@ -42,12 +45,14 @@ derivQspray <- function(qspray, i, derivative = 1) {
   stopifnot(isNonnegativeInteger(i))
   stopifnot(isPositiveInteger(derivative))
   if(i > arity(qspray)) {
-    return(as.qspray(0L))
+    dqspray <- qzero()
+  } else {
+    n    <- integer(length = i)
+    n[i] <- as.integer(derivative)
+    drv  <- qspray_deriv(qspray@powers, qspray@coeffs, n)
+    dqspray <- qspray_from_list(drv)
   }
-  n    <- integer(length = i)
-  n[i] <- as.integer(derivative)
-  drv  <- qspray_deriv(qspray@powers, qspray@coeffs, n)
-  qspray_from_list(drv)
+  passShowAttributes(qspray, dqspray)
 }
 
 #' @title Partial differentiation
@@ -73,17 +78,28 @@ dQspray <- function(qspray, orders) {
   }
   orders <- removeTrailingZeros(orders)
   if(length(orders) > arity(qspray)) {
-    return(as.qspray(0L))
+    dqspray <- qzero()
+  } else {
+    n    <- as.integer(orders)
+    drv  <- qspray_deriv(qspray@powers, qspray@coeffs, n)
+    dqspray <- qspray_from_list(drv)
   }
-  n    <- as.integer(orders)
-  drv  <- qspray_deriv(qspray@powers, qspray@coeffs, n)
-  qspray_from_list(drv)
+  passShowAttributes(qspray, dqspray)
 }
 
+setGeneric(
+  "permuteVariables", function(x, permutation) {
+    NULL
+  }
+)
+
+#' @name permuteVariables
+#' @aliases permuteVariables,qspray,numeric-method 
+#' @docType methods
 #' @title Permute variables
 #' @description Permute the variables of a \code{qspray} polynomial.
 #'
-#' @param qspray a \code{qspray} object
+#' @param x a \code{qspray} object
 #' @param permutation a permutation
 #'
 #' @return A \code{qspray} object.
@@ -101,27 +117,42 @@ dQspray <- function(qspray, orders) {
 #' permutation <- c(3, 1, 2)
 #' Q <- permuteVariables(P, permutation)
 #' Q == f(z, x, y) # should be TRUE
-permuteVariables <- function(qspray, permutation) {
-  stopifnot(isPermutation(permutation))
-  m <- arity(qspray)
-  n <- length(permutation)
-  if(m > n) {
-    stop("Invalid permutation.")
+setMethod(
+  "permuteVariables", c("qspray", "numeric"), 
+  function(x, permutation) {
+    stopifnot(isPermutation(permutation))
+    m <- arity(x)
+    n <- length(permutation)
+    if(m > n) {
+      stop("Invalid permutation.")
+    }
+    permutation[permutation] <- seq_along(permutation)
+    M <- powersMatrix(x)
+    for(. in seq_len(n - m)) {
+      M <- cbind(M, 0L)
+    }
+    M <- M[, permutation]
+    powers <- apply(M, 1L, function(row) {
+      removeTrailingZeros(row)
+    }, simplify = FALSE)
+    out <- new("qspray", powers = powers, coeffs = x@coeffs)
+    passShowAttributes(x, out)
   }
-  permutation[permutation] <- seq_along(permutation)
-  M <- powersMatrix(qspray)
-  for(. in seq_len(n - m)) {
-    M <- cbind(M, 0L)
-  }
-  M <- M[, permutation]
-  powers <- apply(M, 1L, identity, simplify = FALSE)
-  qsprayMaker(powers, qspray@coeffs)
-}
+)
 
+setGeneric(
+  "swapVariables", function(x, i, j) {
+    NULL
+  }
+)
+
+#' @name swapVariables
+#' @aliases swapVariables,qspray,numeric,numeric-method 
+#' @docType methods
 #' @title Swap variables
-#' @description Swap two variables of a \code{qspray} polynomial.
+#' @description Swap two variables in a \code{qspray} polynomial.
 #'
-#' @param qspray a \code{qspray} object
+#' @param x a \code{qspray} object
 #' @param i,j indices of the variables to be swapped
 #'
 #' @return A \code{qspray} object.
@@ -138,18 +169,24 @@ permuteVariables <- function(qspray, permutation) {
 #' P <- f(x, y, z)
 #' Q <- swapVariables(P, 2, 3)
 #' Q == f(x, z, y) # should be TRUE
-swapVariables <- function(qspray, i, j) {
-  stopifnot(isNonnegativeInteger(i), isNonnegativeInteger(j))
-  m <- arity(qspray)
-  n <- max(m, i, j)
-  permutation <- seq_len(n)
-  permutation[i] <- j
-  permutation[j] <- i
-  M <- powersMatrix(qspray)
-  for(. in seq_len(n - m)) {
-    M <- cbind(M, 0L)
+setMethod(
+  "swapVariables", c("qspray", "numeric", "numeric"), 
+  function(x, i, j) {
+    stopifnot(isNonnegativeInteger(i), isNonnegativeInteger(j))
+    m <- arity(x)
+    n <- max(m, i, j)
+    permutation <- seq_len(n)
+    permutation[i] <- j
+    permutation[j] <- i
+    M <- powersMatrix(x)
+    for(. in seq_len(n - m)) {
+      M <- cbind(M, 0L)
+    }
+    M <- M[, permutation]
+    powers <- apply(M, 1L, function(row) {
+      removeTrailingZeros(row)
+    }, simplify = FALSE)
+    out <- new("qspray", powers = powers, coeffs = x@coeffs)
+    passShowAttributes(x, out)
   }
-  M <- M[, permutation]
-  powers <- apply(M, 1L, identity, simplify = FALSE)
-  qsprayMaker(powers, qspray@coeffs)
-}
+)

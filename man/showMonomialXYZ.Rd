@@ -23,7 +23,7 @@ Prints a monomial like \code{"xz^2"}.
 \examples{
 showMonomialXYZ()(c(1, 0, 2))
 showMonomialXYZ()(NULL)
-showMonomialXYZ(collapse = "*")(c(1, 0, 2, 3)) # no error
+showMonomialXYZ(collapse = "*")(c(1, 0, 2, 3)) # ugly but no error
 }
 \seealso{
 \code{\link{showQsprayXYZ}}, 

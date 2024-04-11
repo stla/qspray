@@ -16,7 +16,7 @@ showQsprayX1X2X3(x = "x", collapse = ".", ...)
 A function which prints a \code{qspray} object.
 }
 \description{
-Print a \code{qspray} object given a string for the variable.
+Prints a \code{qspray} object given a string for the variable.
 }
 \note{
 The way to print \code{qspray} objects can be controlled with the 

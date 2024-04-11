@@ -106,7 +106,7 @@ showMonomialX1X2X3 <- function(x = "x", collapse = ".") {
 #' @examples
 #' showMonomialXYZ()(c(1, 0, 2))
 #' showMonomialXYZ()(NULL)
-#' showMonomialXYZ(collapse = "*")(c(1, 0, 2, 3)) # no error
+#' showMonomialXYZ(collapse = "*")(c(1, 0, 2, 3)) # ugly but no error
 showMonomialXYZ <- function(letters = c("x", "y", "z"), collapse = "") {
   function(exponents) {
     paste0(vapply(which(exponents != 0L), function(i) {
@@ -169,7 +169,7 @@ showMonomialOld <- function(x = "x") {
 }
 
 #' @title Print a 'qspray' object
-#' @description Print a \code{qspray} object given a string for the variable.
+#' @description Prints a \code{qspray} object given a string for the variable.
 #'
 #' @param x,collapse see \code{\link{showMonomialX1X2X3}}
 #' @param ... arguments passed to \code{\link{showQspray}}, such as 

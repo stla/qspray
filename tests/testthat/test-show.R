@@ -26,6 +26,7 @@ test_that("show univariate", {
   expect_identical(Print(q3), "A + 1 ")
   expect_identical(Print(q3 + qlone(1)), "2*A + 1 ")
   expect_identical(Print(q3 + qlone(2)), "A1 + A2 + 1 ")
+  expect_identical(Print((q3 + qlone(2)) - qlone(2)), "A + 1 ")
   showQsprayOption(q3, "showMonomial") <- showMonomialOld()
   expect_identical(Print(q3 + qlone(2)), "x^(1) + x^(0, 1) + 1 ")
   showQsprayOption(q3, "showMonomial") <- showMonomialXYZ()
