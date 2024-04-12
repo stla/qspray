@@ -124,7 +124,7 @@ setGeneric(
 )
 
 #' @name compactSymmetricQspray
-#' @aliases compactSymmetricQspray,qspray,logical-method 
+#' @aliases compactSymmetricQspray,qspray,logical-method compactSymmetricQspray,qspray,missing-method
 #' @docType methods
 #' @title Compact symmetric qspray
 #' @description Prints a symmetric qspray polynomial as a linear combination of 
@@ -146,9 +146,8 @@ setGeneric(
 #' compactSymmetricQspray(qspray, check = TRUE)
 setMethod(
   "compactSymmetricQspray", c("qspray", "logical"),
-  function(qspray, check = FALSE) {
+  function(qspray, check) {
     combo <- MSPcombination(qspray, check = check)
-    
     powers <- lapply(combo, `[[`, "lambda")
     coeffs <- lapply(combo, `[[`, "coeff")
     coeffs <- as.character(c_bigq(coeffs))
@@ -160,14 +159,14 @@ setMethod(
     showQsprayOption(msp, "showMonomial") <- showMonomial
     f <- getShowQspray(msp)
     f(msp)
-    
-    # f <- showCoefficient(qspray)
-    # toPaste <- unlist(lapply(combo, function(t) {
-    #   coeff  <- f(t[["coeff"]])
-    #   lambda <- toString(t[["lambda"]])
-    #   sprintf("%s * M[%s]", coeff, lambda)
-    # }))
-    # paste0(toPaste, collapse = " + ")
+  }
+)
+
+#' @rdname compactSymmetricQspray
+setMethod(
+  "compactSymmetricQspray", c("qspray", "missing"),
+  function(qspray, check) {
+    compactSymmetricQspray(qspray, FALSE)
   }
 )
 

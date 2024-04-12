@@ -4,9 +4,12 @@
 \name{compactSymmetricQspray}
 \alias{compactSymmetricQspray}
 \alias{compactSymmetricQspray,qspray,logical-method}
+\alias{compactSymmetricQspray,qspray,missing-method}
 \title{Compact symmetric qspray}
 \usage{
-\S4method{compactSymmetricQspray}{qspray,logical}(qspray, check = FALSE)
+\S4method{compactSymmetricQspray}{qspray,logical}(qspray, check)
+
+\S4method{compactSymmetricQspray}{qspray,missing}(qspray, check)
 }
 \arguments{
 \item{qspray}{a \code{qspray} object, which should correspond to a 
