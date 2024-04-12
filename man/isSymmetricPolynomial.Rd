@@ -10,12 +10,8 @@ isSymmetricPolynomial(qspray)
 \item{qspray}{a \code{qspray} polynomial}
 }
 \value{
-A Boolean value indicating whether the polynomial is symmetric. 
-In addition, if it is \code{TRUE}, a \code{qspray} polynomial is attached to 
-the output as an attribute named \code{"poly"}. This polynomial, say \eqn{P},
-is such that \eqn{P(e_1, ..., e_n)} equals the input symmetric polynomial, 
-where \eqn{e_i} is the i-th elementary symmetric polynomial 
-(\code{ESFpoly(n, i)}).
+A Boolean value indicating whether the polynomial defined by 
+  \code{qspray} is symmetric.
 }
 \description{
 Check whether a \code{qspray} polynomial is symmetric.
@@ -24,6 +20,9 @@ Check whether a \code{qspray} polynomial is symmetric.
 e1 <- ESFpoly(3, 1)
 e2 <- ESFpoly(3, 2)
 e3 <- ESFpoly(3, 3)
-f <- e1 + 2*e2 + 3*e3 + 4*e1*e3
-isSymmetricPolynomial(f)
+q <- e1 + 2*e2 + 3*e3 + 4*e1*e3
+isSymmetricPolynomial(q)
+}
+\seealso{
+\code{\link{MSPcombination}}, \code{\link{compactSymmetricQspray}}
 }

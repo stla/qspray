@@ -4,6 +4,7 @@ test_that("Symmetric polynomial", {
   e3 <- ESFpoly(4, 3)
   f <- e1 + 2*e2 + 3*e3
   expect_true(isSymmetricPolynomial(f))
+  expect_false(isSymmetricPolynomial(qlone(1) - qlone(2)))
 })
 
 test_that("MSPcombination", {

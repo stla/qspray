@@ -25,3 +25,17 @@ test_that("Groebner basis", {
   expect_equal(f3(x2, y2, z2), 0)
   expect_equal(f4(x2, y2, z2), 0)
 })
+
+test_that("isPolynomialOf", {
+  P <- function(X, Y) X^2*Y + 2*X + 3
+  x <- qlone(1); y <- qlone(2); z <- qlone(3)
+  q1 <- x + y + z
+  q2 <- x^2*z^2 + 4*y + 1
+  qspray <- P(q1, q2)
+  check <- isPolynomialOf(qspray, list(q1, q2))
+  expect_true(check)
+  POLYNOMIAL <- attr(check, "polynomial")
+  expect_equal(POLYNOMIAL, P(qlone(1), qlone(2)))
+  expect_equal(composeQspray(POLYNOMIAL, list(q1, q2)), qspray)
+})
+

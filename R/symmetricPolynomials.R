@@ -205,42 +205,46 @@ ESFpoly <- function(m, lambda) {
 #'
 #' @param qspray a \code{qspray} polynomial
 #'
-#' @return A Boolean value indicating whether the polynomial is symmetric. 
-#' In addition, if it is \code{TRUE}, a \code{qspray} polynomial is attached to 
-#' the output as an attribute named \code{"poly"}. This polynomial, say \eqn{P},
-#' is such that \eqn{P(e_1, ..., e_n)} equals the input symmetric polynomial, 
-#' where \eqn{e_i} is the i-th elementary symmetric polynomial 
-#' (\code{ESFpoly(n, i)}).
+#' @return A Boolean value indicating whether the polynomial defined by 
+#'   \code{qspray} is symmetric. 
 #' @export
+#' 
+#' @seealso \code{\link{MSPcombination}}, \code{\link{compactSymmetricQspray}}
 #'
 #' @examples
 #' e1 <- ESFpoly(3, 1)
 #' e2 <- ESFpoly(3, 2)
 #' e3 <- ESFpoly(3, 3)
-#' f <- e1 + 2*e2 + 3*e3 + 4*e1*e3
-#' isSymmetricPolynomial(f)
+#' q <- e1 + 2*e2 + 3*e3 + 4*e1*e3
+#' isSymmetricPolynomial(q)
 isSymmetricPolynomial <- function(qspray) {
-  n <- arity(qspray)
-  i_ <- seq_len(n)
-  E <- lapply(i_, function(i) ESFpoly(n, i))
-  Y <- lapply(i_, function(i) qlone(n + i))
-  G <- lapply(i_, function(i) E[[i]] - Y[[i]])
-  B <- groebner(G, TRUE, FALSE)
-  constantTerm <- getCoefficient(qspray, integer(0L))
-  g <- qdivision(qspray - constantTerm, B)
-  check <- all(vapply(g@powers, function(pwr) {
-    length(pwr) > n && all(pwr[1L:n] == 0L)
-  }, logical(1L)))
-  if(!check) {
-    return(FALSE)
-  }
-  powers <- lapply(g@powers, function(pwr) {
-    pwr[-(1L:n)]
+  tryCatch({
+    . <- MSPcombination(qspray, check = TRUE)
+    TRUE
+  }, error = function(e) {
+    FALSE
   })
-  P <- qsprayMaker(powers, g@coeffs) + constantTerm
-  out <- TRUE
-  attr(out, "poly") <- P
-  out
+  # n <- arity(qspray)
+  # i_ <- seq_len(n)
+  # E <- lapply(i_, function(i) ESFpoly(n, i))
+  # Y <- lapply(i_, function(i) qlone(n + i))
+  # G <- lapply(i_, function(i) E[[i]] - Y[[i]])
+  # B <- groebner(G, TRUE, FALSE)
+  # constantTerm <- getCoefficient(qspray, integer(0L))
+  # g <- qdivision(qspray - constantTerm, B)
+  # check <- all(vapply(g@powers, function(pwr) {
+  #   length(pwr) > n && all(pwr[1L:n] == 0L)
+  # }, logical(1L)))
+  # if(!check) {
+  #   return(FALSE)
+  # }
+  # powers <- lapply(g@powers, function(pwr) {
+  #   pwr[-(1L:n)]
+  # })
+  # P <- qsprayMaker(powers, g@coeffs) + constantTerm
+  # out <- TRUE
+  # attr(out, "poly") <- P
+  # out
 }
 
 

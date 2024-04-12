@@ -1,14 +1,16 @@
 # qspray 2.2.0
 
-- The `show` method has been changed. The monomial previously printed as `"x^(2,0,3)"` is now printed by default as `"x^2z^3"` if there are no more than three variables in the polynomial, otherwise it is printed as `"x1^2.x3^3"`. It is possible to control the way a `qspray` is printed with the help of the function `showQsprayOption<-`. Helper functions to construct a custom `show` method are provided.
+- The `show` method of `qspray` objects has been changed. The monomial previously printed as `"x^(2,0,3)"` is now printed by default as `"x^2z^3"` if there are no more than three variables in the polynomial, otherwise it is printed as `"x1^2.x3^3"`. It is possible to control the way a `qspray` is printed with the help of the function `showQsprayOption<-`. Helper functions to construct a custom `show` method are provided.
 
 - The **README** has been updated.
 
 - New function `substituteQspray`, to substitute some variables in a polynomial.
 
 - New function `composeQspray`, to get the polynomial obtained by substituting the variables of a polynomial with polynomials.
+
+- New function `isPolynomialOf`, to check whether a `qspray` polynomial can be written as a polynomial of some given `qspray` polynomials, and to get this polynomial in case this is true. This uses Gröbner bases and thus this can be slow.
  
-- New function `isSymmetricPolynomial`, to check whether a `qspray` polynomial is symmetric. It is inefficient, but useful for testing purpose. Use `MSPcombination` for efficiency.
+- New function `isSymmetricPolynomial`, to check whether a `qspray` polynomial is symmetric. 
 
 - There was an error in `qdivision` (without severe consequences).
 
