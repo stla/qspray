@@ -232,7 +232,8 @@ combn2 <- function(j, s) {
 #' gb <- groebner(list(f1, f2, f3))
 #' lapply(gb, prettyQspray, vars = c("x", "y", "z"))}
 groebner <- function(G, minimal = TRUE, reduced = TRUE) {
-  d <- max(vapply(G, arity, integer(1L)))
+  # d <- max(vapply(G, arity, integer(1L)))
+  d <- max(vapply(G, numberOfVariables, integer(1L)))
   LT_G <- lapply(G, leading, d = d)
   Ss <- list()
   j <- length(G)
@@ -369,3 +370,52 @@ implicitization <- function(nvariables, parameters, equations, relations) {
   invisible(results)
 }
 
+#' @title Whether a 'qspray' is a polynomial of some given 'qsprays'
+#' @description Checks whether a \code{qspray} polynomial can be written as 
+#'   a polynomial of some given \code{qspray} polynomials. If \code{TRUE}, 
+#'   this polynomial is returned.
+#' 
+#' @param qspray a \code{qspray} object
+#' @param qsprays a list of \code{qspray} objects
+#'
+#' @return A Boolean value indicating whether the polynomial defined by 
+#'   \code{qspray} can be written as a polynomial of the polynomials defined 
+#'   by the \code{qspray} objects given in the \code{qsprays} list. If this is 
+#'   \code{TRUE}, this polynomial is returned as an attribute named 
+#'   \code{"polynomial"}.
+#' @export
+#'
+#' @examples
+#' library(qspray)
+#' P <- function(X, Y) X^2*Y + 2*X + 3
+#' x <- qlone(1); y <- qlone(2); z <- qlone(3)
+#' q1 <- x + y
+#' q2 <- x*z^2 + 4
+#' qspray <- P(q1, q2)
+#' ( check <- isPolynomialOf(qspray, list(q1, q2)) )
+#' POLYNOMIAL <- attr(check, "polynomial")
+#' composeQspray(POLYNOMIAL, list(q1, q2)) == qspray # should be TRUE
+isPolynomialOf <- function(qspray, qsprays) {
+  n <- max(vapply(qsprays, numberOfVariables, integer(1L)))
+  if(numberOfVariables(qspray) > n) {
+    return(FALSE)
+  }
+  i_ <- seq_len(length(qsprays))
+  G <- lapply(i_, function(i) qsprays[[i]] - qlone(n + i))
+  B <- groebner(G, TRUE, FALSE)
+  constantTerm <- getCoefficient(qspray, integer(0L))
+  g <- qdivision(qspray - constantTerm, B)
+  check <- all(vapply(g@powers, function(pwr) {
+    length(pwr) > n && all(pwr[1L:n] == 0L)
+  }, logical(1L)))
+  if(!check) {
+    return(FALSE)
+  }
+  powers <- lapply(g@powers, function(pwr) {
+    pwr[-(1L:n)]
+  })
+  P <- qsprayMaker(powers, g@coeffs) + constantTerm
+  out <- TRUE
+  attr(out, "polynomial") <- P
+  out
+}

@@ -1,8 +1,8 @@
 # qspray 2.2.0
 
-- The `show` method has been changed. The monomial previously printed as `"x^(2,0,3)"` is not printed as `"x1^2.x3^3"`. It is possible to change the letter denoting the unindexed variables of a `qspray` object (`"x"` by default) by setting the attribute `"x"` of this `qspray` object to the letter (or the string) you want.
+- The `show` method has been changed. The monomial previously printed as `"x^(2,0,3)"` is now printed by default as `"x^2z^3"` if there are no more than three variables in the polynomial, otherwise it is printed as `"x1^2.x3^3"`. It is possible to control the way a `qspray` is printed with the help of the function `showQsprayOption<-`. Helper functions to construct a custom `show` method are provided.
 
-- New helper functions to construct a custom `show` method.
+- The **README** has been updated.
 
 - New function `substituteQspray`, to substitute some variables in a polynomial.
 
@@ -18,11 +18,13 @@
 
 - New function `MSPcombination`, to get a symmetric polynomial as a linear combination of the monomial symmetric polynomials. It is also useful to check whether a polynomial is symmetric.
 
-- New function `prettySymmetricQspray` which prints a symmetric polynomial as a linear combination of the monomial symmetric polynomials.
+- New function `compactSymmetricQspray` which prints a symmetric polynomial as a linear combination of the monomial symmetric polynomials.
 
-- New function `sprayDivision`, returning the quotient and the remainder of the division of a polynomial by a polynomial.
+- New function `qsprayDivision`, returning the quotient and the remainder of the division of a polynomial by a polynomial.
 
 - New function `HallInnerProduct`, which computes the Hall inner product between symmetric polynomials. Very inefficient (will be hopefully improved in the future).
+
+- New function `characteristicPolynomial`, to compute the characteristic polynomial of a square matrix.
 
 
 # qspray 2.1.1
