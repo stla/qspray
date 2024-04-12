@@ -4,7 +4,7 @@
 \alias{showQsprayXYZ}
 \title{Print a polynomial}
 \usage{
-showQsprayXYZ(letters = c("x", "y", "z"), collapse = "", ...)
+showQsprayXYZ(letters = c("x", "y", "z"), collapse = ".", ...)
 }
 \arguments{
 \item{letters, collapse}{see \code{\link{showMonomialXYZ}}}

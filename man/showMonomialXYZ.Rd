@@ -4,7 +4,7 @@
 \alias{showMonomialXYZ}
 \title{Print a monomial}
 \usage{
-showMonomialXYZ(letters = c("x", "y", "z"), collapse = "")
+showMonomialXYZ(letters = c("x", "y", "z"), collapse = ".")
 }
 \arguments{
 \item{letters}{a vector of strings, usually some letters such as \code{"x"} 
@@ -18,12 +18,22 @@ A function which takes as argument a sequence of exponents and
   which prints the corresponding monomial.
 }
 \description{
-Prints a monomial like \code{"xz^2"}.
+Prints a monomial like \code{"xz^2"} if possible (see details).
+}
+\details{
+If the function returned by this function is applied to a vector 
+  of exponents whose length is higher than the length of the \code{letters} 
+  vector, then \code{\link{showMonomialX1X2X3}(x=letters[1])} is applied 
+  (see the last example).
 }
 \examples{
 showMonomialXYZ()(c(1, 0, 2))
+showMonomialXYZ(collapse = "*")(c(1, 0, 2))
 showMonomialXYZ()(NULL)
-showMonomialXYZ(collapse = "*")(c(1, 0, 2, 3)) # ugly but no error
+# what happens if there are more exponents than letters:
+showMonomialXYZ(c("a", "b"), collapse = "*")(c(1, 2, 3))
+# same as:
+showMonomialX1X2X3("a", collapse = "*")(c(1, 2, 3))
 }
 \seealso{
 \code{\link{showQsprayXYZ}}, 
