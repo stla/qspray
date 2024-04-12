@@ -34,6 +34,7 @@ RoxygenNote: 7.3.1
 SystemRequirements: C++ 17, gmp, mpfr
 Collate: 
     'RcppExports.R'
+    'characteristicPolynomial.R'
     'creation.R'
     'evaluation.R'
     'groebner.R'

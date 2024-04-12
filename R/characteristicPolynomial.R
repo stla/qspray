@@ -1,5 +1,3 @@
-library(qspray)
-
 makeTheMatrix <- function(A) {
   d <- nrow(A)
   M <- list()
@@ -96,7 +94,3 @@ characteristicPolynomial <- function(A) {
   }
   detLaplace(makeTheMatrix(A))
 }
-
-set.seed(666)
-A <- matrix(rpois(9L, 10), nrow = 3L, ncol = 3L)
-characteristicPolynomial(A)
