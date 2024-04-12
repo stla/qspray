@@ -7,9 +7,9 @@ makeTheMatrix <- function(A) {
     for(j in seq_len(d)) {
       indices <- toString(c(i, j))
       if(i == j) {
-        entry <- A[i, j] - qlone(1)
+        entry <- A[i, j][] - qlone(1)
       } else {
-        entry <- A[i, j]
+        entry <- A[i, j][]
       }
       M[[indices]] <- entry
     }
@@ -71,7 +71,16 @@ detLaplace <- function(M) {
   }
 }
 
+#' @importFrom gmp is.matrixZQ
 characteristicPolynomial <- function(A) {
+  if(!is.matrix(A) && !is.matrixZQ(A)) {
+    stop("A must be a matrix.")
+  }
+  stopifnot(nrow(A) == ncol(A))
+  A <- as.bigq(A)
+  if(anyNA(A)) {
+    stop("Invalid matrix.")
+  }
   detLaplace(makeTheMatrix(A))
 }
 
