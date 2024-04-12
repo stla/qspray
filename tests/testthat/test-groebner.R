@@ -35,7 +35,7 @@ test_that("isPolynomialOf", {
   check <- isPolynomialOf(qspray, list(q1, q2))
   expect_true(check)
   POLYNOMIAL <- attr(check, "polynomial")
-  expect_equal(POLYNOMIAL, P(qlone(1), qlone(2)))
-  expect_equal(composeQspray(POLYNOMIAL, list(q1, q2)), qspray)
+  expect_true(POLYNOMIAL == P(qlone(1), qlone(2)))
+  expect_true(composeQspray(POLYNOMIAL, list(q1, q2)) == qspray)
 })
 
