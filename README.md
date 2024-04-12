@@ -3,7 +3,7 @@ The ‘qspray’ package
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/stla/qspray/workflows/R-CMD-check/badge.svg)](https://github.com/stla/qspray/actions)
+[![R-CMD-check](https://github.com/stla/qspray/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/stla/qspray/actions/workflows/R-CMD-check.yaml)
 [![R-CMD-check-valgrind](https://github.com/stla/qspray/actions/workflows/R-CMD-check-valgrind.yaml/badge.svg)](https://github.com/stla/qspray/actions/workflows/R-CMD-check-valgrind.yaml)
 <!-- badges: end -->
 
@@ -19,7 +19,7 @@ library(qspray)
 ```
 
 The **qspray** package provides the `qspray` objects, which represent
-multivariate polynomials with rational coefficients.
+multivariate polynomials whose coefficients are rational numbers.
 
 ## Creating a `qspray` and arithmetic
 
