@@ -1,3 +1,6 @@
+#' @include qspray.R
+NULL
+
 #' @title Power sum polynomial
 #' @description Returns a power sum function as a polynomial.
 #'
@@ -113,6 +116,16 @@ MSPcombination <- function(qspray, check = TRUE) {
   out
 }
 
+setGeneric(
+  "compactSymmetricQspray",
+  function(qspray, check) {
+    NULL
+  }
+)
+
+#' @name compactSymmetricQspray
+#' @aliases compactSymmetricQspray,qspray,logical-method 
+#' @docType methods
 #' @title Compact symmetric qspray
 #' @description Prints a symmetric qspray polynomial as a linear combination of 
 #'   the monomial symmetric polynomials. 
@@ -131,29 +144,32 @@ MSPcombination <- function(qspray, check = TRUE) {
 #' library(qspray)
 #' ( qspray <- PSFpoly(4, c(3, 1)) - ESFpoly(4, c(2, 2)) + 4L )
 #' compactSymmetricQspray(qspray, check = TRUE)
-compactSymmetricQspray <- function(qspray, check = FALSE) {
-  combo <- MSPcombination(qspray, check = check)
-  
-  powers <- lapply(combo, `[[`, "lambda")
-  coeffs <- lapply(combo, `[[`, "coeff")
-  coeffs <- as.character(c_bigq(coeffs))
-  msp <- new("qspray", powers = powers, coeffs = coeffs)
-  #passShowAttributes(qspray, msp)
-  showMonomial <- function(exponents) {
-    sprintf("M[%s]", toString(exponents))
+setMethod(
+  "compactSymmetricQspray", c("qspray", "logical"),
+  function(qspray, check = FALSE) {
+    combo <- MSPcombination(qspray, check = check)
+    
+    powers <- lapply(combo, `[[`, "lambda")
+    coeffs <- lapply(combo, `[[`, "coeff")
+    coeffs <- as.character(c_bigq(coeffs))
+    msp <- new("qspray", powers = powers, coeffs = coeffs)
+    #passShowAttributes(qspray, msp)
+    showMonomial <- function(exponents) {
+      sprintf("M[%s]", toString(exponents))
+    }
+    showQsprayOption(msp, "showMonomial") <- showMonomial
+    f <- getShowQspray(msp)
+    f(msp)
+    
+    # f <- showCoefficient(qspray)
+    # toPaste <- unlist(lapply(combo, function(t) {
+    #   coeff  <- f(t[["coeff"]])
+    #   lambda <- toString(t[["lambda"]])
+    #   sprintf("%s * M[%s]", coeff, lambda)
+    # }))
+    # paste0(toPaste, collapse = " + ")
   }
-  showQsprayOption(msp, "showMonomial") <- showMonomial
-  f <- getShowQspray(msp)
-  f(msp)
-  
-  # f <- showCoefficient(qspray)
-  # toPaste <- unlist(lapply(combo, function(t) {
-  #   coeff  <- f(t[["coeff"]])
-  #   lambda <- toString(t[["lambda"]])
-  #   sprintf("%s * M[%s]", coeff, lambda)
-  # }))
-  # paste0(toPaste, collapse = " + ")
-}
+)
 
 #' @title Elementary symmetric polynomial
 #' @description Returns an elementary symmetric function as a polynomial.
