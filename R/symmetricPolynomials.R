@@ -123,22 +123,36 @@ MSPcombination <- function(qspray, check = TRUE) {
 #'
 #' @return A character string.
 #' @export
+#' @importFrom gmp c_bigq
 #' 
 #' @seealso \code{\link{MSPcombination}}
 #'
 #' @examples
 #' library(qspray)
-#' qspray <- PSFpoly(4, c(3, 1)) + ESFpoly(4, c(2, 2)) + 4L
+#' ( qspray <- PSFpoly(4, c(3, 1)) - ESFpoly(4, c(2, 2)) + 4L )
 #' compactSymmetricQspray(qspray, check = TRUE)
 compactSymmetricQspray <- function(qspray, check = FALSE) {
   combo <- MSPcombination(qspray, check = check)
-  f <- showCoefficient(qspray)
-  toPaste <- unlist(lapply(combo, function(t) {
-    coeff  <- f(t[["coeff"]])
-    lambda <- toString(t[["lambda"]])
-    sprintf("%s * M[%s]", coeff, lambda)
-  }))
-  paste0(toPaste, collapse = " + ")
+  
+  powers <- lapply(combo, `[[`, "lambda")
+  coeffs <- lapply(combo, `[[`, "coeff")
+  coeffs <- as.character(c_bigq(coeffs))
+  msp <- new("qspray", powers = powers, coeffs = coeffs)
+  #passShowAttributes(qspray, msp)
+  showMonomial <- function(exponents) {
+    sprintf("M[%s]", toString(exponents))
+  }
+  showQsprayOption(msp, "showMonomial") <- showMonomial
+  f <- getShowQspray(msp)
+  f(msp)
+  
+  # f <- showCoefficient(qspray)
+  # toPaste <- unlist(lapply(combo, function(t) {
+  #   coeff  <- f(t[["coeff"]])
+  #   lambda <- toString(t[["lambda"]])
+  #   sprintf("%s * M[%s]", coeff, lambda)
+  # }))
+  # paste0(toPaste, collapse = " + ")
 }
 
 #' @title Elementary symmetric polynomial
