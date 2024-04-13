@@ -168,14 +168,78 @@ qspray
 ## -2*x^(4, 3, 4) - 4*x^(0, 2, 2)
 ```
 
-The most general show option is `"showQspray"`. A `showQspray` function,
-that is to say a function appropriate for the `"showQspray"` option,
-must return a function which transforms a `qspray` to a string There is
-a couple of helper functions to construct a `showQspray` function. By
-the way, a `qspray` object is an S4 object with two slots: `powers` and
-`coeffs`. The `powers` slot is a list of vector of exponents and the
+There are three possible show options that can be passed to
+`showQsprayOption`:
+
+- The most general show option is `"showQspray"`. A `showQspray`
+  function, that is to say a function appropriate for the `"showQspray"`
+  option, must be a function which transforms a `qspray` to a string.
+  The package provides some helper functions to built such functions,
+  like `showQsprayXYZ` and `showQsprayX1X2X3`. With `showQsprayXYZ`, you
+  can choose the letters you want to denote the variables:
+
+``` r
+f <- showQsprayXYZ(c("A", "B", "C"))
+f(qspray)
+## [1] "-2*A^4.B^3.C^4 - 4*B^2.C^2"
+```
+
+With `showQsprayX1X2X3`, you choose only one letter for the variables
+which will be indexed:
+
+``` r
+f <- showQsprayX1X2X3("X")
+f(qspray)
+## [1] "-2*X1^4.X2^3.X3^4 - 4*X2^2.X3^2"
+```
+
+Once you have constructed such a function, you pass it as a show option
+by doing `showQsprayOption(qspray, "showQspray") <- f`.
+
+- The second possible show option is `"showMonomial"`, to control the
+  way the monomials are printed. Actually in the two above examples of
+  `showQsprayXYZ` and `showQsprayX1X2X3` we only changed the way the
+  monomials are printed. Indeed, these two commands are equivalent:
+
+``` r
+showQsprayOption(qspray, "showQspray") <- showQsprayXYZ(c("A", "B", "C"))
+showQsprayOption(qspray, "showMonomial") <- showMonomialXYZ(c("A", "B", "C"))
+```
+
+and these two commands are equivalent as well:
+
+``` r
+showQsprayOption(qspray, "showQspray") <- showQsprayX1X2X3("X")
+showQsprayOption(qspray, "showMonomial") <- showMonomialX1X2X3("X")
+```
+
+But the `showQspray` functions allow finer control, e.g. they allow to
+control the multiplication symbol which separates a coefficient and a
+monomial within a term.
+
+- Finally there is the show option `"x"`. Setting this option to a
+  letter `x`:
+
+``` r
+showQsprayOption(qspray, "x") <- x
+```
+
+is equivalent to:
+
+``` r
+showQsprayOption(qspray, "showMonomial") <- showMonomialX1X2X3(x)
+```
+
+But `showMonomialX1X2X3` also allows to control the way the individual
+powers are collapsed, e.g. `"x^2.y.z^3"` (the default) or `"x^2*y*z^3"`,
+or `"x^2yz^3"`. If the dot is nice for you, use the `"x"` option, that’s
+less code to type.
+
+By the way, a `qspray` object is an S4 object with two slots: `powers`
+and `coeffs`. The `powers` slot is a list of vector of exponents and the
 `coeffs` slot is a character vector, whose each element is coercable to
-a `bigq` number by an application of the function `gmp::as.bigq`.
+a `bigq` number by an application of the function `gmp::as.bigq`. The
+`showMonomial` functions act only on the `powers` slot.
 
 When an arithmetic operation is performed between two `qspray` objects,
 the show options of the first one are passed to the result, *if
@@ -183,7 +247,7 @@ possible*:
 
 ``` r
 qspray + qlone(4)^99
-## -2*x^(4, 3, 4) - 4*x^(0, 2, 2) + x^(0, 0, 0, 99)
+## -2*X1^4.X2^3.X3^4 - 4*X2^2.X3^2 + X4^99
 ```
 
 For example, this is not possible if you specify only three letters for
