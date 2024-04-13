@@ -1,10 +1,10 @@
 # qspray 2.2.0
 
-- The `show` method of `qspray` objects has been changed. The monomial previously printed as `"x^(2, 0, 3)"` is now printed by default as `"x^2.z^3"` if there are no more than three variables in the polynomial, otherwise it is printed as `"x1^2.x3^3"`. It is possible to control the way a `qspray` is printed with the help of the function `showQsprayOption<-`. Helper functions to construct a custom `show` method are provided.
+- The `show` method of `qspray` objects has been changed. The monomial previously printed as `"x^(2, 0, 3)"` is now printed by default as `"x^2.z^3"` if there are no more than three variables in the polynomial, otherwise it is printed as `"x1^2.x3^3"`. But it is now possible to control the way a `qspray` is printed with the help of the function `showQsprayOption<-`. Helper functions to construct a custom `show` method are provided.
 
-- The **README** has been updated.
+- The **README** has been updated. In particular, it contains a large paragraph about the show options.
 
-- New function `substituteQspray`, to substitute some variables in a polynomial.
+- New function `substituteQspray`, to substitute some variables in a `qspray` polynomial.
 
 - New function `composeQspray`, to get the polynomial obtained by substituting the variables of a polynomial with polynomials.
 
@@ -18,7 +18,7 @@
 
 - New function `PSFpoly`, which computes the power sum polynomials.
 
-- New function `MSPcombination`, to get a symmetric polynomial as a linear combination of the monomial symmetric polynomials. It is also useful to check whether a polynomial is symmetric.
+- New function `MSPcombination`, to get a symmetric polynomial as a linear combination of the monomial symmetric polynomials. 
 
 - New function `compactSymmetricQspray` which prints a symmetric polynomial as a linear combination of the monomial symmetric polynomials.
 
