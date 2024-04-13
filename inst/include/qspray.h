@@ -1,6 +1,7 @@
 #ifndef __HEADER__
 #define __HEADER__
 
+#undef Rcpp_hpp
 #include <RcppArmadillo.h>
 #include <boost/multiprecision/gmp.hpp>
 //#include <complex.h>

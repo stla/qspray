@@ -5,9 +5,9 @@
 using namespace QSPRAY;
 
 // -------------------------------------------------------------------------- //
-Qspray<gmpq> prepare(const Rcpp::List& Powers, const Rcpp::StringVector& coeffs) {
+Qspray<gmpq> prepare(const Rcpp::List&         Powers, 
+                     const Rcpp::StringVector& coeffs) {
   Polynomial<gmpq> S;
-
   for(signed int i = 0; i < Powers.size(); i++) {
     Rcpp::IntegerVector Exponents = Powers(i);
     gmpq coeff(Rcpp::as<std::string>(coeffs(i)));
@@ -33,7 +33,7 @@ Qspray<gmpq> prepare(const Rcpp::List& Powers, const Rcpp::StringVector& coeffs)
 
 // -------------------------------------------------------------------------- //
 // [[Rcpp::export]]
-Rcpp::List qspray_maker(const Rcpp::List& Powers,
+Rcpp::List qspray_maker(const Rcpp::List&         Powers,
                         const Rcpp::StringVector& coeffs) {
   return returnQspray(prepare(Powers, coeffs));
 }
@@ -41,10 +41,9 @@ Rcpp::List qspray_maker(const Rcpp::List& Powers,
 
 // -------------------------------------------------------------------------- //
 // [[Rcpp::export]]
-Rcpp::List qspray_deriv(
-    const Rcpp::List& Powers, const Rcpp::StringVector& coeffs,   
-    const Rcpp::IntegerVector& n
-){
+Rcpp::List qspray_deriv(const Rcpp::List&          Powers, 
+                        const Rcpp::StringVector&  coeffs,   
+                        const Rcpp::IntegerVector& n     ){
   Qspray<gmpq> Q = makeQspray(Powers, coeffs);
   std::vector<unsigned int> orders(n.begin(), n.end());
   Qspray<gmpq> Qprime = Q.deriv(orders);
@@ -54,9 +53,9 @@ Rcpp::List qspray_deriv(
 
 // -------------------------------------------------------------------------- //
 // [[Rcpp::export]]
-Rcpp::List qspray_add(const Rcpp::List& Powers1,
+Rcpp::List qspray_add(const Rcpp::List&         Powers1,
                       const Rcpp::StringVector& coeffs1,
-                      const Rcpp::List& Powers2,
+                      const Rcpp::List&         Powers2,
                       const Rcpp::StringVector& coeffs2) {
   Qspray<gmpq> Q1 = makeQspray(Powers1, coeffs1);
   Qspray<gmpq> Q2 = makeQspray(Powers2, coeffs2);  
@@ -66,9 +65,9 @@ Rcpp::List qspray_add(const Rcpp::List& Powers1,
 
 // -------------------------------------------------------------------------- //
 // [[Rcpp::export]]
-Rcpp::List qspray_subtract(const Rcpp::List& Powers1,
+Rcpp::List qspray_subtract(const Rcpp::List&         Powers1,
                            const Rcpp::StringVector& coeffs1,
-                           const Rcpp::List& Powers2,
+                           const Rcpp::List&         Powers2,
                            const Rcpp::StringVector& coeffs2) {
   Qspray<gmpq> Q1 = makeQspray(Powers1, coeffs1);
   Qspray<gmpq> Q2 = makeQspray(Powers2, coeffs2);  
@@ -78,9 +77,9 @@ Rcpp::List qspray_subtract(const Rcpp::List& Powers1,
 
 // -------------------------------------------------------------------------- //
 // [[Rcpp::export]]
-Rcpp::List qspray_mult(const Rcpp::List& Powers1,
+Rcpp::List qspray_mult(const Rcpp::List&         Powers1,
                        const Rcpp::StringVector& coeffs1,
-                       const Rcpp::List& Powers2,
+                       const Rcpp::List&         Powers2,
                        const Rcpp::StringVector& coeffs2) {
   Qspray<gmpq> Q1 = makeQspray(Powers1, coeffs1);
   Qspray<gmpq> Q2 = makeQspray(Powers2, coeffs2);  
@@ -90,9 +89,9 @@ Rcpp::List qspray_mult(const Rcpp::List& Powers1,
 
 // -------------------------------------------------------------------------- //
 // [[Rcpp::export]]
-bool qspray_equality(const Rcpp::List& Powers1,
+bool qspray_equality(const Rcpp::List&         Powers1,
                      const Rcpp::StringVector& coeffs1,
-                     const Rcpp::List& Powers2,
+                     const Rcpp::List&         Powers2,
                      const Rcpp::StringVector& coeffs2) {
   Qspray<gmpq> Q1 = makeQspray(Powers1, coeffs1);
   Qspray<gmpq> Q2 = makeQspray(Powers2, coeffs2);  
@@ -102,7 +101,7 @@ bool qspray_equality(const Rcpp::List& Powers1,
 
 // -------------------------------------------------------------------------- //
 // [[Rcpp::export]]
-Rcpp::List qspray_power(const Rcpp::List& Powers,
+Rcpp::List qspray_power(const Rcpp::List&         Powers,
                         const Rcpp::StringVector& coeffs,
                         unsigned int n) {
    Qspray<gmpq> Q = makeQspray(Powers, coeffs);
