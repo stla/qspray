@@ -29,6 +29,16 @@ set.seed(3141)
 ( qspray <- rQspray() )
 f <- showQspray(showMonomialX1X2X3("X"), compact = TRUE)
 f(qspray)
+# this is equivalent to:
+f <- showQsprayX1X2X3("X", compact = TRUE)
+f(qspray)
+# if you want to adopt this way to show a qspray, use 
+# the setter function \code{\link{showQsprayOption<-}}: 
+showQsprayOption(qspray, "showQspray") <- 
+  showQsprayX1X2X3("X", compact = TRUE)
+qspray
+# then this show option will be preserved by some operations on the qspray:
+qspray^2
 }
 \seealso{
 \code{\link{showQsprayX1X2X3}}, \code{\link{showQsprayXYZ}}, 

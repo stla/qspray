@@ -13,15 +13,17 @@ showQsprayXYZ(letters = c("x", "y", "z"), collapse = ".", ...)
 \code{compact=TRUE}}
 }
 \value{
-A function which prints a \code{qspray} object.
+A function which prints a \code{qspray} object. It is constructed 
+  with \code{\link{showQspray}} and \code{\link{showMonomialXYZ}}.
 }
 \description{
-Prints a polynomial by printing monomials like \code{"x^2yz"}.
+Prints a polynomial by printing monomials like \code{"x^2.yz"}.
 }
 \examples{
 set.seed(3141)
 ( qspray <- rQspray() )
 showQsprayXYZ(c("X", "Y", "Z"))(qspray)
+showQsprayXYZ(c("X", "Y", "Z"))(qlone(1) + qlone(2) + qlone(3) + qlone(4))
 
 }
 \seealso{

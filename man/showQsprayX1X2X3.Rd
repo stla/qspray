@@ -19,8 +19,9 @@ A function which prints a \code{qspray} object.
 Prints a \code{qspray} object given a string for the variable.
 }
 \note{
-The way to print \code{qspray} objects can be controlled with the 
- help of the function \code{\link{showQsprayOption<-}}.
+The way \code{qspray} objects are displayed can be controlled with the 
+ help of the function \code{\link{showQsprayOption<-}}, and 
+ \code{showQsprayX1X2X3()} is a possible option to pass in.
 }
 \examples{
 set.seed(3141)

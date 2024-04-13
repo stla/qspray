@@ -22,19 +22,20 @@
 #' ( qspray <- rQspray() )
 #' f <- showQspray(showMonomialX1X2X3("X"), compact = TRUE)
 #' f(qspray)
+#' # this is equivalent to:
+#' f <- showQsprayX1X2X3("X", compact = TRUE)
+#' f(qspray)
+#' # if you want to adopt this way to show a qspray, use 
+#' # the setter function \code{\link{showQsprayOption<-}}: 
+#' showQsprayOption(qspray, "showQspray") <- 
+#'   showQsprayX1X2X3("X", compact = TRUE)
+#' qspray
+#' # then this show option will be preserved by some operations on the qspray:
+#' qspray^2
 showQspray <- function(
     showMonomial, compact = FALSE, multiplication = "*"
 ) {
-  # if(is.function(sM <- attr(showMonomial, "showAll"))) {
-  #   showMonomials <- function(powers, ...) {
-  #     sM(powers, ...)
-  #   }
-  # } else {
-  #   showMonomials <- function(powers, ...) {
-  #     vapply(powers, showMonomial, character(1L), ...)
-  #   }
-  # }
-  showMonomials <- attr(showMonomial, "showAll") %||%
+  showMonomials <- attr(showMonomial, "showMonomials") %||%
     function(powers) {
       vapply(powers, showMonomial, character(1L))
     }
@@ -42,7 +43,6 @@ showQspray <- function(
     if(isQzero(qspray)) {
       return("0")
     }
-    # qspray <- orderedQspray(qspray)
     nterms <- numberOfTerms(qspray)
     constantTerm <- getConstantTerm(qspray)
     coeffs <- as.bigq(qspray@coeffs)
@@ -70,7 +70,7 @@ showQspray <- function(
     monomials2 <- monomials[length(powers1) + seq_along(powers2)]
     c(h(qspray1, monomials1), h(qspray2, monomials2))
   }
-  f <- function(qspray, monomials) {
+  f <- function(qspray) {
     qspray <- orderedQspray(qspray)
     h(qspray, showMonomials(qspray@powers))
   }
@@ -116,7 +116,7 @@ showMonomialX1X2X3 <- function(x = "x", collapse = ".") {
 }
 
 #' @title Print a monomial
-#' @description Prints a monomial like \code{"xz^2"} if possible (see details).
+#' @description Prints a monomial like \code{"x.z^2"} if possible (see details).
 #'
 #' @param letters a vector of strings, usually some letters such as \code{"x"} 
 #'   and \code{"y"}, to denote the variables
@@ -157,39 +157,55 @@ showMonomialXYZ <- function(letters = c("x", "y", "z"), collapse = ".") {
     }, character(1L)), collapse = collapse)
   }
   secondary <- showMonomialX1X2X3(x = letters[1L], collapse = collapse)
-  condition <- function(exponents, n) {
-    length(exponents) <= n
+  # condition <- function(exponents, n) {
+  #   length(exponents) <= n
+  # }
+  # f <- function(exponents, n = length(letters)) {
+  #   if(condition(exponents, n)) primary(exponents) else secondary(exponents)  
+  # }
+  # F <- function(powers, n = length(letters)) {
+  #   check <- all(vapply(powers, condition, logical(1L), n = n))
+  #   if(check) {
+  #     vapply(powers, primary, character(1L))
+  #   } else {
+  #     vapply(powers, secondary, character(1L))
+  #   }
+  # }
+  condition <- function(exponents) {
+    length(exponents) <= length(letters)
   }
-  f <- function(exponents, n = length(letters)) {
-    if(condition(exponents, n)) primary(exponents) else secondary(exponents)  
+  f <- function(exponents) {
+    if(condition(exponents)) primary(exponents) else secondary(exponents)  
   }
-  F <- function(powers, n = length(letters)) {
-    check <- all(vapply(powers, condition, logical(1L), n = n))
+  showMonomials <- function(powers) {
+    check <- all(vapply(powers, condition, logical(1L)))
     if(check) {
       vapply(powers, primary, character(1L))
     } else {
       vapply(powers, secondary, character(1L))
     }
   }
-  attr(f, "showAll")     <- F
-  attr(f, "inheritable") <- TRUE
+  attr(f, "showMonomials") <- showMonomials
+  attr(f, "inheritable")   <- TRUE
   f
 }
 
 #' @title Print a polynomial
-#' @description Prints a polynomial by printing monomials like \code{"x^2yz"}.
+#' @description Prints a polynomial by printing monomials like \code{"x^2.yz"}.
 #'
 #' @param letters,collapse see \code{\link{showMonomialXYZ}}
 #' @param ... arguments passed to \code{\link{showQspray}}, such as 
 #'   \code{compact=TRUE}
 #'
-#' @return A function which prints a \code{qspray} object.
+#' @return A function which prints a \code{qspray} object. It is constructed 
+#'   with \code{\link{showQspray}} and \code{\link{showMonomialXYZ}}.
 #' @export
 #' 
 #' @examples
 #' set.seed(3141)
 #' ( qspray <- rQspray() )
 #' showQsprayXYZ(c("X", "Y", "Z"))(qspray)
+#' showQsprayXYZ(c("X", "Y", "Z"))(qlone(1) + qlone(2) + qlone(3) + qlone(4))
 #' 
 #' @seealso \code{\link{showMonomialXYZ}}, \code{\link{showQspray}}, 
 #'   \code{\link{showQsprayOption<-}}.
@@ -233,8 +249,9 @@ showMonomialOld <- function(x = "x") {
 #' @return A function which prints a \code{qspray} object.
 #' @export
 #' 
-#' @note The way to print \code{qspray} objects can be controlled with the 
-#'  help of the function \code{\link{showQsprayOption<-}}.
+#' @note The way \code{qspray} objects are displayed can be controlled with the 
+#'  help of the function \code{\link{showQsprayOption<-}}, and 
+#'  \code{showQsprayX1X2X3()} is a possible option to pass in.
 #'
 #' @examples
 #' set.seed(3141)
@@ -279,18 +296,9 @@ showQsprayX1X2X3 <- function(x = "x", collapse = ".", ...) {
   }
   if(which != "showQspray") {
     if(which == "x") {
-      # sMU <- showMonomialXYZ(letters = value) 
-      # sM  <- showMonomialX1X2X3(x = value)
       sM <- showMonomialXYZ(letters = value)
       attr(showOpts, "showMonomial") <- sM
       sQ <- showQspray(showMonomial = sM)
-      # sQ <- function(qspray) {
-      #   if(isUnivariate(qspray)) { # PLUS BESOIN!
-      #     showQspray(showMonomial = sMU)(qspray)
-      #   } else {
-      #     showQspray(showMonomial = sM)(qspray)
-      #   }
-      # }
     } else if(which == "showMonomial") {
       sQ <- showQspray(showMonomial = value)
     } 
@@ -304,13 +312,6 @@ showQsprayX1X2X3 <- function(x = "x", collapse = ".", ...) {
 }
 
 setDefaultShowQsprayOption <- function(qspray) {
-  # trivariate <- numberOfVariables(qspray) <= 3L
-  # if(trivariate){ 
-  #   showQsprayOption(qspray, "showMonomial") <- showMonomialXYZ()
-  # } else {
-  #   showQsprayOption(qspray, "x") <- "x"
-  #   showQsprayOption(qspray, "inheritable") <- TRUE
-  # }
   showQsprayOption(qspray, "showMonomial") <- showMonomialXYZ()
   invisible(qspray)
 }

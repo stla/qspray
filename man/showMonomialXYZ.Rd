@@ -18,7 +18,7 @@ A function which takes as argument a sequence of exponents and
   which prints the corresponding monomial.
 }
 \description{
-Prints a monomial like \code{"xz^2"} if possible (see details).
+Prints a monomial like \code{"x.z^2"} if possible (see details).
 }
 \details{
 If the function returned by this function is applied to a vector 
