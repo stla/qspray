@@ -82,7 +82,10 @@ detLaplace <- function(M) {
 #' @examples
 #' set.seed(666)
 #' A <- matrix(rpois(9L, 10), nrow = 3, ncol = 3)
-#' characteristicPolynomial(A)
+#' ( P <- characteristicPolynomial(A) )
+#' # check the roots are the eigen values:
+#' f <- as.function(P, N = TRUE)
+#' sapply(eigen(A)$values, f) # approx c(0, 0, 0)
 characteristicPolynomial <- function(A) {
   if(!is.matrix(A) && !is.matrixZQ(A)) {
     stop("`A` must be a matrix.")
