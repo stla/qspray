@@ -1,6 +1,6 @@
 # qspray 2.2.0
 
-- The `show` method of `qspray` objects has been changed. The monomial previously printed as `"x^(2,0,3)"` is now printed by default as `"x^2z^3"` if there are no more than three variables in the polynomial, otherwise it is printed as `"x1^2.x3^3"`. It is possible to control the way a `qspray` is printed with the help of the function `showQsprayOption<-`. Helper functions to construct a custom `show` method are provided.
+- The `show` method of `qspray` objects has been changed. The monomial previously printed as `"x^(2, 0, 3)"` is now printed by default as `"x^2.z^3"` if there are no more than three variables in the polynomial, otherwise it is printed as `"x1^2.x3^3"`. It is possible to control the way a `qspray` is printed with the help of the function `showQsprayOption<-`. Helper functions to construct a custom `show` method are provided.
 
 - The **README** has been updated.
 

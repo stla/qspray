@@ -108,7 +108,7 @@ substituteQspray <- function(qspray, values) {
     }
     out <- out + coeffs[i] * term * monomial
   }
-  out
+  passShowAttributes(qspray, out)
 }
 
 #' @title Compose 'qspray' polynomials

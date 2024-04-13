@@ -273,6 +273,9 @@ showQsprayX1X2X3 <- function(x = "x", collapse = ".", ...) {
 #'
 #' @return This returns the updated \code{qspray}.
 #' @export
+#' 
+#' @note The interest of setting some show options to a 'qspray' is that these 
+#'   options are preserved by some operations. See the examples and the README.
 #'
 #' @examples
 #' set.seed(3141)
@@ -286,6 +289,19 @@ showQsprayX1X2X3 <- function(x = "x", collapse = ".", ...) {
 #' # old show method:
 #' showQsprayOption(qspray, "showMonomial") <- showMonomialOld()
 #' qspray
+#' # show options are preserved by some operations:
+#' qspray^2
+#' 3*qspray
+#' derivQspray(qspray, 1)
+#' swapVariables(qspray, 1, 2)
+#' substituteQspray(qspray, c(NA, NA, "3/2"))
+#' # for the binary arithmetic operations, the show options of the first 
+#' # operand are transferred to the result when possible:
+#' ( qspray2 <- rQspray() )
+#' qspray + qspray2 
+#' if(require("ratioOfQsprays")) {
+#'   qspray / qspray2
+#' }
 `showQsprayOption<-` <- function(x, which, value) {
   which <- match.arg(which, c("x", "showMonomial", "showQspray", "inheritable"))
   showOpts <- attr(x, "showOpts") %||% TRUE
