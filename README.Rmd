@@ -124,7 +124,7 @@ h("1", "y", "3/2")
 
 You can control the way of printing a `qspray` with the help of the function 
 `showQsprayOption<-`. By default, the monomials of a `qspray` are printed in
-the style of `x^2yz^3` if there are at most three variables, otherwise they 
+the style of `x^2.y.z^3` if there are at most three variables, otherwise they 
 are printed like `x1^2.x2.x3^3`: 
 
 ```{r}
