@@ -17,6 +17,12 @@
 #' @seealso \code{\link{showQsprayX1X2X3}}, \code{\link{showQsprayXYZ}}, 
 #'   \code{\link{showQsprayOption<-}}.
 #'   
+#' @note The function returned by this function can be used as the option 
+#'   \code{"showQspray"} in the \code{\link{showQsprayOption<-}} function.
+#'   But one generally prefers to use \code{\link{showQsprayX1X2X3}} or 
+#'   \code{\link{showQsprayXYZ}} instead, which are both built with 
+#'   \code{showQspray}.
+#'   
 #' @examples
 #' set.seed(3141)
 #' ( qspray <- rQspray() )
@@ -80,7 +86,7 @@ showQspray <- function(
 }
 
 #' @title Print a monomial
-#' @description Prints a monomial like \code{"x1.x3^2"}.
+#' @description Prints a monomial in the style of \code{"x1.x3^2"}.
 #'
 #' @param x a string, usually a letter such as \code{"x"} or \code{"X"}, to 
 #'   denote the non-indexed variables
@@ -94,12 +100,27 @@ showQspray <- function(
 #' @seealso \code{\link{showQsprayX1X2X3}}, 
 #'   \code{\link{showMonomialXYZ}}, \code{\link{showQsprayOption<-}}. 
 #' 
+#' @note The function returned by this function can be used as the option 
+#'   \code{"showMonomial"} in the \code{\link{showQsprayOption<-}} function.
+#'   But if you are happy with the default \code{collapse} argument, then you 
+#'   can equivalently set the \code{"x"} option instead, thereby typing less 
+#'   code. See the example. 
+#' 
 #' @examples
 #' showMonomialX1X2X3("X")(c(1, 0, 2))
 #' showMonomialX1X2X3("X", collapse = "*")(c(1, 0, 2))
 #' showMonomialX1X2X3("X")(c(1, 0, 2)) == 
 #'   showMonomialXYZ(c("X1", "X2", "X3"))(c(1, 0, 2))
 #' showMonomialX1X2X3()(NULL)
+#' # setting a show option:
+#' set.seed(3141)
+#' ( qspray <- rQspray() )
+#' showQsprayOption(qspray, "showMonomial") <- showMonomialX1X2X3("X")
+#' qspray
+#' # this is equivalent to:
+#' showQsprayOption(qspray, "showQspray") <- showQsprayX1X2X3("X")
+#' # and also equivalent to:
+#' showQsprayOption(qspray, "x") <- "X" 
 showMonomialX1X2X3 <- function(x = "x", collapse = ".") {
   f <- function(exponents) {
     paste0(vapply(which(exponents != 0L), function(i) {
@@ -132,9 +153,11 @@ showMonomialX1X2X3 <- function(x = "x", collapse = ".") {
 #'   vector, then \code{\link{showMonomialX1X2X3}(x=letters[1])} is applied 
 #'   (see the last example).
 #' 
-#'
 #' @seealso \code{\link{showQsprayXYZ}}, 
 #'   \code{\link{showMonomialX1X2X3}}, \code{\link{showQsprayOption<-}}. 
+#' 
+#' @note The function returned by this function can be used as the option 
+#'   \code{"showMonomial"} in the \code{\link{showQsprayOption<-}} function.
 #' 
 #' @examples
 #' showMonomialXYZ()(c(1, 0, 2))
@@ -144,6 +167,13 @@ showMonomialX1X2X3 <- function(x = "x", collapse = ".") {
 #' showMonomialXYZ(c("a", "b"), collapse = "*")(c(1, 2, 3))
 #' # same as:
 #' showMonomialX1X2X3("a", collapse = "*")(c(1, 2, 3))
+#' # setting a show option:
+#' set.seed(3141)
+#' ( qspray <- rQspray() )
+#' showQsprayOption(qspray, "showMonomial") <- showMonomialXYZ(c("A", "B", "C"))
+#' qspray
+#' # this is equivalent to:
+#' showQsprayOption(qspray, "showQspray") <- showQsprayXYZ(c("A", "B", "C"))
 showMonomialXYZ <- function(letters = c("x", "y", "z"), collapse = ".") {
   primary <- function(exponents) {
     paste0(vapply(which(exponents != 0L), function(i) {
@@ -201,14 +231,23 @@ showMonomialXYZ <- function(letters = c("x", "y", "z"), collapse = ".") {
 #'   with \code{\link{showQspray}} and \code{\link{showMonomialXYZ}}.
 #' @export
 #' 
+#' 
+#' @note The function returned by this function can be used as the option 
+#'   \code{"showQspray"} in the \code{\link{showQsprayOption<-}} function.
+#' 
+#' @seealso \code{\link{showMonomialXYZ}}, \code{\link{showQspray}}, 
+#'   \code{\link{showQsprayOption<-}}.
+#' 
 #' @examples
 #' set.seed(3141)
 #' ( qspray <- rQspray() )
 #' showQsprayXYZ(c("X", "Y", "Z"))(qspray)
 #' showQsprayXYZ(c("X", "Y", "Z"))(qlone(1) + qlone(2) + qlone(3) + qlone(4))
-#' 
-#' @seealso \code{\link{showMonomialXYZ}}, \code{\link{showQspray}}, 
-#'   \code{\link{showQsprayOption<-}}.
+#' # setting a show option:
+#' showQsprayOption(qspray, "showQspray") <- showQsprayXYZ(c("A", "B", "C"))
+#' qspray
+#' # this is equivalent to:
+#' showQsprayOption(qspray, "showMonomial") <- showMonomialXYZ(c("A", "B", "C"))
 showQsprayXYZ <- function(letters = c("x", "y", "z"), collapse = ".", ...) {
   showQspray(showMonomialXYZ(letters, collapse), ...)
 }
@@ -249,14 +288,25 @@ showMonomialOld <- function(x = "x") {
 #' @return A function which prints a \code{qspray} object.
 #' @export
 #' 
+#' @seealso \code{\link{showMonomialX1X2X3}}, \code{\link{showQspray}}, 
+#'   \code{\link{showQsprayOption<-}}.
+#'   
 #' @note The way \code{qspray} objects are displayed can be controlled with the 
 #'  help of the function \code{\link{showQsprayOption<-}}, and 
-#'  \code{showQsprayX1X2X3()} is a possible option to pass in.
+#'  \code{showQsprayX1X2X3()} is a possible option to pass in 
+#'  \code{\link{showQsprayOption<-}}.
 #'
 #' @examples
 #' set.seed(3141)
 #' ( qspray <- rQspray() )
 #' showQsprayX1X2X3("X")(qspray)
+#' # setting a show option:
+#' showQsprayOption(qspray, "showQspray") <- showQsprayX1X2X3("A")
+#' qspray
+#' # this is equivalent to:
+#' showQsprayOption(qspray, "showMonomial") <- showMonomialX1X2X3("A")
+#' # and also equivalent to:
+#' showQsprayOption(qspray, "x") <- "A"
 showQsprayX1X2X3 <- function(x = "x", collapse = ".", ...) {
   f <- showQspray(showMonomialX1X2X3(x, collapse), ...)
   attr(f, "inheritable") <- TRUE

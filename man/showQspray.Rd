@@ -24,6 +24,13 @@ A function which prints a \code{qspray} object.
 Prints a \code{qspray} object given a function which prints 
   the monomials.
 }
+\note{
+The function returned by this function can be used as the option 
+  \code{"showQspray"} in the \code{\link{showQsprayOption<-}} function.
+  But one generally prefers to use \code{\link{showQsprayX1X2X3}} or 
+  \code{\link{showQsprayXYZ}} instead, which are both built with 
+  \code{showQspray}.
+}
 \examples{
 set.seed(3141)
 ( qspray <- rQspray() )

@@ -21,10 +21,22 @@ Prints a \code{qspray} object given a string for the variable.
 \note{
 The way \code{qspray} objects are displayed can be controlled with the 
  help of the function \code{\link{showQsprayOption<-}}, and 
- \code{showQsprayX1X2X3()} is a possible option to pass in.
+ \code{showQsprayX1X2X3()} is a possible option to pass in 
+ \code{\link{showQsprayOption<-}}.
 }
 \examples{
 set.seed(3141)
 ( qspray <- rQspray() )
 showQsprayX1X2X3("X")(qspray)
+# setting a show option:
+showQsprayOption(qspray, "showQspray") <- showQsprayX1X2X3("A")
+qspray
+# this is equivalent to:
+showQsprayOption(qspray, "showMonomial") <- showMonomialX1X2X3("A")
+# and also equivalent to:
+showQsprayOption(qspray, "x") <- "A"
+}
+\seealso{
+\code{\link{showMonomialX1X2X3}}, \code{\link{showQspray}}, 
+  \code{\link{showQsprayOption<-}}.
 }

@@ -18,7 +18,14 @@ A function which takes as argument a sequence of exponents and
   which prints the corresponding monomial.
 }
 \description{
-Prints a monomial like \code{"x1.x3^2"}.
+Prints a monomial in the style of \code{"x1.x3^2"}.
+}
+\note{
+The function returned by this function can be used as the option 
+  \code{"showMonomial"} in the \code{\link{showQsprayOption<-}} function.
+  But if you are happy with the default \code{collapse} argument, then you 
+  can equivalently set the \code{"x"} option instead, thereby typing less 
+  code. See the example.
 }
 \examples{
 showMonomialX1X2X3("X")(c(1, 0, 2))
@@ -26,6 +33,15 @@ showMonomialX1X2X3("X", collapse = "*")(c(1, 0, 2))
 showMonomialX1X2X3("X")(c(1, 0, 2)) == 
   showMonomialXYZ(c("X1", "X2", "X3"))(c(1, 0, 2))
 showMonomialX1X2X3()(NULL)
+# setting a show option:
+set.seed(3141)
+( qspray <- rQspray() )
+showQsprayOption(qspray, "showMonomial") <- showMonomialX1X2X3("X")
+qspray
+# this is equivalent to:
+showQsprayOption(qspray, "showQspray") <- showQsprayX1X2X3("X")
+# and also equivalent to:
+showQsprayOption(qspray, "x") <- "X" 
 }
 \seealso{
 \code{\link{showQsprayX1X2X3}}, 

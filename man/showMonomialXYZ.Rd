@@ -26,6 +26,10 @@ If the function returned by this function is applied to a vector
   vector, then \code{\link{showMonomialX1X2X3}(x=letters[1])} is applied 
   (see the last example).
 }
+\note{
+The function returned by this function can be used as the option 
+  \code{"showMonomial"} in the \code{\link{showQsprayOption<-}} function.
+}
 \examples{
 showMonomialXYZ()(c(1, 0, 2))
 showMonomialXYZ(collapse = "*")(c(1, 0, 2))
@@ -34,6 +38,13 @@ showMonomialXYZ()(NULL)
 showMonomialXYZ(c("a", "b"), collapse = "*")(c(1, 2, 3))
 # same as:
 showMonomialX1X2X3("a", collapse = "*")(c(1, 2, 3))
+# setting a show option:
+set.seed(3141)
+( qspray <- rQspray() )
+showQsprayOption(qspray, "showMonomial") <- showMonomialXYZ(c("A", "B", "C"))
+qspray
+# this is equivalent to:
+showQsprayOption(qspray, "showQspray") <- showQsprayXYZ(c("A", "B", "C"))
 }
 \seealso{
 \code{\link{showQsprayXYZ}}, 

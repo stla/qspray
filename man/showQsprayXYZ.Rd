@@ -19,12 +19,20 @@ A function which prints a \code{qspray} object. It is constructed
 \description{
 Prints a polynomial by printing monomials like \code{"x^2.yz"}.
 }
+\note{
+The function returned by this function can be used as the option 
+  \code{"showQspray"} in the \code{\link{showQsprayOption<-}} function.
+}
 \examples{
 set.seed(3141)
 ( qspray <- rQspray() )
 showQsprayXYZ(c("X", "Y", "Z"))(qspray)
 showQsprayXYZ(c("X", "Y", "Z"))(qlone(1) + qlone(2) + qlone(3) + qlone(4))
-
+# setting a show option:
+showQsprayOption(qspray, "showQspray") <- showQsprayXYZ(c("A", "B", "C"))
+qspray
+# this is equivalent to:
+showQsprayOption(qspray, "showMonomial") <- showMonomialXYZ(c("A", "B", "C"))
 }
 \seealso{
 \code{\link{showMonomialXYZ}}, \code{\link{showQspray}}, 
