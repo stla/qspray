@@ -22,19 +22,29 @@
 #' ( qspray <- rQspray() )
 #' f <- showQspray(showMonomialX1X2X3("X"), compact = TRUE)
 #' f(qspray)
-showQspray <- function(showMonomial, compact = FALSE, multiplication = "*") {
-  showMonomials <- attr(showMonomial, "showAll") %||% 
+showQspray <- function(
+    showMonomial, compact = FALSE, multiplication = "*"
+) {
+  # if(is.function(sM <- attr(showMonomial, "showAll"))) {
+  #   showMonomials <- function(powers, ...) {
+  #     sM(powers, ...)
+  #   }
+  # } else {
+  #   showMonomials <- function(powers, ...) {
+  #     vapply(powers, showMonomial, character(1L), ...)
+  #   }
+  # }
+  showMonomials <- attr(showMonomial, "showAll") %||%
     function(powers) {
       vapply(powers, showMonomial, character(1L))
     }
-  f <- function(qspray) {
+  h <- function(qspray, monomials) {
     if(isQzero(qspray)) {
       return("0")
     }
-    qspray <- orderedQspray(qspray)
+    # qspray <- orderedQspray(qspray)
     nterms <- numberOfTerms(qspray)
     constantTerm <- getConstantTerm(qspray)
-    monomials <- showMonomials(qspray@powers)
     coeffs <- as.bigq(qspray@coeffs)
     plus <- vapply(coeffs, function(x) x >= 0L, FUN.VALUE = logical(1L))
     plusSign  <- ifelse(compact, "+", " + ")
@@ -50,6 +60,21 @@ showQspray <- function(showMonomial, compact = FALSE, multiplication = "*") {
     leader <- if(plus[1L]) "" else "-"
     paste0(c(leader, c(rbind(terms, signs))), collapse = "")
   }
+  g <- function(qspray1, qspray2) {
+    qspray1 <- orderedQspray(qspray1)
+    qspray2 <- orderedQspray(qspray2)
+    powers1 <- qspray1@powers
+    powers2 <- qspray2@powers
+    monomials <- showMonomials(c(powers1, powers2))
+    monomials1 <- monomials[seq_along(powers1)]
+    monomials2 <- monomials[length(powers1) + seq_along(powers2)]
+    c(h(qspray1, monomials1), h(qspray2, monomials2))
+  }
+  f <- function(qspray, monomials) {
+    qspray <- orderedQspray(qspray)
+    h(qspray, showMonomials(qspray@powers))
+  }
+  attr(f, "showQsprays") <- g
   attr(f, "inheritable") <- attr(showMonomial, "inheritable")
   f
 }
@@ -132,14 +157,14 @@ showMonomialXYZ <- function(letters = c("x", "y", "z"), collapse = ".") {
     }, character(1L)), collapse = collapse)
   }
   secondary <- showMonomialX1X2X3(x = letters[1L], collapse = collapse)
-  condition <- function(exponents) {
-    length(exponents) <= length(letters)
+  condition <- function(exponents, n) {
+    length(exponents) <= n
   }
-  f <- function(exponents) {
-    if(condition(exponents)) primary(exponents) else secondary(exponents)  
+  f <- function(exponents, n = length(letters)) {
+    if(condition(exponents, n)) primary(exponents) else secondary(exponents)  
   }
-  F <- function(powers) {
-    check <- all(vapply(powers, condition, logical(1L)))
+  F <- function(powers, n = length(letters)) {
+    check <- all(vapply(powers, condition, logical(1L), n = n))
     if(check) {
       vapply(powers, primary, character(1L))
     } else {
