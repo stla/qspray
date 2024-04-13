@@ -46,7 +46,4 @@ substituteQspray(qspray, c(NA, NA, "3/2"))
 # operand are transferred to the result when possible:
 ( qspray2 <- rQspray() )
 qspray + qspray2 
-if(require("ratioOfQsprays")) {
-  qspray / qspray2
-}
 }

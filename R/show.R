@@ -299,9 +299,6 @@ showQsprayX1X2X3 <- function(x = "x", collapse = ".", ...) {
 #' # operand are transferred to the result when possible:
 #' ( qspray2 <- rQspray() )
 #' qspray + qspray2 
-#' if(require("ratioOfQsprays")) {
-#'   qspray / qspray2
-#' }
 `showQsprayOption<-` <- function(x, which, value) {
   which <- match.arg(which, c("x", "showMonomial", "showQspray", "inheritable"))
   showOpts <- attr(x, "showOpts") %||% TRUE
