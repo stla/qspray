@@ -54,7 +54,7 @@ setGeneric(
 setMethod(
   "numberOfVariables", "qspray", 
   function(x) {
-    max(0L, arity(x))
+    as.integer(max(0L, arity(x)))
   }
 )
 
