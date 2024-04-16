@@ -96,24 +96,29 @@ MSPcombination <- function(qspray, check = TRUE) {
     )
   }
   if(check) {
-    cl <- class(qspray)[1L]
-    if(!canCoerce(qzero(), cl)) {
-      stop(
-        "Cannot check symmetry for this type of polynomials."
-      )
-    }
-    n <- arity(qspray)
-    check <- as(qzero(), cl)
-    for(t in out) {
-      coeff  <- t[["coeff"]]
-      lambda <- t[["lambda"]]
-      check  <- check + coeff * as(MSFpoly(n, lambda), cl)
-    }
-    if(check != qspray) {
+    test <- checkSymmetry(qspray, out)
+    if(!test) {
       stop("The polynomial is not symmetric.")
     }
   }
   out
+}
+
+checkSymmetry <- function(qspray, mspCombination) {
+  cl <- class(qspray)[1L]
+  if(!canCoerce(qzero(), cl)) {
+    stop(
+      "Cannot check symmetry for this type of polynomials."
+    )
+  }
+  n <- numberOfVariables(qspray)
+  check <- as(qzero(), cl)
+  for(t in mspCombination) {
+    coeff  <- t[["coeff"]]
+    lambda <- t[["lambda"]]
+    check  <- check + coeff * as(MSFpoly(n, lambda), cl)
+  }
+  check == qspray
 }
 
 setGeneric(
@@ -124,7 +129,7 @@ setGeneric(
 )
 
 #' @name compactSymmetricQspray
-#' @aliases compactSymmetricQspray,qspray,logical-method compactSymmetricQspray,qspray,missing-method
+#' @aliases compactSymmetricQspray,qspray,logical-method compactSymmetricQspray,qspray-method
 #' @docType methods
 #' @title Compact symmetric qspray
 #' @description Prints a symmetric qspray polynomial as a linear combination of 
@@ -132,7 +137,7 @@ setGeneric(
 #'
 #' @param qspray a \code{qspray} object, which should correspond to a 
 #'   symmetric polynomial
-#' @param check Boolean, whether to check the symmetry
+#' @param check Boolean, whether to check the symmetry (default \code{TRUE})
 #'
 #' @return A character string.
 #' @export
@@ -164,9 +169,9 @@ setMethod(
 
 #' @rdname compactSymmetricQspray
 setMethod(
-  "compactSymmetricQspray", c("qspray", "missing"),
-  function(qspray, check) {
-    compactSymmetricQspray(qspray, FALSE)
+  "compactSymmetricQspray", c("qspray"),
+  function(qspray) {
+    compactSymmetricQspray(qspray, check = FALSE)
   }
 )
 
@@ -216,14 +221,10 @@ ESFpoly <- function(m, lambda) {
 #' e2 <- ESFpoly(3, 2)
 #' e3 <- ESFpoly(3, 3)
 #' q <- e1 + 2*e2 + 3*e3 + 4*e1*e3
-#' isSymmetricPolynomial(q)
-isSymmetricPolynomial <- function(qspray) {
-  tryCatch({
-    . <- MSPcombination(qspray, check = TRUE)
-    TRUE
-  }, error = function(e) {
-    FALSE
-  })
+#' isSymmetricQspray(q)
+isSymmetricQspray <- function(qspray) {
+  mspCombination <- MSPcombination(qspray, check = FALSE)
+  checkSymmetry(qspray, mspCombination)
   # n <- arity(qspray)
   # i_ <- seq_len(n)
   # E <- lapply(i_, function(i) ESFpoly(n, i))

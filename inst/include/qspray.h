@@ -1,5 +1,5 @@
-#ifndef __HEADER__
-#define __HEADER__
+#ifndef ___QSPRAY___
+#define ___QSPRAY___
 
 #undef Rcpp_hpp
 #include <RcppArmadillo.h>

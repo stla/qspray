@@ -4,18 +4,19 @@
 \name{compactSymmetricQspray}
 \alias{compactSymmetricQspray}
 \alias{compactSymmetricQspray,qspray,logical-method}
-\alias{compactSymmetricQspray,qspray,missing-method}
+\alias{compactSymmetricQspray,qspray-method}
+\alias{compactSymmetricQspray,qspray,ANY-method}
 \title{Compact symmetric qspray}
 \usage{
 \S4method{compactSymmetricQspray}{qspray,logical}(qspray, check)
 
-\S4method{compactSymmetricQspray}{qspray,missing}(qspray, check)
+\S4method{compactSymmetricQspray}{qspray,ANY}(qspray)
 }
 \arguments{
 \item{qspray}{a \code{qspray} object, which should correspond to a 
 symmetric polynomial}
 
-\item{check}{Boolean, whether to check the symmetry}
+\item{check}{Boolean, whether to check the symmetry (default \code{TRUE})}
 }
 \value{
 A character string.

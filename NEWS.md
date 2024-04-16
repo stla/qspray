@@ -10,7 +10,7 @@
 
 - New function `isPolynomialOf`, to check whether a `qspray` polynomial can be written as a polynomial of some given `qspray` polynomials, and to get this polynomial in case this is true. This uses Gröbner bases and thus this can be slow.
  
-- New function `isSymmetricPolynomial`, to check whether a `qspray` polynomial is symmetric. 
+- New function `isSymmetricQspray`, to check whether the polynomial defined by a `qspray` object is symmetric. 
 
 - There was an error in `qdivision` (without severe consequences).
 
