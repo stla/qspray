@@ -18,17 +18,9 @@ if [ $? -ne 0 ]; then
     exit 2
 fi
 
-## check for mpfr
-pkg-config --exists mpfr
-if [ $? -ne 0 ]; then
-    echo "*** pkg-config is installed but 'pkg-config --exists mpfr' did not return 0."
-    echo "*** We need mpfr to proceed. Exiting."
-    exit 3
-fi
-
 ## get compiler flags and libs
-pkgcflags=`pkg-config --cflags gmp mpfr`
-pkglibs=`pkg-config --libs gmp mpfr`
+pkgcflags=`pkg-config --cflags gmp`
+pkglibs=`pkg-config --libs gmp`
 
 ## substitute them in
 sed -e "s|@PKG_CXXFLAGS@|$pkgcflags|" -e "s|@PKG_LIBS@|$pkglibs|" src/Makevars.in > src/Makevars

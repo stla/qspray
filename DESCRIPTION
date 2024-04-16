@@ -31,7 +31,7 @@ LinkingTo:
     RcppArmadillo
 Encoding: UTF-8
 RoxygenNote: 7.3.1
-SystemRequirements: C++ 17, gmp, mpfr
+SystemRequirements: C++17, gmp
 Collate: 
     'RcppExports.R'
     'characteristicPolynomial.R'
