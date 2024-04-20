@@ -21,7 +21,7 @@ library(qspray)
 The **qspray** package provides the `qspray` objects, which represent
 multivariate polynomials whose coefficients are rational numbers.
 
-## Creating a `qspray` and arithmetic
+## Creating a `qspray` polynomial and arithmetic
 
 The easiest way to build a multivariate polynomial with **qspray** is to
 start by introducing the generating variables with the help of the
@@ -50,7 +50,9 @@ qsprayMaker(string = "4 x^(2) + 1/2 x^(0, 1) - 5/3 x^(1, 1, 1)")
 ## 4*x^2 - 5/3*x.y.z + 1/2*y
 ```
 
-As you want, but this method is not highly robust.
+As you want, but this method is not highly robust. And it is not very
+easy to figure out what is the monomial represented by a string such as
+`"x^(i,j,k)"` (this is `x^i*y^j*z^k`).
 
 Some arithmetic on this polynomial:
 
@@ -344,6 +346,14 @@ groebner(list(f, g))
 ## y^3
 ```
 
+As an application of Gröbner bases, there is the function
+`isPolynomialOf`. This function checks whether a polynomial can be
+obtained by substituting the variables of a polynomial with some given
+polynomials: given a `qspray` polynomial `Q` and some `qspray`
+polynomials `P1`, …, `Pn`, does there exist a polynomial function `f`
+such that `Q = f(P1, ..., Pn)`? If this is true, the `isPolynomialOf`
+function also returns `f`.
+
 ## Packages using ‘qspray’
 
 There are packages depending on the **qspray** package (some of them are
@@ -364,4 +374,55 @@ not on CRAN yet):
 
 - [**symbolicQspray**](https://github.com/stla/symbolicQspray):
   multivariate polynomials whose coefficients are `ratioOfQsprays`
-  fractions of polynomials.
+  fractions of polynomials; they represent multivariate polynomials with
+  parameters.
+
+## Using the C++ code in another package
+
+The three packages **jack**, **ratioOfQsprays** and **symbolicQspray**
+use some C++ code based on the header file of the C++ code of
+**qspray**. If you want to use it in your package too, include the
+following instruction in the DESCRIPTION file:
+
+``` yaml
+LinkingTo: Rcpp, RcppArmadillo, qspray
+```
+
+Then you can use the **qspray** header file in your C++ code by using
+the namespace `QSPRAY`.
+
+The header file provides the templated class `Qspray`. An object of type
+`Qspray<T>` represents a multivariate polynomials whose coefficients are
+represented by the objects of the type `T`. For example, multivariate
+polynomials with numeric coefficients can be represented by the objects
+of type `Qspray<double>` (so I should have chosen another name since `Q`
+is here to indicate the field of rational numbers). The class `Qspray`
+provides the operators `==`, `!=`, `+`, `-`, `*` and the power for the
+objects of type `Qspray<T>` as long as the operators `==`, `!=`, `+`,
+`-` and `*` are available for the type `T`. So you don’t have to
+implement the comparison operators nor the arithmetic operations for the
+`Qspray<double>` polynomials if you instantiate this type. The class
+`Qspray` also provides a function to calculate derivatives. This class
+is included in the namespace `QSPRAY` which also includes a function
+performing the division of two multivariate polynomials but it is
+restricted to polynomials with rational coefficients. Anyway it would
+not be a good idea to use the algorithm performed by this function for
+polynomials whose coefficients type is not an “exact type”, such as
+`double`. If you want to use `Qspray<T>` with an exact type `T` and if
+you need the division, send me a few words about your use case and I
+will see whether I can help. I will probably remove the division from
+the namespace `QSPRAY`. I originally included it to use it in the
+**ratioOfQsprays** package, but I finally used the division provided by
+the **CGAL** library instead, which is faster.
+
+A few words about the implementation. The class `Qspray<T>` has only one
+member object: an object of type `Polynomial<T>`, which is an alias of
+the type `std::unordered_map<std::vector<int>, T>` (plus a template
+argument for the hasher). So a `Polynomial<T>` object is a map whose
+keys are `std::vector<int>` objects and whose values are `T` objects. An
+element of this map represents a term of the polynomial: a key
+represents a monomial, e.g. the vector `{2,1,3}` represents the monomial
+`x^2*y*z^3`, and the value attached to this key represents the
+coefficient of this monomial. This way to represent a multivariate
+polynomial has been copied from Robin Hankin’s **spray** package,
+without which the **qspray** package would have never existed.
