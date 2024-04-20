@@ -1,7 +1,7 @@
 Type: Package
 Package: qspray
 Title: Multivariate Polynomials with Rational Coefficients
-Version: 2.2.0
+Version: 3.0.0
 Authors@R: c(
     person("Stéphane", "Laurent", , "laurent_step@outlook.fr", role = c("aut", "cre")),
     person("Robin", "Hankin", role = c("ctb", "cph"),
@@ -10,8 +10,11 @@ Authors@R: c(
 Maintainer: Stéphane Laurent <laurent_step@outlook.fr>
 Description: Symbolic calculation and evaluation of multivariate
     polynomials with rational coefficients. This package is strongly
-    inspired by the 'spray' package. It also provides a function to 
+    inspired by the 'spray' package. It provides a function to 
     compute Gröbner bases (reference <doi:10.1007/978-3-319-16721-3>).
+    The header file of the C++ code can be used by other packages. It 
+    provides the templated class 'Qspray' that can be used to represent and 
+    to deal with multivariate polynomials with another type of coefficients.
 License: GPL-3
 URL: https://github.com/stla/qspray
 BugReports: https://github.com/stla/qspray/issues
