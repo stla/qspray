@@ -4,19 +4,19 @@
 \alias{composeQspray}
 \title{Compose 'qspray' polynomials}
 \usage{
-composeQspray(qspray, qsprays)
+composeQspray(qspray, listOfQsprays)
 }
 \arguments{
 \item{qspray}{a \code{qspray} polynomial}
 
-\item{qsprays}{a list containing at least \code{n} \code{qspray} polynomials 
+\item{listOfQsprays}{a list containing at least \code{n} \code{qspray} polynomials 
 where \code{n} is the number of variables of the polynomial given in the 
 \code{qspray} argument}
 }
 \value{
 The \code{qspray} polynomial obtained by composing the polynomial 
   given in the \code{qspray} argument with the polynomials given in the 
-  \code{qsprays} argument.
+  \code{listOfQsprays} argument.
 }
 \description{
 Substitutes the variables of a \code{qspray} polynomial with 

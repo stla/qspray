@@ -197,13 +197,13 @@ setMethod(
 #'   and you want the polynomial \eqn{P(x^2, x+y+1)} (see example).
 #' 
 #' @param qspray a \code{qspray} polynomial
-#' @param qsprays a list containing at least \code{n} \code{qspray} polynomials 
-#'   where \code{n} is the number of variables of the polynomial given in the 
-#'   \code{qspray} argument
+#' @param listOfQsprays a list containing at least \code{n} \code{qspray} 
+#'   polynomials where \code{n} is the number of variables of the polynomial 
+#'   given in the \code{qspray} argument
 #'
 #' @return The \code{qspray} polynomial obtained by composing the polynomial 
 #'   given in the \code{qspray} argument with the polynomials given in the 
-#'   \code{qsprays} argument.
+#'   \code{listOfQsprays} argument.
 #' @export
 #'
 #' @examples
@@ -214,13 +214,13 @@ setMethod(
 #' X <- x^2
 #' Y <- x + y + 1
 #' composeQspray(P, list(X, Y)) # this is P(x^2, x+y+1)
-composeQspray <- function(qspray, qsprays) {
+composeQspray <- function(qspray, listOfQsprays) {
   n <- numberOfVariables(qspray)
-  if(length(qsprays) < n) {
+  if(length(listOfQsprays) < n) {
     stop(
       sprintf(
         paste0(
-          "The `qsprays` argument must be a list containing ", 
+          "The `listOfQsprays` argument must be a list containing ", 
           "at least %d qspray polynomials."
         ), n
       )
@@ -235,7 +235,7 @@ composeQspray <- function(qspray, qsprays) {
     for(j in seq_along(pwr)) {
       p <- pwr[j]
       if(p != 0L) {
-        term <- term * qsprays[[j]]^p
+        term <- term * listOfQsprays[[j]]^p
       }
     }
     result <- result + coeffs[i] * term
