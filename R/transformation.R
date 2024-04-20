@@ -25,7 +25,7 @@ orderedQspray <- function(qspray) {
 }
 
 #' @title Partial derivative
-#' @description Partial derivative of a qspray polynomial.
+#' @description Partial derivative of a \code{qspray} polynomial.
 #'
 #' @param qspray object of class \code{qspray}
 #' @param i integer, the dimension to differentiate with respect to
@@ -56,7 +56,7 @@ derivQspray <- function(qspray, i, derivative = 1) {
 }
 
 #' @title Partial differentiation
-#' @description Partial differentiation of a qspray polynomial.
+#' @description Partial differentiation of a \code{qspray} polynomial.
 #'
 #' @param qspray object of class \code{qspray}
 #' @param orders integer vector, the orders of the differentiation
@@ -188,5 +188,88 @@ setMethod(
     }, simplify = FALSE)
     out <- new("qspray", powers = powers, coeffs = x@coeffs)
     passShowAttributes(x, out)
+  }
+)
+
+#' @title Compose 'qspray' polynomials
+#' @description Substitutes the variables of a \code{qspray} polynomial with 
+#'   some \code{qspray} polynomials. E.g. you have a polynomial \eqn{P(x, y)} 
+#'   and you want the polynomial \eqn{P(x^2, x+y+1)} (see example).
+#' 
+#' @param qspray a \code{qspray} polynomial
+#' @param qsprays a list containing at least \code{n} \code{qspray} polynomials 
+#'   where \code{n} is the number of variables of the polynomial given in the 
+#'   \code{qspray} argument
+#'
+#' @return The \code{qspray} polynomial obtained by composing the polynomial 
+#'   given in the \code{qspray} argument with the polynomials given in the 
+#'   \code{qsprays} argument.
+#' @export
+#'
+#' @examples
+#' library(qspray)
+#' x <- qlone(1)
+#' y <- qlone(2)
+#' P <- x*y/2 + 4*y
+#' X <- x^2
+#' Y <- x + y + 1
+#' composeQspray(P, list(X, Y)) # this is P(x^2, x+y+1)
+composeQspray <- function(qspray, qsprays) {
+  n <- numberOfVariables(qspray)
+  if(length(qsprays) < n) {
+    stop(
+      sprintf(
+        paste0(
+          "The `qsprays` argument must be a list containing ", 
+          "at least %d qspray polynomials."
+        ), n
+      )
+    )
+  }
+  coeffs <- qspray@coeffs
+  powers <- qspray@powers
+  result <- qzero()
+  for(i in seq_along(powers)) {
+    term <- qone()
+    pwr <- powers[[i]]
+    for(j in seq_along(pwr)) {
+      p <- pwr[j]
+      if(p != 0L) {
+        term <- term * qsprays[[j]]^p
+      }
+    }
+    result <- result + coeffs[i] * term
+  }
+  result  
+}
+
+setGeneric(
+  "changeVariables", function(x, listOfQsprays) {
+    NULL
+  }
+)
+
+#' @name changeVariables
+#' @aliases changeVariables,qspray,list-method 
+#' @docType methods
+#' @title Change of variables in a 'qspray' polynomial
+#' @description Replaces the variables of a \code{qspray} polynomial with 
+#'   some \code{qspray} polynomials. E.g. you have a polynomial \eqn{P(x, y)} 
+#'   and you want the polynomial \eqn{P(x^2, x+y+1)}. This is an alias of 
+#'   \code{\link{composeQspray}}
+#' 
+#' @param x a \code{qspray} polynomial
+#' @param listOfQsprays a list containing at least \code{n} \code{qspray} 
+#'   polynomials where \code{n} is the number of variables of the polynomial 
+#'   given in the \code{x} argument
+#'
+#' @return The \code{qspray} polynomial obtained by replacing the variables of 
+#'   the polynomial given in the \code{x} argument with the polynomials given 
+#'   in the \code{listOfQsprays} argument.
+#' @export
+setMethod(
+  "changeVariables", c("qspray", "list"), 
+  function(x, listOfQsprays) {
+    composeQspray(x, listOfQsprays)
   }
 )

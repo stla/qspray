@@ -17,7 +17,7 @@ derivQspray(qspray, i, derivative = 1)
 A \code{qspray} object.
 }
 \description{
-Partial derivative of a qspray polynomial.
+Partial derivative of a \code{qspray} polynomial.
 }
 \examples{
 library(qspray)

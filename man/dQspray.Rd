@@ -15,7 +15,7 @@ dQspray(qspray, orders)
 A \code{qspray} object.
 }
 \description{
-Partial differentiation of a qspray polynomial.
+Partial differentiation of a \code{qspray} polynomial.
 }
 \examples{
 library(qspray)

@@ -6,7 +6,7 @@
 
 - New function `substituteQspray`, to substitute some variables in a `qspray` polynomial.
 
-- New function `composeQspray`, to get the polynomial obtained by substituting the variables of a polynomial with polynomials.
+- New function `composeQspray`, to get the polynomial obtained by substituting the variables of a polynomial with polynomials. The new function `changeVariables` is an alias of `composeQspray`.
 
 - New function `isPolynomialOf`, to check whether a `qspray` polynomial can be written as a polynomial of some given `qspray` polynomials, and to get this polynomial in case this is true. This uses Gröbner bases and thus this can be slow.
  

@@ -480,7 +480,7 @@ namespace QSPRAY {
       return Qspray<T>(Sprime);
     }
 
-  };
+  }; // end class Qspray
 
   // -------------------------------------------------------------------------- //
   template <typename T>
