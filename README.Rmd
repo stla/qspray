@@ -27,7 +27,7 @@ The **qspray** package provides the `qspray` objects, which represent
 multivariate polynomials whose coefficients are rational numbers.
 
 
-## Creating a `qspray` and arithmetic
+## Creating a `qspray` polynomial and arithmetic
 
 The easiest way to build a multivariate polynomial with **qspray** is to start 
 by introducing the generating variables with the help of the `qlone` function 
@@ -53,7 +53,9 @@ Or maybe you prefer to define the polynomial by giving it as a string:
 qsprayMaker(string = "4 x^(2) + 1/2 x^(0, 1) - 5/3 x^(1, 1, 1)")
 ```
 
-As you want, but this method is not highly robust.
+As you want, but this method is not highly robust. And it is not very easy to 
+figure out what is the monomial represented by a string such as `"x^(i,j,k)"`
+(this is `x^i*y^j*z^k`).
 
 Some arithmetic on this polynomial:
 
@@ -317,4 +319,33 @@ greatest common divisor of two `qspray` polynomials.
 `qspray` polynomials.
 
 - [**symbolicQspray**](https://github.com/stla/symbolicQspray): multivariate 
-polynomials whose coefficients are `ratioOfQsprays` fractions of polynomials.
+polynomials whose coefficients are `ratioOfQsprays` fractions of polynomials; 
+they represent multivariate polynomials with parameters.
+
+The three packages **jack**, **ratioOfQsprays** and **symbolicQspray** use some 
+C++ code based on the header file of the C++ code of **qspray**. If you want 
+to use it in your package, include the following instruction in the 
+DESCRIPTION file:
+
+```yaml
+LinkingTo: Rcpp, RcppArmadillo, qspray
+```
+
+The header file provides the templated class `Qspray`. An object of type 
+`Qspray<T>` represents a multivariate polynomials whose coefficients are 
+represented by the objects of the type `T`. For example, multivariate 
+polynomials with numeric coefficients can be represented by the objects of 
+type `Qspray<double>` (so I should have chosen another name since `Q` is here 
+to indicate the field of rational numbers). The class `Qspray` provides the
+operators `+`, `-`, `*` and the power for the objects of type `Qspray<T>` 
+as long as the operators `+`, `-` and `*` are available for the type `T`. 
+So you don't have to implement the arithmetic operations for the 
+`Qspray<double>` polynomials if you instantiate this type.
+
+A few words about the implementation. The class `Qspray<T>` has only one 
+member object: an object of type `Polynomial<T>`, which is an alias of 
+the type `std::unordered_map<std::vector<int>, T>` (plus a template argument 
+for the hasher). So a `Polynomial<T>` object is a map whose keys are 
+`std::vector<int>` objects and whose values are `T` objects. A key represent 
+a monomial, e.g. the vector `{2,1,3}` represents the monomial `x^2*y*z^3`, and 
+a value represents the coefficient attached to this monomial.
