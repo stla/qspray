@@ -15,7 +15,8 @@ A \code{qspray} object. It defines the same polynomial as the
 }
 \description{
 Reorders the terms of a \code{qspray} object according to the 
-  lexicographic order of the powers.
+  lexicographic order of the powers. This function is rather used 
+  internally only but it is exported for internal usage in other packages.
 }
 \examples{
 qspray <- rQspray()

@@ -12,8 +12,8 @@
 \item{x}{a \code{qspray} polynomial}
 
 \item{listOfQsprays}{a list containing at least \code{n} \code{qspray} 
-polynomials where \code{n} is the number of variables of the polynomial 
-given in the \code{x} argument}
+objects, or objects coercable to \code{qspray} objects, where \code{n} 
+is the number of variables of the polynomial given in the \code{x} argument}
 }
 \value{
 The \code{qspray} polynomial obtained by replacing the variables of 
@@ -24,5 +24,15 @@ The \code{qspray} polynomial obtained by replacing the variables of
 Replaces the variables of a \code{qspray} polynomial with 
   some \code{qspray} polynomials. E.g. you have a polynomial \eqn{P(x, y)} 
   and you want the polynomial \eqn{P(x^2, x+y+1)}. This is an alias of 
-  \code{\link{composeQspray}}
+  \code{\link{composeQspray}}.
+}
+\examples{
+library(qspray)
+f <- function(x, y) x*y/2 + 4*y
+x <- qlone(1)
+y <- qlone(2)
+P <- f(x, y)
+X <- x^2
+Y <- x + y + 1
+changeVariables(P, list(X, Y)) == f(X, Y) # should be TRUE
 }

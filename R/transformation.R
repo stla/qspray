@@ -3,7 +3,8 @@ NULL
 
 #' @title Ordered 'qspray'
 #' @description Reorders the terms of a \code{qspray} object according to the 
-#'   lexicographic order of the powers. 
+#'   lexicographic order of the powers. This function is rather used 
+#'   internally only but it is exported for internal usage in other packages.
 #'
 #' @param qspray a \code{qspray} object
 #'
@@ -59,7 +60,10 @@ derivQspray <- function(qspray, i, derivative = 1) {
 #' @description Partial differentiation of a \code{qspray} polynomial.
 #'
 #' @param qspray object of class \code{qspray}
-#' @param orders integer vector, the orders of the differentiation
+#' @param orders integer vector, the orders of the differentiation; e.g. 
+#'   \code{c(2, 0, 1)} means that you differentiate two times with respect to 
+#'   \eqn{x}, you do not differentiate with respect to \eqn{y}, and you 
+#'   differentiate one time with respect to \eqn{z}
 #'
 #' @return A \code{qspray} object.
 #' @export
@@ -121,7 +125,7 @@ setMethod(
   "permuteVariables", c("qspray", "numeric"), 
   function(x, permutation) {
     stopifnot(isPermutation(permutation))
-    m <- arity(x)
+    m <- numberOfVariables(x)
     n <- length(permutation)
     if(m > n) {
       stop("Invalid permutation.")

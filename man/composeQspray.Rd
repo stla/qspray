@@ -9,9 +9,9 @@ composeQspray(qspray, listOfQsprays)
 \arguments{
 \item{qspray}{a \code{qspray} polynomial}
 
-\item{listOfQsprays}{a list containing at least \code{n} \code{qspray} polynomials 
-where \code{n} is the number of variables of the polynomial given in the 
-\code{qspray} argument}
+\item{listOfQsprays}{a list containing at least \code{n} \code{qspray} 
+polynomials where \code{n} is the number of variables of the polynomial 
+given in the \code{qspray} argument}
 }
 \value{
 The \code{qspray} polynomial obtained by composing the polynomial 

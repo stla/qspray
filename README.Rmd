@@ -8,7 +8,7 @@ output: github_document
 [![R-CMD-check-valgrind](https://github.com/stla/qspray/actions/workflows/R-CMD-check-valgrind.yaml/badge.svg)](https://github.com/stla/qspray/actions/workflows/R-CMD-check-valgrind.yaml)
 <!-- badges: end -->
 
-***R package for multivariate polynomials with rational coefficients.***
+***R package to deal with multivariate polynomials with rational coefficients.***
 
 ___
 
