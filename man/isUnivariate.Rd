@@ -19,5 +19,8 @@ Checks whether a \code{qspray} object defines a
   univariate polynomial.
 }
 \note{
-It is considered that a constant \code{qspray} is univariate.
+It is considered that a constant \code{qspray} is univariate, and 
+  that the \code{qspray} object \code{y^2+1} where \code{y=qlone(2)} is 
+  not univariate, although only one variable is present (see the note in 
+  the documentation of \code{numberOfVariables}).
 }

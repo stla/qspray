@@ -65,8 +65,10 @@ setGeneric(
 #'
 #' @return An integer.
 #' @export
-#' @note The number of variables in the \code{qspray} object \code{qlone(d)} 
-#'   is \code{d}, not \code{1}.
+#' @note The number of variables in the \code{qspray} object \code{y^2+1} where
+#'   \code{y=qlone(2)} is \code{2}, not \code{1}, although only one variable is 
+#'   present. Strictly speaking, the function returns the maximal integer 
+#'   \code{d} such that the variable \code{qlone(d)} occurs in the polynomial.
 setMethod(
   "numberOfVariables", "qspray", 
   function(x) {
@@ -186,7 +188,10 @@ setMethod(
 #'
 #' @return A Boolean value.
 #' @export
-#' @note It is considered that a constant \code{qspray} is univariate.
+#' @note It is considered that a constant \code{qspray} is univariate, and 
+#'   that the \code{qspray} object \code{y^2+1} where \code{y=qlone(2)} is 
+#'   not univariate, although only one variable is present (see the note in 
+#'   the documentation of \code{numberOfVariables}).
 setMethod(
   "isUnivariate", "qspray",
   function(x) {
@@ -197,7 +202,7 @@ setMethod(
 #' @name isQzero
 #' @aliases isQzero,qspray-method 
 #' @docType methods
-#' @title Whether a qspray polynomial is null
+#' @title Whether a 'qspray' polynomial is null
 #' @description Checks whether a \code{qspray} object defines the zero 
 #'   polynomial.
 #'
@@ -215,7 +220,7 @@ setMethod(
 #' @name isQone
 #' @aliases isQone,qspray-method 
 #' @docType methods
-#' @title Whether a qspray polynomial is the unit polynomial
+#' @title Whether a 'qspray' polynomial is the unit polynomial
 #' @description Checks whether a \code{qspray} object defines the unit 
 #'   polynomial.
 #'
@@ -246,13 +251,13 @@ setMethod(
 #' qspray2 <- "4/7" * qspray1
 #' collinearQsprays(qspray1, qspray2)
 collinearQsprays <- function(qspray1, qspray2) {
-  if(qspray1 == qzero() && qspray2 == qzero()) {
+  if(isQzero(qspray1) && isQzero(qspray2)) {
     return(TRUE)
   }
-  if(qspray1 == qzero() && qspray2 != qzero()) {
+  if(isQzero(qspray1) && !isQzero(qspray2)) {
     return(FALSE)
   }
-  if(qspray1 != qzero() && qspray2 == qzero()) {
+  if(!isQzero(qspray1) && isQzero(qspray2)) {
     return(FALSE)
   }
   M1 <- powersMatrix(qspray1)

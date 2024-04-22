@@ -18,6 +18,8 @@ An integer.
 Number of variables involved in a \code{qspray} object.
 }
 \note{
-The number of variables in the \code{qspray} object \code{qlone(d)} 
-  is \code{d}, not \code{1}.
+The number of variables in the \code{qspray} object \code{y^2+1} where
+  \code{y=qlone(2)} is \code{2}, not \code{1}, although only one variable is 
+  present. Strictly speaking, the function returns the maximal integer 
+  \code{d} such that the variable \code{qlone(d)} occurs in the polynomial.
 }
