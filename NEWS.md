@@ -1,12 +1,12 @@
 # qspray 3.0.0
 
-- The C++ code has now a large header file that can be used in other packages (by setting `LinkingTo: qspray, Rcpp, RcppArmadillo` in the DESCRIPTION file). It is used by two upcoming packages: **ratioOfQsprays** (fractions of multivariate polynomials) and **symbolicQspray** (multivariate polynomials with symbolic parameters). Moreover, this code is templated. For example, multivariate polynomials with numeric (`double`) coefficients can be represented by the objects of type `Qspray<double>`, and instantiating this type automatically makes available the arithmetic operations on these polynomials.
+- The C++ code has now a large header file that can be used in other packages (by setting `LinkingTo: qspray, Rcpp, RcppArmadillo` in the DESCRIPTION file). It is used by two upcoming packages: **ratioOfQsprays** (fractions of multivariate polynomials) and **symbolicQspray** (multivariate polynomials with symbolic parameters). Moreover, this code is templated. For example, multivariate polynomials with numeric (`double`) coefficients can be represented by the objects of type `Qspray<double>`, and instantiating this type automatically makes available the arithmetic operations for these polynomials.
 
 - The `show` method of `qspray` objects has been changed. The monomial previously printed as `"x^(2, 0, 3)"` is now printed by default as `"x^2.z^3"` if there are no more than three variables in the polynomial, otherwise it is printed as `"x1^2.x3^3"`. But it is now possible to control the way a `qspray` is printed with the help of the function `showQsprayOption<-`. Helper functions to construct a custom `show` method are provided.
 
 - The **README** has been updated. In particular, it contains a large section about the show options.
 
-- New function `substituteQspray`, to substitute some variables in a `qspray` polynomial.
+- New function `substituteQspray`, to substitute some values to a subset of the variables of a `qspray` polynomial.
 
 - New function `composeQspray`, to get the polynomial obtained by substituting the variables of a polynomial with polynomials. The new function `changeVariables` is an alias of `composeQspray`.
 
@@ -20,15 +20,15 @@
 
 - New function `PSFpoly`, which computes the power sum polynomials.
 
-- New function `MSPcombination`, to get a symmetric polynomial as a linear combination of the monomial symmetric polynomials. 
+- New function `MSPcombination`, to get a symmetric `qspray` polynomial as a linear combination of the monomial symmetric polynomials. 
 
-- New function `compactSymmetricQspray` which prints a symmetric polynomial as a linear combination of the monomial symmetric polynomials.
+- New function `compactSymmetricQspray` which prints a symmetric `qspray` polynomial as a linear combination of the monomial symmetric polynomials.
 
-- New function `qsprayDivision`, returning the quotient and the remainder of the division of a polynomial by a polynomial.
+- New function `qsprayDivision`, returning the quotient and the remainder of the division of a `qspray` polynomial by a `qspray` polynomial.
 
-- New function `HallInnerProduct`, which computes the Hall inner product between symmetric polynomials. Very inefficient (will be hopefully improved in the future).
+- New function `HallInnerProduct`, which computes the Hall inner product between two symmetric `qspray` polynomials. Very inefficient (will be hopefully improved in the future).
 
-- New function `characteristicPolynomial`, to compute the characteristic polynomial of a square matrix.
+- New function `characteristicPolynomial`, to get the characteristic polynomial of a square matrix as a `qspray` polynomial.
 
 
 # qspray 2.1.1
