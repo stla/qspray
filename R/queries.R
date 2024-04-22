@@ -1,41 +1,57 @@
 setGeneric(
   "numberOfVariables", function(x) {
-    NULL
+    stop(
+      "No available application of `numberOfVariables` for this object."
+    )
   }
 )
 setGeneric(
   "numberOfTerms", function(qspray) {
-    NULL
+    stop(
+      "No available application of `numberOfTerms` for this object."
+    )
   }
 )
 setGeneric(
   "getCoefficient", function(qspray, exponents) {
-    NULL
+    stop(
+      "No available application of `getCoefficient`. Check the arguments."
+    )
   }
 )
 setGeneric(
   "getConstantTerm", function(qspray) {
-    NULL
+    stop(
+      "No available application of `getConstantTerm` for this object."
+    )
   }
 )
 setGeneric(
   "isConstant", function(x) {
-    NULL
+    stop(
+      "No available application of `isConstant` for this object."
+    )
   }
 )
 setGeneric(
   "isUnivariate", function(x) {
-    NULL
+    stop(
+      "No available application of `isUnivariate` for this object."
+    )
   }
 )
 setGeneric(
   "isQzero", function(qspray) {
-    NULL
+    stop(
+      "No available application of `isQzero` for this object."
+    )
   }
 )
 setGeneric(
   "isQone", function(qspray) {
-    NULL
+    stop(
+      "No available application of `isQone` for this object."
+    )
   }
 )
 
@@ -97,7 +113,7 @@ setMethod(
 #' p <- 4*x^2 + 3*y - 5
 #' getCoefficient(p, 2)
 #' getCoefficient(p, c(2, 0)) # same as getCoefficient(p, 2)
-#' getCoefficient(p, c(0, 1))
+#' getCoefficient(p, c(0, 1)) # coefficient of y because y=x^0*y^1
 #' getCoefficient(p, 0) # the constant term
 #' getCoefficient(p, integer(0)) # the constant term 
 #' getCoefficient(p, 3) # there's no cubic term
@@ -106,7 +122,7 @@ setMethod(
   function(qspray, exponents) {
     stopifnot(isExponents(exponents))
     exponents <- removeTrailingZeros(exponents)
-    n <- arity(qspray)
+    n <- numberOfVariables(qspray)
     if(length(exponents) > n) {
       coeff <- 0L
     } else {
@@ -214,9 +230,10 @@ setMethod(
   }
 )
 
-#' @title Whether two qsprays are collinear
-#' @description Checks whether two qsprays are collinear, that is, whether 
-#'   they are equal up to a scalar factor.
+#' @title Whether two 'qspray' polynomials are collinear
+#' @description Checks whether the polynomials represented by two \code{qspray}
+#'   objects are collinear, that is, whether they are equal up to a scalar 
+#'   factor.
 #'
 #' @param qspray1,qspray2 two \code{qspray} objects 
 #'

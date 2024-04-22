@@ -9,7 +9,8 @@ derivQspray(qspray, i, derivative = 1)
 \arguments{
 \item{qspray}{object of class \code{qspray}}
 
-\item{i}{integer, the dimension to differentiate with respect to}
+\item{i}{integer, the dimension to differentiate with respect to, e.g. 
+\code{1} to differentiate with respect to \eqn{x}}
 
 \item{derivative}{integer, how many times to differentiate}
 }
@@ -24,5 +25,5 @@ library(qspray)
 x <- qlone(1)
 y <- qlone(2)
 qspray <- 2*x  + 3*x*y
-derivQspray(qspray, 1)
+derivQspray(qspray, 2) # derivative w.r.t. y
 }

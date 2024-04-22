@@ -2,7 +2,7 @@
 % Please edit documentation in R/queries.R
 \name{collinearQsprays}
 \alias{collinearQsprays}
-\title{Whether two qsprays are collinear}
+\title{Whether two 'qspray' polynomials are collinear}
 \usage{
 collinearQsprays(qspray1, qspray2)
 }
@@ -13,8 +13,9 @@ collinearQsprays(qspray1, qspray2)
 A Boolean value.
 }
 \description{
-Checks whether two qsprays are collinear, that is, whether 
-  they are equal up to a scalar factor.
+Checks whether the polynomials represented by two \code{qspray}
+  objects are collinear, that is, whether they are equal up to a scalar 
+  factor.
 }
 \examples{
 library(qspray)

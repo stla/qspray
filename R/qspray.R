@@ -1,14 +1,10 @@
 #' @useDynLib qspray, .registration=TRUE
 #' @importFrom Rcpp evalCpp
-#' @importFrom methods setMethod setClass new canCoerce as
+#' @importFrom methods setMethod setClass new canCoerce as setGeneric
 #' @importFrom gmp as.bigq factorialZ asNumeric
 #' @importFrom purrr transpose
 #' @include qspray.R
 NULL
-
-# if(getRversion() >= "2.15.1") {
-#   globalVariables("as.ratioOfQsprays")
-# }
 
 setClass(
   "qspray",
@@ -18,7 +14,7 @@ setClass(
 setMethod(
   "show", "qspray", 
   function(object) {
-    f <- getShowQspray(object)#attr(attr(object, "showOpts"), "showQspray")
+    f <- getShowQspray(object)
     cat(f(object), "\n")
   }
 )
@@ -52,7 +48,9 @@ as.qspray.numeric <- function(x) {
 
 setGeneric(
   "as.qspray", function(x) {
-    NULL
+    stop(
+      "No available application of `as.qspray` for this object."
+    )
   }
 )
 
@@ -63,7 +61,8 @@ setGeneric(
 #' @title Coercion to a 'qspray' object
 #'
 #' @param x a \code{qspray} object or an object yielding a quoted integer or a 
-#'   quoted fraction after an application of \code{as.character}
+#'   quoted fraction after an application of \code{as.character}, e.g. a 
+#'   \code{bigq} number
 #'
 #' @return A \code{qspray} object.
 #' @export
@@ -77,7 +76,6 @@ setMethod(
     as.qspray.character(x)
   }
 )
-
 #' @rdname as.qspray
 setMethod(
   "as.qspray", "qspray",
@@ -85,7 +83,6 @@ setMethod(
     x
   }
 )
-
 #' @rdname as.qspray
 setMethod(
   "as.qspray", "numeric",
@@ -93,7 +90,6 @@ setMethod(
     as.qspray.numeric(x)
   }
 )
-
 #' @rdname as.qspray
 setMethod(
   "as.qspray", "bigz",
@@ -101,7 +97,6 @@ setMethod(
     as_qspray_gmp(x)
   }
 )
-
 #' @rdname as.qspray
 setMethod(
   "as.qspray", "bigq",
@@ -150,7 +145,6 @@ qspray_arith_character <- function(e1, e2) {
   passShowAttributes(e1, qspray)
 }
 
-#' @importFrom utils installed.packages
 qspray_arith_qspray <- function(e1, e2) {
   x <- switch(
     .Generic,
@@ -259,55 +253,46 @@ setMethod(
   signature(e1 = "qspray", e2 = "qspray"), 
   qspray_arith_qspray
 )
-
 setMethod(
   "Arith", 
   signature(e1 = "qspray", e2 = "character"), 
   qspray_arith_character
 )
-
 setMethod(
   "Arith", 
   signature(e1 = "qspray", e2 = "bigq"), 
   qspray_arith_gmp
 )
-
 setMethod(
   "Arith", 
   signature(e1 = "qspray", e2 = "bigz"), 
   qspray_arith_gmp
 )
-
 setMethod(
   "Arith", 
   signature(e1 = "character", e2 = "qspray"), 
   character_arith_qspray
 )
-
 setMethod(
   "Arith", 
   signature(e1 = "bigq", e2 = "qspray"), 
   gmp_arith_qspray
 )
-
 setMethod(
   "Arith", 
   signature(e1 = "bigz", e2 = "qspray"), 
   gmp_arith_qspray
 )
-
 setMethod(
   "Arith", 
   signature(e1 = "qspray", e2 = "numeric"), 
   qspray_arith_numeric
 )
-
 setMethod(
   "Arith", 
   signature(e1 = "numeric", e2 = "qspray"), 
   numeric_arith_qspray
 )
-
 
 setMethod(
   "Compare",
@@ -318,7 +303,8 @@ setMethod(
       "==" = qspray_equality(e1@powers, e1@coeffs, e2@powers, e2@coeffs),
       "!=" = !qspray_equality(e1@powers, e1@coeffs, e2@powers, e2@coeffs),
       stop(gettextf(
-        "Comparison operator %s not defined for qspray objects.", dQuote(.Generic)
+        "Comparison operator %s not defined for qspray objects.", 
+        dQuote(.Generic)
       ))
     )
   }

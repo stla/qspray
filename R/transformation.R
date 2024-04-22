@@ -29,7 +29,8 @@ orderedQspray <- function(qspray) {
 #' @description Partial derivative of a \code{qspray} polynomial.
 #'
 #' @param qspray object of class \code{qspray}
-#' @param i integer, the dimension to differentiate with respect to
+#' @param i integer, the dimension to differentiate with respect to, e.g. 
+#'   \code{1} to differentiate with respect to \eqn{x}
 #' @param derivative integer, how many times to differentiate
 #'
 #' @return A \code{qspray} object.
@@ -40,12 +41,14 @@ orderedQspray <- function(qspray) {
 #' x <- qlone(1)
 #' y <- qlone(2)
 #' qspray <- 2*x  + 3*x*y
-#' derivQspray(qspray, 1)
+#' derivQspray(qspray, 2) # derivative w.r.t. y
 derivQspray <- function(qspray, i, derivative = 1) {
   stopifnot(inherits(qspray, "qspray"))
   stopifnot(isNonnegativeInteger(i))
   stopifnot(isPositiveInteger(derivative))
-  if(i > arity(qspray)) {
+  if(derivative == 0L) {
+    dqspray <- qspray
+  } else if(i > numberOfVariables(qspray)) {
     dqspray <- qzero()
   } else {
     n    <- integer(length = i)
@@ -81,7 +84,9 @@ dQspray <- function(qspray, orders) {
     stopifnot(isPositiveInteger(orders[i]))
   }
   orders <- removeTrailingZeros(orders)
-  if(length(orders) > arity(qspray)) {
+  if(length(orders) == 0L) {
+    dqspray <- qspray
+  } else if(length(orders) > numberOfVariables(qspray)) {
     dqspray <- qzero()
   } else {
     n    <- as.integer(orders)
@@ -93,7 +98,9 @@ dQspray <- function(qspray, orders) {
 
 setGeneric(
   "permuteVariables", function(x, permutation) {
-    NULL
+    stop(
+      "No available application of `permuteVariables`. Check the arguments."
+    )
   }
 )
 
@@ -146,7 +153,9 @@ setMethod(
 
 setGeneric(
   "swapVariables", function(x, i, j) {
-    NULL
+    stop(
+      "No available application of `swapVariables`. Check the arguments."
+    )
   }
 )
 
@@ -177,7 +186,7 @@ setMethod(
   "swapVariables", c("qspray", "numeric", "numeric"), 
   function(x, i, j) {
     stopifnot(isNonnegativeInteger(i), isNonnegativeInteger(j))
-    m <- arity(x)
+    m <- numberOfVariables(x)
     n <- max(m, i, j)
     permutation <- seq_len(n)
     permutation[i] <- j
@@ -225,7 +234,7 @@ composeQspray <- function(qspray, listOfQsprays) {
       sprintf(
         paste0(
           "The `listOfQsprays` argument must be a list containing ", 
-          "at least %d qspray polynomials."
+          "at least %d objects coercable to `qspray` polynomials."
         ), n
       )
     )
@@ -249,7 +258,9 @@ composeQspray <- function(qspray, listOfQsprays) {
 
 setGeneric(
   "changeVariables", function(x, listOfQsprays) {
-    NULL
+    stop(
+      "No available application of `changeVariables`. Check the arguments."
+    )
   }
 )
 

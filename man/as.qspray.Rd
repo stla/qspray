@@ -22,7 +22,8 @@
 }
 \arguments{
 \item{x}{a \code{qspray} object or an object yielding a quoted integer or a 
-quoted fraction after an application of \code{as.character}}
+quoted fraction after an application of \code{as.character}, e.g. a 
+\code{bigq} number}
 }
 \value{
 A \code{qspray} object.
