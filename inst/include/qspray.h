@@ -329,25 +329,11 @@ namespace QSPRAY {
         if(r1 != zero) {
           powers pows1 = it1->first;
           signed int n1 = pows1.size();
-
-          // Rcpp::Rcout << "--- POWS 1 ---\n";
-          // for(int i = 0; i < n1; i++) {
-          //   Rcpp::Rcout << pows1[i] << " --- ";
-          // }
-          // Rcpp::Rcout << "\n";
-
           for(it2 = S2.begin(); it2 != S2.end(); ++it2) {
             T r2 = it2->second;
             if(r2 != zero) {
               powers pows2 = it2->first;
               signed int n2 = pows2.size();
-
-              // Rcpp::Rcout << "--- POWS 2 ---\n";
-              // for(int i = 0; i < n2; i++) {
-              //   Rcpp::Rcout << pows2[i] << " --- ";
-              // }
-              // Rcpp::Rcout << "\n";
-
               powssum.clear();
               if(n1 < n2) {
                 powssum.reserve(n2);
