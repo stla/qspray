@@ -152,8 +152,8 @@ h("1", "y", "3/2")
 
 You can control the way of printing a `qspray` with the help of the
 function `showQsprayOption<-`. By default, the monomials of a `qspray`
-are printed in the style of `x^2.y.z^3` if there are at most three
-variables, otherwise they are printed like `x1^2.x2.x3^3`:
+are printed in the style of `x^2.y.z^3` if there are no more than three
+variables, otherwise they are printed in the style of `x1^2.x2.x3^3`:
 
 ``` r
 set.seed(3141)
@@ -197,7 +197,7 @@ f(qspray)
 ```
 
 With `showQsprayX1X2X3`, you choose only one letter for the variables
-which will be indexed:
+and they will be appended with a digit:
 
 ``` r
 f <- showQsprayX1X2X3("X")
@@ -387,6 +387,12 @@ following instruction in the DESCRIPTION file:
 
 ``` yaml
 LinkingTo: Rcpp, RcppArmadillo, qspray
+```
+
+And include the following instruction in your C++ code:
+
+``` cpp
+#include "qspray.h"
 ```
 
 Then you can use the **qspray** header file in your C++ code by using
