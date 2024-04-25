@@ -387,15 +387,19 @@ implicitization <- function(nvariables, parameters, equations, relations) {
 #'
 #' @examples
 #' library(qspray)
-#' P <- function(X, Y) X^2*Y + 2*X + 3
 #' x <- qlone(1); y <- qlone(2); z <- qlone(3)
 #' q1 <- x + y
 #' q2 <- x*z^2 + 4
-#' qspray <- P(q1, q2)
+#' qspray <- q1^2*q2 + 2*q1 + 3
 #' ( check <- isPolynomialOf(qspray, list(q1, q2)) )
 #' POLYNOMIAL <- attr(check, "polynomial")
-#' composeQspray(POLYNOMIAL, list(q1, q2)) == qspray # should be TRUE
+#' changeVariables(POLYNOMIAL, list(q1, q2)) == qspray # should be TRUE
 isPolynomialOf <- function(qspray, qsprays) {
+  if(isConstant(qspray)) {
+    out <- TRUE
+    attr(out, "polynomial") <- qspray
+    return(out)
+  }
   n <- max(vapply(qsprays, numberOfVariables, integer(1L)))
   if(numberOfVariables(qspray) > n) {
     return(FALSE)
@@ -403,7 +407,7 @@ isPolynomialOf <- function(qspray, qsprays) {
   i_ <- seq_len(length(qsprays))
   G <- lapply(i_, function(i) qsprays[[i]] - qlone(n + i))
   B <- groebner(G, TRUE, FALSE)
-  constantTerm <- getCoefficient(qspray, integer(0L))
+  constantTerm <- getConstantTerm(qspray)
   g <- qdivision(qspray - constantTerm, B)
   check <- all(vapply(g@powers, function(pwr) {
     length(pwr) > n && all(pwr[1L:n] == 0L)

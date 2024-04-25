@@ -234,6 +234,9 @@ setMethod(
 #' Y <- x + y + 1
 #' composeQspray(P, list(X, Y)) # this is P(x^2, x+y+1)
 composeQspray <- function(qspray, listOfQsprays) {
+  if(isConstant(qspray)) {
+    return(qspray)
+  }
   n <- numberOfVariables(qspray)
   if(length(listOfQsprays) < n) {
     stop(
