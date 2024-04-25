@@ -132,6 +132,9 @@ setMethod(
   "permuteVariables", c("qspray", "numeric"), 
   function(x, permutation) {
     stopifnot(isPermutation(permutation))
+    if(isConstant(x)) {
+      return(x)
+    }
     m <- numberOfVariables(x)
     n <- length(permutation)
     if(m > n) {
@@ -142,7 +145,7 @@ setMethod(
     for(. in seq_len(n - m)) {
       M <- cbind(M, 0L)
     }
-    M <- M[, permutation]
+    M <- M[, permutation, drop = FALSE]
     powers <- apply(M, 1L, function(row) {
       removeTrailingZeros(row)
     }, simplify = FALSE)
@@ -186,6 +189,9 @@ setMethod(
   "swapVariables", c("qspray", "numeric", "numeric"), 
   function(x, i, j) {
     stopifnot(isNonnegativeInteger(i), isNonnegativeInteger(j))
+    if(isConstant(x)) {
+      return(x)
+    }
     m <- numberOfVariables(x)
     n <- max(m, i, j)
     permutation <- seq_len(n)
@@ -195,7 +201,7 @@ setMethod(
     for(. in seq_len(n - m)) {
       M <- cbind(M, 0L)
     }
-    M <- M[, permutation]
+    M <- M[, permutation, drop = FALSE]
     powers <- apply(M, 1L, function(row) {
       removeTrailingZeros(row)
     }, simplify = FALSE)
@@ -234,7 +240,7 @@ composeQspray <- function(qspray, listOfQsprays) {
       sprintf(
         paste0(
           "The `listOfQsprays` argument must be a list containing ", 
-          "at least %d objects coercable to `qspray` polynomials."
+          "at least %d objects coercible to `qspray` polynomials."
         ), n
       )
     )
@@ -275,7 +281,7 @@ setGeneric(
 #' 
 #' @param x a \code{qspray} polynomial
 #' @param listOfQsprays a list containing at least \code{n} \code{qspray} 
-#'   objects, or objects coercable to \code{qspray} objects, where \code{n} 
+#'   objects, or objects coercible to \code{qspray} objects, where \code{n} 
 #'   is the number of variables of the polynomial given in the \code{x} argument
 #'
 #' @return The \code{qspray} polynomial obtained by replacing the variables of 

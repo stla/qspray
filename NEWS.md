@@ -1,3 +1,8 @@
+# qspray 3.0.0.9000
+
+- The functions `permuteVariables` and `swapVariables` generated an error for a constant `qspray` or a `qspray` having only one term.
+
+
 # qspray 3.0.0
 
 - The C++ code has now a large header file that can be used in other packages (by setting `LinkingTo: qspray, Rcpp, RcppArmadillo` in the DESCRIPTION file). It is used by two upcoming packages: **ratioOfQsprays** (fractions of multivariate polynomials) and **symbolicQspray** (multivariate polynomials with symbolic parameters). Moreover, this code is templated. For example, multivariate polynomials with numeric (`double`) coefficients can be represented by the objects of type `Qspray<double>`, and instantiating this type automatically makes available the arithmetic operations for these polynomials.
