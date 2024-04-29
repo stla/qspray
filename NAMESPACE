@@ -2,6 +2,7 @@
 
 S3method(as.function,qspray)
 export("showQsprayOption<-")
+export(CSHFpoly)
 export(ESFpoly)
 export(HallInnerProduct)
 export(MSFpoly)

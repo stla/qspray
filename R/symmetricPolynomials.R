@@ -49,13 +49,48 @@ PSFpoly <- function(m, lambda) {
 MSFpoly <- function(m, lambda) {
   stopifnot(isNonnegativeInteger(m), isPartition(lambda))
   lambda <- lambda[lambda != 0L]
-  if(length(lambda) > m) return(as.qspray(0L))
+  if(length(lambda) > m) return(qzero())
   kappa                    <- numeric(m)
   kappa[seq_along(lambda)] <- lambda
   perms <- Permn(kappa)
   powers <- Rows(perms)
   coeffs <- rep("1", nrow(perms))
   qsprayMaker(powers, coeffs)
+}
+
+#' @importFrom partitions parts
+#' @noRd
+.CSHFpoly <- function(m, k) {
+  lambdas <- parts(k)
+  qsprays <- apply(lambdas, 2L, function(lambda) {
+    MSFpoly(m, lambda)
+  }, simplify = FALSE)
+  Reduce(`+`, qsprays)
+}
+
+#' @title Complete homogeneous symmetric function
+#' @description Returns a complete homogeneous symmetric function as a 
+#'   \code{qspray} polynomial.
+#'
+#' @param m integer, the number of variables
+#' @param lambda an integer partition, given as a vector of decreasing
+#'   positive integers
+#'
+#' @return A \code{qspray} object.
+#' @export
+#'
+#' @examples
+#' library(qspray)
+#' CSHFpoly(3, c(3, 1))
+CSHFpoly <- function(m, lambda) {
+  stopifnot(isNonnegativeInteger(m), isPartition(lambda))
+  lambda <- lambda[lambda != 0L]
+  if(length(lambda) > m) return(qzero())
+  if(length(lambda) == 0L) return(qone())
+  qsprays <- lapply(lambda, function(k) {
+    .CSHFpoly(m, k)
+  })
+  Reduce(`*`, qsprays)
 }
 
 #' @title Symmetric polynomial in terms of the monomial symmetric polynomials
