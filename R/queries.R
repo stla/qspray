@@ -292,9 +292,9 @@ collinearQsprays <- function(qspray1, qspray2) {
 #' @examples
 #' lambda <- c(3, 2, 1)
 #' p <- PSFpoly(4, lambda)
-#' ( homogeneous <- isHomogeneous(p) ) # should be TRUE
+#' ( homogeneous <- isHomogeneousQspray(p) ) # should be TRUE
 #' attr(homogeneous, "degree") == sum(lambda) # should be TRUE
-isHomogeneous <- function(qspray) {
+isHomogeneousQspray <- function(qspray) {
   if(isConstant(qspray)) {
     out <- TRUE
     attr(out, "degree") <- 0L
@@ -302,7 +302,7 @@ isHomogeneous <- function(qspray) {
     out <- FALSE
   } else {
     degrees <- vapply(qspray@powers, sum, integer(1L))
-    if(all(degrees) == degrees[1L]) {
+    if(all(degrees == degrees[1L])) {
       out <- TRUE
       attr(out, "degree") <- degrees[1L]
     } else {
