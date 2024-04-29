@@ -2,6 +2,8 @@
 
 - The functions `permuteVariables` and `swapVariables` generated an error for a constant `qspray` or a `qspray` having only one term.
 
+- New function `isHomogeneous`, to check whether a `qspray` polynomial is homogeneous.
+
 
 # qspray 3.0.0
 

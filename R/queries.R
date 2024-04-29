@@ -277,3 +277,37 @@ collinearQsprays <- function(qspray1, qspray2) {
   r <- coeffs2[1L] / coeffs1[1L]
   all(r * coeffs1 == coeffs2)
 }
+
+#' @title Whether a 'qspray' polynomial is homogeneous
+#' @description Checks whether the polynomial defined by a \code{qspray} 
+#'   object is homogeneous, and also returns the degree if this is true.
+#'
+#' @param qspray a \code{qspray} object
+#'
+#' @return A Boolean value indicating whether the polynomial defined by 
+#'   \code{qspray} is homogeneous. Moreover, if it is homogeneous, the degree 
+#'   is given in the attribute \code{"degree"} of the output.
+#' @export
+#'
+#' @examples
+#' lambda <- c(3, 2, 1)
+#' p <- PSFpoly(4, lambda)
+#' ( homogeneous <- isHomogeneous(p) ) # should be TRUE
+#' attr(homogeneous, "degree") == sum(lambda) # should be TRUE
+isHomogeneous <- function(qspray) {
+  if(isConstant(qspray)) {
+    out <- TRUE
+    attr(out, "degree") <- 0L
+  } else if(getConstantTerm(qspray) != 0L) {
+    out <- FALSE
+  } else {
+    degrees <- vapply(qspray@powers, sum, integer(1L))
+    if(all(degrees) == degrees[1L]) {
+      out <- TRUE
+      attr(out, "degree") <- degrees[1L]
+    } else {
+      out <- FALSE
+    }
+  }
+  out
+}
