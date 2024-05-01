@@ -23,7 +23,7 @@ rQspray <- function() {
 #' @return A \code{qspray} object.
 #' @export
 qzero <- function() {
-  as.qspray(0L)
+  new("qspray", powers = list(), coeffs = character(0L))
 }
 
 #' @title The unit 'qspray' polynomial
@@ -31,7 +31,7 @@ qzero <- function() {
 #' @return A \code{qspray} object.
 #' @export
 qone <- function() {
-  as.qspray(1L)
+  new("qspray", powers = list(integer(0L)), coeffs = "1")
 }
 
 #' @title Polynomial variable
