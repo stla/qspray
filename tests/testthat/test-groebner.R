@@ -64,3 +64,27 @@ test_that("implicitization ellipse", {
   f <- showQsprayXYZ(c("a", "b", "x", "y"))
   expect_equal(f(eq), "a^2.b^2 - a^2.y^2 - b^2.x^2")
 })
+
+test_that("implicitization Enneper", {
+  u <- qlone(1)
+  v <- qlone(2)
+  nvariables <- 2
+  parameters <- NULL
+  equations <- list(
+    "x" = 3*u + 3*u*v^2 - u^3,
+    "y" = 3*v + 3*u^2*v - v^3,
+    "z" = 3*u^2 - 3*v^2
+  )
+  relations <- NULL
+  eqs <- implicitization(nvariables, parameters, equations, relations)
+  #
+  expect_length(eqs, 1L)
+  # take a point on the Enneper surface
+  xyz <- gmp::c_bigq(lapply(equations, function(qspray) {
+    evalQspray(qspray, c("1/2", "1/2"))
+  }))
+  # check it is mapped to 0 by the implicit function
+  eq <- eqs[[1L]]
+  v <- evalQspray(eq, xyz)
+  expect_identical(as.integer(v), 0L)
+})
