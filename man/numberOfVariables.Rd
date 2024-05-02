@@ -15,11 +15,15 @@
 An integer.
 }
 \description{
-Number of variables involved in a \code{qspray} object.
+Number of variables involved in a \code{qspray} object (see 
+  the note for the precise meaning).
 }
 \note{
 The number of variables in the \code{qspray} object \code{y^2+1} where
   \code{y=qlone(2)} is \code{2}, not \code{1}, although only one variable is 
   present. Strictly speaking, the function returns the maximal integer 
   \code{d} such that the variable \code{qlone(d)} occurs in the polynomial.
+}
+\seealso{
+\code{\link{involvedVariables}}.
 }

@@ -39,3 +39,28 @@ test_that("isPolynomialOf", {
   expect_true(composeQspray(POLYNOMIAL, list(q1, q2)) == qspray)
 })
 
+test_that("implicitization ellipse", {
+  # variables 
+  cost <- qlone(1)
+  sint <- qlone(2)
+  # parameters
+  a <- qlone(3)
+  b <- qlone(4)
+  #
+  nvariables <- 2
+  parameters <- c("a", "b")
+  equations <- list(
+    "x" = a * cost,
+    "y" = b * sint
+  )
+  relations <- list(
+    cost^2 + sint^2 - 1
+  )
+  # 
+  eqs <- implicitization(nvariables, parameters, equations, relations)
+  #
+  expect_length(eqs, 1L)
+  eq <- eqs[[1L]]
+  f <- showQsprayXYZ(c("a", "b", "x", "y"))
+  expect_equal(f(eq), "a^2.b^2 - a^2.y^2 - b^2.x^2")
+})

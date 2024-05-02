@@ -154,9 +154,13 @@ lexorder <- function(M){
   )
 }
 
-# lexorder <- function(M) {
-#   do.call(
-#     order, 
-#     c(lapply(seq_len(ncol(M)), function(i) M[, i]), decreasing = TRUE)
-#   )
-# }
+# drop the first n variables of a qspray
+# this assumes these variables are not involved in the qspray!
+#' @importFrom utils tail
+#' @noRd
+dropVariables <- function(n, qspray) {
+  powers <- lapply(qspray@powers, function(expnts) {
+    tail(expnts, -n)
+  })
+  new("qspray", powers = powers, coeffs = qspray@coeffs)
+}

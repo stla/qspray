@@ -13,6 +13,13 @@ setGeneric(
   }
 )
 setGeneric(
+  "involvedVariables", function(x) {
+    stop(
+      "No available application of `involvedVariables` for this object."
+    )
+  }
+)
+setGeneric(
   "getCoefficient", function(qspray, exponents) {
     stop(
       "No available application of `getCoefficient`. Check the arguments."
@@ -59,12 +66,14 @@ setGeneric(
 #' @aliases numberOfVariables,qspray-method 
 #' @docType methods
 #' @title Number of variables in a 'qspray' polynomial
-#' @description Number of variables involved in a \code{qspray} object.
+#' @description Number of variables involved in a \code{qspray} object (see 
+#'   the note for the precise meaning).
 #'
 #' @param x a \code{qspray} object
 #'
 #' @return An integer.
 #' @export
+#' @seealso \code{\link{involvedVariables}}.
 #' @note The number of variables in the \code{qspray} object \code{y^2+1} where
 #'   \code{y=qlone(2)} is \code{2}, not \code{1}, although only one variable is 
 #'   present. Strictly speaking, the function returns the maximal integer 
@@ -73,6 +82,35 @@ setMethod(
   "numberOfVariables", "qspray", 
   function(x) {
     as.integer(max(0L, arity(x)))
+  }
+)
+
+#' @name involvedVariables
+#' @aliases involvedVariables,qspray-method 
+#' @docType methods
+#' @title Variables involved in a 'qspray' polynomial
+#' @description Variables involved in a \code{qspray} object.
+#'
+#' @param x a \code{qspray} object
+#'
+#' @return A vector of integers. Each integer represents the index of a 
+#'   variable involved in \code{x}.
+#' @export
+#' @examples
+#' x <- qlone(1); z <- qlone(3)
+#' involvedVariables(x^2 + x*z + 1) # should be c(1L, 3L)
+setMethod(
+  "involvedVariables", "qspray", 
+  function(x) {
+    if(isConstant(x)) {
+      integer(0L)
+    } else {
+      M <- powersMatrix(x)
+      tests <- apply(M, 2L, function(col) {
+        any(col != 0L)
+      })
+      which(tests)
+    }
   }
 )
 
