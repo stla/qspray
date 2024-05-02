@@ -347,13 +347,6 @@ implicitization <- function(nvariables, parameters, equations, relations) {
   }
   #
   gb <- groebner(generators)
-  # isfree <- function(i) {
-  #   all(vapply(gb[[i]]@powers, function(pows) {
-  #     length(pows) == 0L || 
-  #       (length(pows) > nvariables && all(pows[1L:nvariables] == 0L))
-  #   }, logical(1L)))
-  # }
-  # free <- c(FALSE, vapply(2L:length(gb), isfree, logical(1L)))
   isfree <- function(qspray) {
     !any(is.element(1L:nvariables, involvedVariables(qspray)))
   }
@@ -362,18 +355,8 @@ implicitization <- function(nvariables, parameters, equations, relations) {
     dropVariables(nvariables, qspray)
   })
   #
-  # results <- gb[free]
-  # for(i in seq_along(results)) {
-  #   el <- results[[i]]
-  #   coeffs <- el@coeffs
-  #   powers <- el@powers
-  #   for(j in seq_along(powers)) {
-  #     powers[[j]] <- tail(powers[[j]], -nvariables)
-  #   }
-  #   results[[i]] <- qsprayMaker(powers, coeffs)
-  # }
   vars <- c(parameters, names(equations))
-  messages <- lapply(results, prettyQspray, vars = vars)
+  messages <- lapply(results, showQsprayXYZ(vars))
   for(msg in messages) {
     message(msg)
   }
@@ -419,20 +402,11 @@ isPolynomialOf <- function(qspray, qsprays) {
   B <- groebner(G, TRUE, FALSE)
   constantTerm <- getConstantTerm(qspray)
   g <- qdivision(qspray - constantTerm, B)
-  
   check <- !any(is.element(1L:n, involvedVariables(g)))
-  
-  # check <- all(vapply(g@powers, function(pwr) {
-  #   length(pwr) > n && all(pwr[1L:n] == 0L)
-  # }, logical(1L)))
   if(!check) {
     return(FALSE)
   }
   P <- dropVariables(n, g) + constantTerm
-  # powers <- lapply(g@powers, function(pwr) {
-  #   pwr[-(1L:n)]
-  # })
-  # P <- qsprayMaker(powers, g@coeffs) + constantTerm
   out <- TRUE
   attr(out, "polynomial") <- P
   out
