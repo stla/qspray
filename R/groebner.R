@@ -96,7 +96,7 @@ termAsQspray <- function(term) {
 #' qdivision(f, list(g)) # should be zero
 qdivision <- function(qspray, divisors) {
   stopifnot(is.list(divisors))
-  if(qspray == qzero()) {
+  if(isQzero(qspray)) {
     return(qzero())
   }
   d <- max(vapply(divisors, numberOfVariables, integer(1L)))
@@ -232,10 +232,8 @@ combn2 <- function(j, s) {
 #' f1 <- x^2 + y + z^2 - 1
 #' f2 <- x^2 + y + z - 1
 #' f3 <- x + y^2 + z - 1
-#' gb <- groebner(list(f1, f2, f3))
-#' lapply(gb, prettyQspray, vars = c("x", "y", "z"))}
+#' groebner(list(f1, f2, f3))}
 groebner <- function(G, minimal = TRUE, reduced = TRUE) {
-  # d <- max(vapply(G, arity, integer(1L)))
   d <- max(vapply(G, numberOfVariables, integer(1L)))
   LT_G <- lapply(G, leading, d = d)
   Ss <- list()
