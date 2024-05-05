@@ -25,9 +25,26 @@ leading <- function(qspray, d) {
   list("powers" = Mpowers[i, ], "coeff" = qspray@coeffs[i])
 }
 
+#' @title Leading term of a 'qspray' polynomial
+#' @description Returns the leading term of a \code{qspray} polynomial.
+#' 
+#' @param qspray a \code{qspray} object
+#' @param d integer, the number of variables of \code{qspray}, in general 
+#'   this is \code{numberOfVariables(qspray)}; setting a larger integer 
+#'   just adds some trailing zeros to the vector of exponents given in the 
+#'   output, and setting a smaller integer throws an error
+#'
+#' @return A list providing the exponents of the leading term in the field 
+#'   \code{powers}, an integer vector, and the coefficient of the leading term 
+#'   in the field  \code{coeff}, a \code{bigq} rational number.
+#' @export
 leadingTerm <- function(qspray, d) {
-  l <- leading(qspray, d)
-  list("powers" = l[["powers"]], "coeff" = as.bigq(l[["coeff"]]))
+  if(isQzero(qspray)) {
+    NULL
+  } else {
+    l <- leading(qspray, d)
+    list("powers" = l[["powers"]], "coeff" = as.bigq(l[["coeff"]]))
+  }
 }
 
 coeffInverse <- function(coeff) {
