@@ -164,3 +164,7 @@ dropVariables <- function(n, qspray) {
   })
   new("qspray", powers = powers, coeffs = qspray@coeffs)
 }
+
+isNamedList <- function(x) {
+  is.list(x) && length(names(x)) == length(x)
+}

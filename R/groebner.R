@@ -311,17 +311,18 @@ groebner <- function(G, minimal = TRUE, reduced = TRUE) {
 
 #' @title Implicitization with Gröbner bases
 #' @description Implicitization of a system of parametric equations 
-#'   (see examples).
+#'   (see example).
 #'
 #' @param nvariables number of variables
 #' @param parameters character vector of the names of the parameters, or 
 #'   \code{NULL} if there's no parameter
-#' @param equations list of qspray polynomials representing the parametric 
-#'   equations
-#' @param relations list of qspray polynomials representing the relations 
-#'   between the variables and the parameters, or \code{NULL} if there is none
+#' @param equations named list of \code{qspray} polynomials representing the 
+#'   parametric equations
+#' @param relations list of \code{qspray} polynomials representing the relations 
+#'   between the variables and between the parameters, or \code{NULL} if there 
+#'   is none
 #'
-#' @return A list of qspray polynomials.
+#' @return A list of \code{qspray} polynomials.
 #' @export
 #' @importFrom utils tail
 #'
@@ -331,12 +332,12 @@ groebner <- function(G, minimal = TRUE, reduced = TRUE) {
 #' # variables 
 #' cost <- qlone(1)
 #' sint <- qlone(2)
+#' nvariables <- 2
 #' # parameters
 #' a <- qlone(3)
 #' b <- qlone(4)
-#' #
-#' nvariables <- 2
 #' parameters <- c("a", "b")
+#' #
 #' equations <- list(
 #'   "x" = a * cost,
 #'   "y" = b * sint
@@ -349,7 +350,7 @@ groebner <- function(G, minimal = TRUE, reduced = TRUE) {
 implicitization <- function(nvariables, parameters, equations, relations) {
   stopifnot(isPositiveInteger(nvariables))
   stopifnot(is.null(parameters) || isStringVector(parameters))
-  stopifnot(is.list(equations), length(equations) > 1L)
+  stopifnot(isNamedList(equations), length(equations) > 1L)
   stopifnot(is.null(relations) || is.list(relations))
   #
   nequations <- length(equations)
@@ -371,11 +372,11 @@ implicitization <- function(nvariables, parameters, equations, relations) {
   })
   #
   vars <- c(parameters, names(equations))
-  messages <- lapply(results, showQsprayXYZ(vars))
-  for(msg in messages) {
-    message(msg)
-  }
-  invisible(results)
+  showFunc <- showQsprayXYZ(vars)
+  lapply(results, function(qspray) {
+    showQsprayOption(qspray, "showQspray") <- showFunc
+    qspray
+  })
 }
 
 #' @title Whether a 'qspray' is a polynomial of some given 'qsprays'
