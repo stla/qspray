@@ -15,6 +15,6 @@
 An integer.
 }
 \description{
-Number of terms in the polynomial defined by a 
+Number of terms of the polynomial defined by a 
   \code{qspray} object.
 }

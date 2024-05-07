@@ -11,14 +11,14 @@
 \arguments{
 \item{qspray}{a \code{qspray} object}
 
-\item{exponents}{a vector of exponents}
+\item{exponents}{a vector of exponents, thereby defining a monomial;
+trailing zeros are ignored}
 }
 \value{
 The coefficient as a \code{bigq} number.
 }
 \description{
-Get the coefficient corresponding to the given sequence of 
-  exponents.
+Get the coefficient of the term with the given monomial.
 }
 \examples{
 library(qspray)

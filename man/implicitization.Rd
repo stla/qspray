@@ -12,18 +12,19 @@ implicitization(nvariables, parameters, equations, relations)
 \item{parameters}{character vector of the names of the parameters, or 
 \code{NULL} if there's no parameter}
 
-\item{equations}{list of qspray polynomials representing the parametric 
-equations}
+\item{equations}{named list of \code{qspray} polynomials representing the 
+parametric equations}
 
-\item{relations}{list of qspray polynomials representing the relations 
-between the variables and the parameters, or \code{NULL} if there is none}
+\item{relations}{list of \code{qspray} polynomials representing the relations 
+between the variables and between the parameters, or \code{NULL} if there 
+is none}
 }
 \value{
-A list of qspray polynomials.
+A list of \code{qspray} polynomials.
 }
 \description{
 Implicitization of a system of parametric equations 
-  (see examples).
+  (see example).
 }
 \examples{
 library(qspray)
@@ -31,12 +32,12 @@ library(qspray)
 # variables 
 cost <- qlone(1)
 sint <- qlone(2)
+nvariables <- 2
 # parameters
 a <- qlone(3)
 b <- qlone(4)
-#
-nvariables <- 2
 parameters <- c("a", "b")
+#
 equations <- list(
   "x" = a * cost,
   "y" = b * sint
@@ -45,5 +46,5 @@ relations <- list(
   cost^2 + sint^2 - 1
 )
 # 
-eqs <- implicitization(nvariables, parameters, equations, relations)
+implicitization(nvariables, parameters, equations, relations)
 }

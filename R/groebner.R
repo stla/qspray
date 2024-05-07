@@ -346,7 +346,7 @@ groebner <- function(G, minimal = TRUE, reduced = TRUE) {
 #'   cost^2 + sint^2 - 1
 #' )
 #' # 
-#' eqs <- implicitization(nvariables, parameters, equations, relations)
+#' implicitization(nvariables, parameters, equations, relations)
 implicitization <- function(nvariables, parameters, equations, relations) {
   stopifnot(isPositiveInteger(nvariables))
   stopifnot(is.null(parameters) || isStringVector(parameters))

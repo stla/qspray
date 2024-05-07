@@ -118,7 +118,7 @@ setMethod(
 #' @aliases numberOfTerms,qspray-method 
 #' @docType methods
 #' @title Number of terms in a 'qspray' polynomial
-#' @description Number of terms in the polynomial defined by a 
+#' @description Number of terms of the polynomial defined by a 
 #'   \code{qspray} object.
 #'
 #' @param qspray a \code{qspray} object
@@ -136,11 +136,11 @@ setMethod(
 #' @aliases getCoefficient,qspray,numeric-method 
 #' @docType methods
 #' @title Get a coefficient in a 'qspray' polynomial
-#' @description Get the coefficient corresponding to the given sequence of 
-#'   exponents.
+#' @description Get the coefficient of the term with the given monomial.
 #' 
 #' @param qspray a \code{qspray} object
-#' @param exponents a vector of exponents
+#' @param exponents a vector of exponents, thereby defining a monomial;
+#'   trailing zeros are ignored
 #'
 #' @return The coefficient as a \code{bigq} number.
 #' @export
