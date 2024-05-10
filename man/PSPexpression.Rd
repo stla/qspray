@@ -2,7 +2,7 @@
 % Please edit documentation in R/symmetricPolynomials.R
 \name{PSPexpression}
 \alias{PSPexpression}
-\title{Symmetric polynomial in terms of the power sum polynomials.}
+\title{Symmetric polynomial in terms of the power sum polynomials}
 \usage{
 PSPexpression(qspray)
 }
@@ -20,11 +20,14 @@ Expression of a symmetric \code{qspray} polynomial as a
 }
 \examples{
 # take a symmetric polynomial
-qspray <- ESFpoly(4, c(2, 1)) + ESFpoly(4, c(2, 2))
+( qspray <- ESFpoly(4, c(2, 1)) + ESFpoly(4, c(2, 2)) )
 # compute the power sum expression
-pspExpr <- PSPexpression(qspray)
+( pspExpr <- PSPexpression(qspray) )
 # take the involved power sum polynomials
 psPolys <- lapply(1:numberOfVariables(pspExpr), function(i) PSFpoly(4, i))
 # then this should be TRUE:
-qspray == composeQspray(pspExpr, psPolys)
+qspray == changeVariables(pspExpr, psPolys)
+}
+\seealso{
+\code{\link{PSPcombination}}
 }

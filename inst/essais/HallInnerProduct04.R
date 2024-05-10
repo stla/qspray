@@ -151,6 +151,11 @@ qspray <- ESFpoly(4, c(2, 1)) + ESFpoly(4, c(2, 2))
 pspExpr <- PSPexpression(qspray)
 composeQspray(pspExpr, list(PSFpoly(4, 1L), PSFpoly(4, 2L)))
 
+pspCombo <- PSPcombination(qspray)
+Reduce(`+`, lapply(pspCombo, function(term) {
+  term[["coeff"]] * PSFpoly(4, term[["lambda"]])
+}))
+
 
 library(qspray)
 library(jack)

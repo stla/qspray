@@ -389,7 +389,7 @@ zlambda <- function(lambda, alpha) {
   out
 }
 
-#' @title Symmetric polynomial in terms of the power sum polynomials.
+#' @title Symmetric polynomial in terms of the power sum polynomials
 #' @description Expression of a symmetric \code{qspray} polynomial as a 
 #'   polynomial in the power sum polynomials.
 #'
@@ -400,12 +400,13 @@ zlambda <- function(lambda, alpha) {
 #'   where \eqn{p_i} is the i-th power sum polynomial (\code{PSFpoly(n, i)}).
 #' @export
 #' @importFrom gmp c_bigq
+#' @seealso \code{\link{PSPcombination}}
 #' 
 #' @examples
 #' # take a symmetric polynomial
-#' qspray <- ESFpoly(4, c(2, 1)) + ESFpoly(4, c(2, 2))
+#' ( qspray <- ESFpoly(4, c(2, 1)) + ESFpoly(4, c(2, 2)) )
 #' # compute the power sum expression
-#' pspExpr <- PSPexpression(qspray)
+#' ( pspExpr <- PSPexpression(qspray) )
 #' # take the involved power sum polynomials
 #' psPolys <- lapply(1:numberOfVariables(pspExpr), function(i) PSFpoly(4, i))
 #' # then this should be TRUE:
@@ -450,39 +451,38 @@ PSPexpression <- function(qspray) {
   out
 }
 
-#' @title Symmetric polynomial in terms of the power sum polynomials.
+#' @title Symmetric polynomial as a linear combination of some power sum 
+#'   polynomials
 #' @description Expression of a symmetric \code{qspray} polynomial as a 
-#'   polynomial in the power sum polynomials.
+#'   linear combination of some power sum polynomials.
 #'
 #' @param qspray a symmetric \code{qspray} polynomial; symmetry is not checked 
 #'
-#' @return A \code{qspray} polynomial, say \eqn{P}, such that 
-#'   \eqn{P(p_1, ..., p_n)} equals the input symmetric polynomial, 
-#'   where \eqn{p_i} is the i-th power sum polynomial (\code{PSFpoly(n, i)}).
+#' @return A list of pairs. Each pair is made of a \code{bigq} number, the 
+#'   coefficient of the term of the linear combination, and an integer 
+#'   partition, corresponding to a power sum polynomial.
 #' @export
 #' @importFrom gmp c_bigq
+#' @seealso \code{\link{PSPexpression}}
 #' 
 #' @examples
 #' # take a symmetric polynomial
-#' qspray <- ESFpoly(4, c(2, 1)) + ESFpoly(4, c(2, 2))
-#' # compute the power sum expression
-#' pspExpr <- PSPexpression(qspray)
-#' # take the involved power sum polynomials
-#' psPolys <- lapply(1:numberOfVariables(pspExpr), function(i) PSFpoly(4, i))
-#' # then this should be TRUE:
-#' qspray == changeVariables(pspExpr, psPolys)
+#' ( qspray <- ESFpoly(4, c(2, 1)) + ESFpoly(4, c(2, 2)) )
+#' # compute the power sum combination
+#' ( pspCombo <- PSPcombination(qspray) )
+#' # then the polynomial can be reconstructed as follows:
+#' Reduce(`+`, lapply(pspCombo, function(term) {
+#'   term[["coeff"]] * PSFpoly(4, term[["lambda"]])
+#' }))
 PSPcombination <- function(qspray) {
   mspAssocsList <- MSPcombination(qspray, check = FALSE)
-  # lambdas <- lapply(mspAssocsList, `[[`, "lambda")
-  # lambdaStrings <- vapply(lambdas, partitionAsString, character(1L))
-  # n <- length(lambdas)
   pspCombinations <- lapply(mspAssocsList, function(t) {
     xs     <- MSPinPSbasis(t[["lambda"]])
     coeffs <- t[["coeff"]] * c_bigq(lapply(xs, `[[`, "coeff"))
     lambdas <- lapply(xs, `[[`, "lambda")
     lambdaStrings <- vapply(lambdas, partitionAsString, character(1L))
     out <- mapply(
-      function(x,y) `names<-`(list(x,y), c("coeff", "lambda")), 
+      function(x, y) `names<-`(list(x, y), c("coeff", "lambda")), 
       coeffs, lambdas, SIMPLIFY = FALSE, USE.NAMES = FALSE
     )
     names(out) <- lambdaStrings
@@ -509,16 +509,18 @@ PSPcombination <- function(qspray) {
     )
   }
   pspCombination <- Reduce(accum, x = pspCombinations)
+  pspCombination <- 
+    Filter(function(term) term[["coeff"]] != 0L, pspCombination)
   if(length(pspCombination) == 1L) {
     return(pspCombination)
   }
   lambdas <- lapply(pspCombination, `[[`, "lambda")
-  n <- maximum(lengths(lambdas))
-  lambdasMatrix <- vapply(lambdas, function(lambda) {
-    grow(lambda, n)
-  }, integer(n))
+  n <- max(lengths(lambdas))
+  lambdasMatrix <- t(vapply(lambdas, function(lambda) {
+    qspray:::grow(lambda, n)
+  }, integer(n)))
   i_ <- do.call(
-    order, Columns(lambdasMatrix), decreasing = FALSE
+    order, c(qspray:::Columns(lambdasMatrix), decreasing = TRUE)
   )
   pspCombination[i_]
 }
