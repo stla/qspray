@@ -392,8 +392,7 @@ zlambda <- function(lambda, alpha) {
 #' @description Expression of a symmetric \code{qspray} polynomial as a 
 #'   polynomial in the power sum polynomials.
 #'
-#' @param qspray a symmetric \code{qspray} polynomial (an error is returned if 
-#'   it is not symmetric)
+#' @param qspray a symmetric \code{qspray} polynomial; symmetry is not checked 
 #'
 #' @return A \code{qspray} polynomial, say \eqn{P}, such that 
 #'   \eqn{P(p_1, ..., p_n)} equals the input symmetric polynomial, 

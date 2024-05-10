@@ -4,6 +4,8 @@
 
 - New function `isHomogeneousQspray`, to check whether a `qspray` polynomial is homogeneous.
 
+- The `HallInnerProduct` functions has been greatly improved.
+
 
 # qspray 3.0.0
 

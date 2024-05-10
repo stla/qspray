@@ -7,8 +7,7 @@
 PSPexpression(qspray)
 }
 \arguments{
-\item{qspray}{a symmetric \code{qspray} polynomial (an error is returned if 
-it is not symmetric)}
+\item{qspray}{a symmetric \code{qspray} polynomial; symmetry is not checked}
 }
 \value{
 A \code{qspray} polynomial, say \eqn{P}, such that 

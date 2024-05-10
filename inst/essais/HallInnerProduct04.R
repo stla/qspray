@@ -150,3 +150,13 @@ choose(n, length(mu)) * factorial(length(mu)) / prod(factorial(table(mu)))
 qspray <- ESFpoly(4, c(2, 1)) + ESFpoly(4, c(2, 2))
 pspExpr <- PSPexpression(qspray)
 composeQspray(pspExpr, list(PSFpoly(4, 1L), PSFpoly(4, 2L)))
+
+
+library(qspray)
+library(jack)
+
+jp1 <- JackPol(4, c(3, 1), "2", "J")
+jp2 <- JackPol(4, c(2, 2), "2", "J")
+
+HallInnerProduct(jp1, jp1, alpha = 2)
+
