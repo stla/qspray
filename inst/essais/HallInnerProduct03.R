@@ -23,6 +23,7 @@ E_lambda_mu <- function(lambda, mu) {
   if(length(L) == 0L) {
     return(as.bigq(0L))
   }
+  print(length(L))
   out <- Reduce(`+`, sapply(L, function(nus) {
       E_lambda_mu_term(mu, nus)
   }, simplify = FALSE))
@@ -241,30 +242,30 @@ MSPinPSbasis <- function(mu) {
 
 MSPinPSbasis <- function(mu) {
   mu <- as.integer(mu)
-  k <- 1L
-  x <- lapply(mu, parts)
-  Grid <- as.matrix(expand.grid(lapply(x, function(partitions) seq_len(ncol(partitions)))))
-  partoches <- lapply(qspray:::Rows(Grid), function(combo) {
-    nus <- lapply(seq_along(mu), function(i) {
-      qspray:::removeTrailingZeros(x[[i]][, combo[i]])
-    })
-    do.call(c, nus)
-  })
-  partoches <- union(partoches, lapply(qspray:::Columns(parts(sum(mu))), qspray:::removeTrailingZeros))
-  print(partoches)
+  # x <- lapply(mu, parts)
+  # Grid <- as.matrix(expand.grid(lapply(x, function(partitions) seq_len(ncol(partitions)))))
+  # partoches <- lapply(qspray:::Rows(Grid), function(combo) {
+  #   nus <- lapply(seq_along(mu), function(i) {
+  #     qspray:::removeTrailingZeros(x[[i]][, combo[i]])
+  #   })
+  #   do.call(c, nus)
+  # })
+  # partoches <- union(partoches, lapply(qspray:::Columns(parts(sum(mu))), qspray:::removeTrailingZeros))
+  # print(partoches)
+  partoches <- lapply(qspray:::Columns(parts(sum(mu))), qspray:::removeTrailingZeros)
   coeffs <- vector("list", length(partoches))
   powers <- vector("list", length(partoches))
   k <- 1L
   for(lambda in partoches) {
     coeff <- E_lambda_mu(mu, lambda)
     coeffs[[k]] <- coeff
-    print(lambda)
-    print(coeff)
+    # print(lambda)
+    # print(coeff)
     powers[[k]] <- sort(lambda, decreasing = TRUE)
     k <- k + 1L    
   }
   qspray <- qsprayMaker(powers = powers, coeffs = c_bigq(coeffs))
-  print(qspray)
+  # print(qspray)
   lambdas <- qspray@powers
   weights <- as.bigq(qspray@coeffs)
   lapply(seq_along(weights), function(i) {
@@ -292,7 +293,8 @@ zlambda <- function(lambda, alpha) {
 
 
 
-mu <- c(3L, 2L, 1L)
+mu <- c(3L, 3L, 2L, 2L, 1L, 1L)
+mu <- c(3L, 2L, 2L)
 x <- MSPinPSbasis(mu)
 n <- sum(mu)
 
@@ -307,4 +309,7 @@ for(t in x) {
 }
 
 check == MSFpoly(n, mu)
+
+# number of terms
+choose(n, length(mu)) * nrow(DescTools::Permn(mu))
 
