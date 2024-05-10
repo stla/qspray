@@ -312,4 +312,5 @@ check == MSFpoly(n, mu)
 
 # number of terms
 choose(n, length(mu)) * nrow(DescTools::Permn(mu))
+choose(n, length(mu)) * factorial(length(mu)) / prod(factorial(table(mu)))
 
