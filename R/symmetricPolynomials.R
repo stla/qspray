@@ -413,7 +413,7 @@ PSPexpression <- function(qspray) {
     coeffs <- t[["coeff"]] * c_bigq(lapply(xs, `[[`, "coeff"))
     powers <- lapply(xs, function(x) {
       lambda <- x[["lambda"]]
-      vapply(unique(lambda), function(j) {
+      vapply(seq_len(lambda[1L]), function(j) {
         sum(lambda == j)
       }, integer(1L))
     })
