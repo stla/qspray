@@ -401,9 +401,15 @@ zlambda <- function(lambda, alpha) {
 #' @export
 #' @importFrom gmp c_bigq
 #' 
-#' @note
-#' This function has been exported because it is used in the \strong{jack} 
-#'   package. 
+#' @examples
+#' # take a symmetric polynomial
+#' qspray <- ESFpoly(4, c(2, 1)) + ESFpoly(4, c(2, 2))
+#' # compute the power sum expression
+#' pspExpr <- PSPexpression(qspray)
+#' # take the involved power sum polynomials
+#' psPolys <- lapply(1:numberOfVariables(pspExpr), function(i) PSFpoly(4, i))
+#' # then this should be TRUE:
+#' qspray == composeQspray(pspExpr, psPolys)
 PSPexpression <- function(qspray) {
   constantTerm <- getConstantTerm(qspray)
   mspdecomposition <- MSPcombination(qspray - constantTerm)
@@ -449,14 +455,18 @@ PSPexpression <- function(qspray) {
 #'
 #' @param qspray1,qspray2 two symmetric \code{qspray} polynomials
 #' @param alpha parameter equal to \code{1} for the usual Hall inner product, 
-#'   otherwise this is the "Jack parameter", an integer or a \code{bigq} number
+#'   otherwise this is the "Jack parameter"; it must be a single value 
+#'   coercible to a \code{bigq} number, e.g. \code{"2/5"}
 #'
 #' @return A \code{bigq} number.
 #' @export
-#' @importFrom gmp as.bigq is.bigq is.bigz
+#' @importFrom gmp as.bigq
 HallInnerProduct <- function(qspray1, qspray2, alpha = 1) {
-  stopifnot(isInteger(alpha) || is.bigq(alpha) || is.bigz(alpha))
+  stopifnot(length(alpha) == 1L)
   alpha <- as.bigq(alpha)
+  if(is.na(alpha)) {
+    stop("Invalid `alpha`.")
+  }
   if(isTRUE(attr(qspray1, "PSPexpression"))) {
     PSspray1 <- qspray1
     PSspray2 <- PSPexpression(qspray2)

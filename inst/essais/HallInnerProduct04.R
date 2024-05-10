@@ -147,8 +147,6 @@ choose(n, length(mu)) * factorial(length(mu)) / prod(factorial(table(mu)))
 
 
 
-qspray <- ESFpoly(3, c(2,1))
-
-pspExpr <- ion(qspray)
-
-composeQspray(pspExpr, list(PSFpoly(3, 1L), PSFpoly(3, 2L)))
+qspray <- ESFpoly(4, c(2, 1)) + ESFpoly(4, c(2, 2))
+pspExpr <- PSPexpression(qspray)
+composeQspray(pspExpr, list(PSFpoly(4, 1L), PSFpoly(4, 2L)))

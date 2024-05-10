@@ -10,7 +10,8 @@ HallInnerProduct(qspray1, qspray2, alpha = 1)
 \item{qspray1, qspray2}{two symmetric \code{qspray} polynomials}
 
 \item{alpha}{parameter equal to \code{1} for the usual Hall inner product, 
-otherwise this is the "Jack parameter", an integer or a \code{bigq} number}
+otherwise this is the "Jack parameter"; it must be a single value 
+coercible to a \code{bigq} number, e.g. \code{"2/5"}}
 }
 \value{
 A \code{bigq} number.

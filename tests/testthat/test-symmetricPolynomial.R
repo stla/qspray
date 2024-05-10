@@ -19,3 +19,11 @@ test_that("compactSymmetricQspray", {
     "M[4] + M[3, 1] - M[2, 2] - 2*M[2, 1, 1] - 6*M[1, 1, 1, 1] + 4"
   )
 })
+
+test_that("PSPexpression", {
+  qspray <- PSFpoly(4, c(3, 1)) - ESFpoly(4, c(2, 2)) + 4L
+  pspExpr <- PSPexpression(qspray)
+  psPolys <- lapply(1:numberOfVariables(pspExpr), function(i) PSFpoly(4, i))
+  obtained <- changeVariables(pspExpr, psPolys)
+  expect_true(obtained == qspray)
+})

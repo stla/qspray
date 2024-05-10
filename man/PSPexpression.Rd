@@ -19,7 +19,13 @@ A \code{qspray} polynomial, say \eqn{P}, such that
 Expression of a symmetric \code{qspray} polynomial as a 
   polynomial in the power sum polynomials.
 }
-\note{
-This function has been exported because it is used in the \strong{jack} 
-  package.
+\examples{
+# take a symmetric polynomial
+qspray <- ESFpoly(4, c(2, 1)) + ESFpoly(4, c(2, 2))
+# compute the power sum expression
+pspExpr <- PSPexpression(qspray)
+# take the involved power sum polynomials
+psPolys <- lapply(1:numberOfVariables(pspExpr), function(i) PSFpoly(4, i))
+# then this should be TRUE:
+qspray == composeQspray(pspExpr, psPolys)
 }
