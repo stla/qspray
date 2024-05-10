@@ -13,15 +13,63 @@ E_lambda_mu <- function(lambda, mu) {
   # chaque composition donne les longueurs des nu_i 
   compos <- compositions(ell_lambda, ell_mu, include.zero = FALSE)
   compos <- qspray:::Columns(compos)
+
+  perms <- DescTools::Permn(lambda)
+  L <- do.call(c, lapply(qspray:::Rows(perms), function(perm) {
+    Filter(Negate(is.null), lapply(compos, function(compo) {
+      NUS(perm, mu, compo)
+    }))
+  }))
+  if(length(L) == 0L) {
+    return(as.bigq(0L))
+  }
+  out <- Reduce(`+`, sapply(L, function(nus) {
+      E_lambda_mu_term(mu, nus)
+  }, simplify = FALSE))
+  if((ell_lambda - ell_mu) %% 2L == 1L) {
+    out <- -out
+  } 
+  return(out)
+  
   # compos <- lapply(compos, qspray:::removeTrailingZeros)
   # compos <- Filter(function(compo) length(compo) >= ell_mu, compos)
+  perms <- DescTools::Permn(lambda)
   out <- Reduce(`+`, sapply(compos, function(compo) {
-    decoupage(lambda, mu, compo)
+    dd <- as.bigq(0L)
+    for(i in seq_len(nrow(perms))) {
+      dd <- dd + decoupage(perms[i, ], mu, compo)
+    }
+    return(dd)
+    # if((ell_lambda - length(compo)) %% 2L == 0L) {
+    #   dd
+    # } else {
+    #   -dd
+    # }
   }, simplify = FALSE))
+  # dd <- decoupage(lambda, lambda, rep(1L, length(lambda)))
   if((ell_lambda - ell_mu) %% 2L == 0L) {
-    out
+    out 
   } else {
-    -out
+    -out 
+  }
+}
+
+NUS <- function(lambda, mu, compo) {
+  starts <- cumsum(c(0L, head(compo, -1L))) + 1L
+  ends   <- cumsum(c(0L, head(compo, -1L))) + compo
+  nus <- lapply(seq_along(compo), function(i) {
+    lambda[(starts[i]):(ends[i])]
+  })
+  weights <- vapply(nus, function(nu) {
+    as.integer(sum(nu))
+  }, integer(1L))
+  test <- all(mu == weights) && all(sapply(nus, function(nu) {
+    all(diff(nu) <= 0)
+  }))
+  if(test) {
+    nus
+  } else {
+    NULL
   }
 }
 
@@ -34,8 +82,40 @@ decoupage <- function(lambda, mu, compo) {
   weights <- vapply(nus, function(nu) {
     as.integer(sum(nu))
   }, integer(1L))
-  if(all(weights == mu)) {
-    E_lambda_mu_term(mu, nus)
+  
+  # muprime <- qspray:::grow(mu, length(weights))
+
+  # test <- all(cumsum(muprime)-cumsum(weights) >= 0L)
+  # test <- weights[1L] == mu
+  # muprime <- c(3,3,0)
+  # weights <- c(3,2,1)
+  # muprime <- c(4,4,1)
+  # weights <- c(4,3,2)
+  # weights <- sort(weights, decreasing = TRUE)
+  # muprime <- sort(muprime, decreasing = TRUE)
+  
+  # ww <- weights
+  # if(length(weights) > length(mu)) {
+  #   l <- length(mu)
+  #   weights <- c(head(weights, l-1L), sum(weights[l:length(weights)]))
+  # }
+  
+  # weights <- sort(weights, decreasing = TRUE)
+  # muprime <- sort(muprime, decreasing = TRUE)
+  # diffs <- integer(length(weights))
+  # for(i in seq_len(length(weights)-1L)) {
+  #   d <- diffs[i] <- muprime[i] - weights[i]
+  #   if(d >= 0L) {
+  #     muprime[i] <- weights[i]
+  #     muprime[i+1L] <- muprime[i+1L] + d
+  #   } else {
+  #     return(0L)
+  #   }
+  # }
+#  test <- all(sort(mu) == sort(weights))
+  test <- all(mu == sort(weights, decreasing = TRUE))
+  if(test) { #all(sort(weights, decreasing = TRUE) == sort(mu, decreasing = TRUE))) {
+    E_lambda_mu_term(weights, nus)
   } else {
     0L
   }
@@ -171,12 +251,14 @@ MSPinPSbasis <- function(mu) {
     do.call(c, nus)
   })
   partoches <- union(partoches, lapply(qspray:::Columns(parts(sum(mu))), qspray:::removeTrailingZeros))
+  print(partoches)
   coeffs <- vector("list", length(partoches))
   powers <- vector("list", length(partoches))
   k <- 1L
   for(lambda in partoches) {
     coeff <- E_lambda_mu(mu, lambda)
     coeffs[[k]] <- coeff
+    print(lambda)
     print(coeff)
     powers[[k]] <- sort(lambda, decreasing = TRUE)
     k <- k + 1L    
@@ -210,8 +292,9 @@ zlambda <- function(lambda, alpha) {
 
 
 
-mu <- c(3L, 2L)
+mu <- c(3L, 2L, 1L)
 x <- MSPinPSbasis(mu)
+n <- sum(mu)
 
 library(qspray)
 check <- qzero()
@@ -219,11 +302,9 @@ for(t in x) {
   coeff <- t[["coeff"]]
   if(coeff != 0L) {
     lambda <- t[["lambda"]]
-    check <- check + coeff * PSFpoly(5, lambda)
+    check <- check + coeff * PSFpoly(n, lambda)
   }
 }
 
-check == MSFpoly(5, mu)
+check == MSFpoly(n, mu)
 
-pows <- check@powers
-mm <- qsprayMaker(pows, coeffs = rep("1L", length(pows)))
