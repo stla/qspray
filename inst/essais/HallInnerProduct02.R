@@ -6,13 +6,13 @@ spray2 <- jack::SchurPol(4, c(3, 1))
 HallInnerProduct(spray1, spray2)
 
 alpha <- gmp::as.bigq(2L)
-spray1 <- jack::JackPol(3, c(2,1), alpha, which = "P")
+spray1 <- jack::JackPol(3, c(3), alpha, which = "P")
 spray2 <- jack::JackPol(3, c(1,1,1), alpha, which = "P")
 HallInnerProduct(spray1, spray1, alpha = alpha)
 t <- alpha
-3*t^3/(t^2 + 3/2*t + 1/2)
-(2*t^3 + t^2)/(t + 2) 
-t^3/6 + t^2/2 + t/3
+3*t^3/(t^2 + 3/2*t + 1/2) # 3
+(2*t^3 + t^2)/(t + 2)     # 2, 1
+t^3/6 + t^2/2 + t/3       # 1, 1, 1
 
 poly <- PSFpoly(4, c(4))
 HallInnerProduct(poly, poly, alpha = t)

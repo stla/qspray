@@ -168,3 +168,7 @@ dropVariables <- function(n, qspray) {
 isNamedList <- function(x) {
   is.list(x) && length(names(x)) == length(x)
 }
+
+partitionAsString <- function(lambda) {
+  sprintf("[%s]", toString(lambda))
+}

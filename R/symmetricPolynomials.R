@@ -18,7 +18,7 @@ PSFpoly <- function(m, lambda) {
   stopifnot(isNonnegativeInteger(m), isPartition(lambda))
   lambda <- removeTrailingZeros(lambda)
   if(length(lambda) == 0L) {
-    return(as.qspray(m))
+    return(qone())
   }
   # if(any(lambda > m)) return(as.qspray(0L))
   if(length(lambda) > m) return(qzero())
@@ -341,16 +341,17 @@ partitionSequences <- function(lambda, mu, compo) {
 #' @importFrom gmp factorialZ
 #' @noRd
 E_lambda_mu_term <- function(mu, nus) {
-  toMultiply <- sapply(seq_along(nus), function(i) {
+  toMultiply <- lapply(seq_along(nus), function(i) {
     nu  <- nus[[i]]
     mjs <- vapply(as.integer(unique(nu)), function(j) {
       sum(nu == j)
     }, integer(1L))
     mu[i] * factorialZ(length(nu)-1L) / prod(factorialZ(mjs))
-  }, simplify = FALSE)
+  })
   Reduce(`*`, toMultiply)
 }
 
+#' Monomial symmetric polynomial as linear combination of power sum polynomials
 #' @importFrom gmp as.bigq as.bigz c_bigq
 #' @importFrom partitions parts
 #' @noRd
@@ -377,7 +378,7 @@ MSPinPSbasis <- function(mu) {
 
 # also used in the Hall inner product
 zlambda <- function(lambda, alpha) {
-  parts <- as.integer(unique(lambda[lambda != 0L]))
+  parts <- unique(lambda)
   mjs   <- vapply(parts, function(j) {
     sum(lambda == j)
   }, integer(1L))
@@ -408,10 +409,10 @@ zlambda <- function(lambda, alpha) {
 #' # take the involved power sum polynomials
 #' psPolys <- lapply(1:numberOfVariables(pspExpr), function(i) PSFpoly(4, i))
 #' # then this should be TRUE:
-#' qspray == composeQspray(pspExpr, psPolys)
+#' qspray == changeVariables(pspExpr, psPolys)
 PSPexpression <- function(qspray) {
   constantTerm <- getConstantTerm(qspray)
-  mspdecomposition <- MSPcombination(qspray - constantTerm)
+  mspdecomposition <- MSPcombination(qspray - constantTerm, check = FALSE)
   pspexpression <- qzero()
   for(t in mspdecomposition) {
     xs     <- MSPinPSbasis(t[["lambda"]])
@@ -447,6 +448,79 @@ PSPexpression <- function(qspray) {
   # out <- qsprayMaker(powers, g@coeffs) + constantTerm
   attr(out, "PSPexpression") <- TRUE
   out
+}
+
+#' @title Symmetric polynomial in terms of the power sum polynomials.
+#' @description Expression of a symmetric \code{qspray} polynomial as a 
+#'   polynomial in the power sum polynomials.
+#'
+#' @param qspray a symmetric \code{qspray} polynomial; symmetry is not checked 
+#'
+#' @return A \code{qspray} polynomial, say \eqn{P}, such that 
+#'   \eqn{P(p_1, ..., p_n)} equals the input symmetric polynomial, 
+#'   where \eqn{p_i} is the i-th power sum polynomial (\code{PSFpoly(n, i)}).
+#' @export
+#' @importFrom gmp c_bigq
+#' 
+#' @examples
+#' # take a symmetric polynomial
+#' qspray <- ESFpoly(4, c(2, 1)) + ESFpoly(4, c(2, 2))
+#' # compute the power sum expression
+#' pspExpr <- PSPexpression(qspray)
+#' # take the involved power sum polynomials
+#' psPolys <- lapply(1:numberOfVariables(pspExpr), function(i) PSFpoly(4, i))
+#' # then this should be TRUE:
+#' qspray == changeVariables(pspExpr, psPolys)
+PSPcombination <- function(qspray) {
+  mspAssocsList <- MSPcombination(qspray, check = FALSE)
+  # lambdas <- lapply(mspAssocsList, `[[`, "lambda")
+  # lambdaStrings <- vapply(lambdas, partitionAsString, character(1L))
+  # n <- length(lambdas)
+  pspCombinations <- lapply(mspAssocsList, function(t) {
+    xs     <- MSPinPSbasis(t[["lambda"]])
+    coeffs <- t[["coeff"]] * c_bigq(lapply(xs, `[[`, "coeff"))
+    lambdas <- lapply(xs, `[[`, "lambda")
+    lambdaStrings <- vapply(lambdas, partitionAsString, character(1L))
+    out <- mapply(
+      function(x,y) `names<-`(list(x,y), c("coeff", "lambda")), 
+      coeffs, lambdas, SIMPLIFY = FALSE, USE.NAMES = FALSE
+    )
+    names(out) <- lambdaStrings
+    out
+  })
+  accum <- function(assocs1, assocs2) {
+    lambdas1 <- names(assocs1) 
+    lambdas2 <- names(assocs2)
+    intersection <- intersect(lambdas1, lambdas2)
+    merged <- mapply(
+      function(pair1, pair2) {
+        list(
+          "coeff" = pair1[["coeff"]] + pair2[["coeff"]],
+          "lambda" = pair1[["lambda"]]
+        )
+      },
+      assocs1[intersection], assocs2[intersection],
+      SIMPLIFY = FALSE, USE.NAMES = TRUE
+    )
+    c(
+      merged, 
+      assocs1[setdiff(lambdas1, intersection)], 
+      assocs2[setdiff(lambdas2, intersection)]
+    )
+  }
+  pspCombination <- Reduce(accum, x = pspCombinations)
+  if(length(pspCombination) == 1L) {
+    return(pspCombination)
+  }
+  lambdas <- lapply(pspCombination, `[[`, "lambda")
+  n <- maximum(lengths(lambdas))
+  lambdasMatrix <- vapply(lambdas, function(lambda) {
+    grow(lambda, n)
+  }, integer(n))
+  i_ <- do.call(
+    order, Columns(lambdasMatrix), decreasing = FALSE
+  )
+  pspCombination[i_]
 }
 
 #' @title Hall inner product
