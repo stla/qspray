@@ -102,12 +102,30 @@ zlambda <- function(lambda, alpha) {
   out
 }
 
-
+powsum <- function (m, lambda) 
+{
+  lambda <- lambda[lambda > 0L]
+  if (length(lambda) == 0L) {
+    return(as.qspray(m))
+  }
+  # if (any(lambda > m)) 
+  #   return(as.qspray(0L))
+  out <- 1L
+  for (k in lambda) {
+    powers <- lapply(1L:m, function(i) {
+      c(rep(0L, i - 1L), k)
+    })
+    pk <- qsprayMaker(powers = powers, coeffs = rep("1", 
+                                                    m))
+    out <- out * pk
+  }
+  out
+}
 
 mu <- c(3L, 3L, 2L, 2L, 1L, 1L)
 mu <- c(3L, 2L, 2L)
 x <- MSPinPSbasis(mu)
-n <- sum(mu)
+n <- sum(mu)-2
 
 library(qspray)
 check <- qzero()
@@ -115,9 +133,11 @@ for(t in x) {
   coeff <- t[["coeff"]]
   if(coeff != 0L) {
     lambda <- t[["lambda"]]
-    check <- check + coeff * PSFpoly(n, lambda)
+    check <- check + coeff * powsum(n, lambda)
   }
 }
+
+check - MSFpoly(n, mu)
 
 check == MSFpoly(n, mu)
 
@@ -125,3 +145,10 @@ check == MSFpoly(n, mu)
 choose(n, length(mu)) * nrow(DescTools::Permn(mu))
 choose(n, length(mu)) * factorial(length(mu)) / prod(factorial(table(mu)))
 
+
+
+qspray <- ESFpoly(3, c(2,1))
+
+pspExpr <- ion(qspray)
+
+composeQspray(pspExpr, list(PSFpoly(3, 1L), PSFpoly(3, 2L)))

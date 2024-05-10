@@ -16,11 +16,12 @@ NULL
 #' PSFpoly(3, c(3, 1))
 PSFpoly <- function(m, lambda) {
   stopifnot(isNonnegativeInteger(m), isPartition(lambda))
-  lambda <- lambda[lambda > 0L]
+  lambda <- removeTrailingZeros(lambda)
   if(length(lambda) == 0L) {
     return(as.qspray(m))
   }
-  if(any(lambda > m)) return(as.qspray(0L))
+  # if(any(lambda > m)) return(as.qspray(0L))
+  if(length(lambda) > m) return(qzero())
   out <- 1L
   for(k in lambda) {
     powers <- lapply(1L:m, function(i) {
@@ -48,7 +49,7 @@ PSFpoly <- function(m, lambda) {
 #' MSFpoly(3, c(3, 1))
 MSFpoly <- function(m, lambda) {
   stopifnot(isNonnegativeInteger(m), isPartition(lambda))
-  lambda <- lambda[lambda != 0L]
+  lambda <- removeTrailingZeros(lambda)
   if(length(lambda) > m) return(qzero())
   kappa                    <- numeric(m)
   kappa[seq_along(lambda)] <- lambda
@@ -84,7 +85,7 @@ MSFpoly <- function(m, lambda) {
 #' CSHFpoly(3, c(3, 1))
 CSHFpoly <- function(m, lambda) {
   stopifnot(isNonnegativeInteger(m), isPartition(lambda))
-  lambda <- lambda[lambda != 0L]
+  lambda <- removeTrailingZeros(lambda)
   if(length(lambda) > m) return(qzero())
   if(length(lambda) == 0L) return(qone())
   qsprays <- lapply(lambda, function(k) {
@@ -287,6 +288,8 @@ isSymmetricQspray <- function(qspray) {
 #### ~ Hall inner product ~ ####
 
 #' @importFrom partitions compositions
+#' @importFrom gmp as.bigq
+#' @importFrom DescTools Permn
 #' @noRd
 E_lambda_mu <- function(lambda, mu) {
   ell_lambda <- length(lambda)
@@ -297,17 +300,26 @@ E_lambda_mu <- function(lambda, mu) {
   # chaque composition donne les longueurs des nu_i 
   compos <- compositions(ell_lambda, ell_mu, include.zero = FALSE)
   compos <- Columns(compos)
-  out <- Reduce(`+`, sapply(compos, function(compo) {
-    decoupage(lambda, mu, compo)
-  }, simplify = FALSE))
-  if((ell_lambda - ell_mu) %% 2L == 0L) {
-    out
-  } else {
-    -out
+  lambdas <- Permn(lambda)
+  L <- do.call(c, lapply(qspray:::Rows(lambdas), function(lambdaPerm) {
+    Filter(Negate(is.null), lapply(compos, function(compo) {
+      partitionSequences(lambdaPerm, mu, compo)
+    }))
+  }))
+  if(length(L) == 0L) {
+    return(as.bigq(0L))
   }
+  out <- Reduce(`+`, lapply(L, function(nus) {
+    E_lambda_mu_term(mu, nus)
+  }))
+  if((ell_lambda - ell_mu) %% 2L == 1L) {
+    out <- -out
+  } 
+  return(out)
 }
 
-decoupage <- function(lambda, mu, compo) {
+#' @importFrom utils head
+partitionSequences <- function(lambda, mu, compo) {
   starts <- cumsum(c(0L, head(compo, -1L))) + 1L
   ends   <- cumsum(c(0L, head(compo, -1L))) + compo
   nus <- lapply(seq_along(compo), function(i) {
@@ -316,10 +328,13 @@ decoupage <- function(lambda, mu, compo) {
   weights <- vapply(nus, function(nu) {
     as.integer(sum(nu))
   }, integer(1L))
-  if(all(weights == mu)) {
-    E_lambda_mu_term(mu, nus)
+  test <- all(mu == weights) && all(vapply(nus, function(nu) {
+    all(diff(nu) <= 0L)
+  }, logical(1L)))
+  if(test) {
+    nus
   } else {
-    0L
+    NULL
   }
 }
 
@@ -336,24 +351,28 @@ E_lambda_mu_term <- function(mu, nus) {
   Reduce(`*`, toMultiply)
 }
 
-# !!!!!! DOES NOT WORK !!!!!!!!!
-#' @importFrom gmp as.bigz
+#' @importFrom gmp as.bigq as.bigz c_bigq
 #' @importFrom partitions parts
 #' @noRd
 MSPinPSbasis <- function(mu) {
   mu <- as.integer(mu)
-  lambdas <- Columns(parts(sum(mu)))
-  out <- sapply(lambdas, function(lambda) {
-    lambda <- lambda[lambda != 0L]
-    E <- E_lambda_mu(mu, lambda)
-    if(E != 0L) {
-      list(
-        "coeff"  = E / as.bigz(zlambda(lambda, alpha = 1L)),
-        "lambda" = lambda
-      )
-    }
-  }, simplify = FALSE)
-  Filter(Negate(is.null), out)
+  partitions <- lapply(Columns(parts(sum(mu))), removeTrailingZeros)
+  coeffs <- vector("list", length(partitions))
+  k <- 1L
+  for(lambda in partitions) {
+    coeffs[[k]] <- E_lambda_mu(mu, lambda)
+    k <- k + 1L    
+  }
+  qspray <- qsprayMaker(powers = partitions, coeffs = c_bigq(coeffs))
+  lambdas <- qspray@powers
+  weights <- as.bigq(qspray@coeffs)
+  lapply(seq_along(weights), function(i) {
+    lambda <- lambdas[[i]]
+    list(
+      "coeff"  = weights[i] / as.bigz(zlambda(lambda, alpha = 1L)),
+      "lambda" = lambda
+    )
+  })
 }
 
 # also used in the Hall inner product
@@ -386,42 +405,41 @@ zlambda <- function(lambda, alpha) {
 #' This function has been exported because it is used in the \strong{jack} 
 #'   package. 
 PSPexpression <- function(qspray) {
-  n <- arity(qspray)
-  
-  # mspdecomposition <- MSPcombination(qspray)
-  # pspexpression <- qzero()
-  # for(t in mspdecomposition) {
-  #   xs     <- MSPinPSbasis(t[["lambda"]])
-  #   coeffs <- t[["coeff"]] * c_bigq(sapply(xs, `[[`, "coeff", simplify = FALSE))
-  #   powers <- lapply(xs, function(x) {
-  #     lambda <- x[["lambda"]]
-  #     parts  <- as.integer(unique(lambda[lambda != 0L]))
-  #     vapply(1:30, function(j) {
-  #       sum(lambda == j)
-  #     }, integer(1L))
-  #   })
-  #   p             <- qsprayMaker(powers, coeffs)
-  #   pspexpression <- pspexpression + p
-  # }
-  # out <- pspexpression
-  
-  i_ <- seq_len(n)
-  P <- lapply(i_, function(i) PSFpoly(n, i))
-  Y <- lapply(i_, function(i) qlone(n + i))
-  G <- lapply(i_, function(i) P[[i]] - Y[[i]])
-  B <- groebner(G, TRUE, FALSE)
-  constantTerm <- getCoefficient(qspray, integer(0L))
-  g            <- qdivision(qspray - constantTerm, B)
-  check <- all(vapply(g@powers, function(pwr) {
-    length(pwr) > n && all(pwr[1L:n] == 0L)
-  }, logical(1L)))
-  if(!check) {
-    stop("PSPpolyExpr: the polynomial is not symmetric.")
+  constantTerm <- getConstantTerm(qspray)
+  mspdecomposition <- MSPcombination(qspray - constantTerm)
+  pspexpression <- qzero()
+  for(t in mspdecomposition) {
+    xs     <- MSPinPSbasis(t[["lambda"]])
+    coeffs <- t[["coeff"]] * c_bigq(lapply(xs, `[[`, "coeff"))
+    powers <- lapply(xs, function(x) {
+      lambda <- x[["lambda"]]
+      vapply(unique(lambda), function(j) {
+        sum(lambda == j)
+      }, integer(1L))
+    })
+    p             <- qsprayMaker(powers, coeffs)
+    pspexpression <- pspexpression + p
   }
-  powers <- lapply(g@powers, function(pwr) {
-    pwr[-(1L:n)]
-  })
-  out <- qsprayMaker(powers, g@coeffs) + constantTerm
+  out <- pspexpression + constantTerm
+  
+  # n <- arity(qspray)
+  # i_ <- seq_len(n)
+  # P <- lapply(i_, function(i) PSFpoly(n, i))
+  # Y <- lapply(i_, function(i) qlone(n + i))
+  # G <- lapply(i_, function(i) P[[i]] - Y[[i]])
+  # B <- groebner(G, TRUE, FALSE)
+  # constantTerm <- getCoefficient(qspray, integer(0L))
+  # g            <- qdivision(qspray - constantTerm, B)
+  # check <- all(vapply(g@powers, function(pwr) {
+  #   length(pwr) > n && all(pwr[1L:n] == 0L)
+  # }, logical(1L)))
+  # if(!check) {
+  #   stop("PSPpolyExpr: the polynomial is not symmetric.")
+  # }
+  # powers <- lapply(g@powers, function(pwr) {
+  #   pwr[-(1L:n)]
+  # })
+  # out <- qsprayMaker(powers, g@coeffs) + constantTerm
   attr(out, "PSPexpression") <- TRUE
   out
 }
