@@ -4,7 +4,7 @@
 
 - New function `isHomogeneousQspray`, to check whether a `qspray` polynomial is homogeneous.
 
-- The `HallInnerProduct` functions has been greatly improved.
+- The `HallInnerProduct` function has been greatly improved, and it is now possible to get the result of the Hall inner product with a symbolic parameter (this result is a univariate `qspray` whose variable represents the parameter).
 
 
 # qspray 3.0.0
