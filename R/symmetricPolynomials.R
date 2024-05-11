@@ -511,38 +511,48 @@ PSPcombination <- function(qspray) {
   pspCombination <- Reduce(accum, x = pspCombinations)
   pspCombination <- 
     Filter(function(term) term[["coeff"]] != 0L, pspCombination)
-  if(length(pspCombination) == 1L) {
+  if(length(pspCombination) <= 1L) {
     return(pspCombination)
   }
   lambdas <- lapply(pspCombination, `[[`, "lambda")
   n <- max(lengths(lambdas))
   lambdasMatrix <- t(vapply(lambdas, function(lambda) {
-    qspray:::grow(lambda, n)
+    grow(lambda, n)
   }, integer(n)))
   i_ <- do.call(
-    order, c(qspray:::Columns(lambdasMatrix), decreasing = TRUE)
+    order, c(Columns(lambdasMatrix), decreasing = TRUE)
   )
   pspCombination[i_]
 }
 
 #' @title Hall inner product
-#' @description Hall inner product of two symmetric polynomials.
+#' @description Hall inner product of two symmetric polynomials. It has a 
+#'   parameter \code{alpha} and the standard Hall inner product is the case 
+#'   when \code{alpha=1}. It is possible to get the Hall inner product with 
+#'   a symbolic \code{alpha} parameter.
 #'
 #' @param qspray1,qspray2 two symmetric \code{qspray} polynomials
 #' @param alpha parameter equal to \code{1} for the usual Hall inner product, 
-#'   otherwise this is the "Jack parameter"; it must be a single value 
-#'   coercible to a \code{bigq} number, e.g. \code{"2/5"}
+#'   otherwise this is the "Jack parameter"; it must be either a single value 
+#'   coercible to a \code{bigq} number, e.g. \code{"2/5"}, or \code{NULL} to 
+#'   get the Hall product with a symbolic \code{alpha}
 #'
-#' @return A \code{bigq} number.
+#' @return A \code{bigq} number if \code{alpha} is not \code{NULL}, otherwise 
+#'   a univariate \code{qspray} polynomial.
 #' @export
 #' @importFrom gmp as.bigq
 HallInnerProduct <- function(qspray1, qspray2, alpha = 1) {
-  stopifnot(length(alpha) == 1L)
-  alpha <- as.bigq(alpha)
-  if(is.na(alpha)) {
-    stop("Invalid `alpha`.")
+  symbolic <- is.null(alpha)
+  if(symbolic) {
+    alpha <- qlone(1L)
+  } else {
+    stopifnot(length(alpha) == 1L)
+    alpha <- as.bigq(alpha)
+    if(is.na(alpha)) {
+      stop("Invalid `alpha`.")
+    }
   }
-  if(isTRUE(attr(qspray1, "PSPexpression"))) {
+  if(!symbolic && isTRUE(attr(qspray1, "PSPexpression"))) {
     PSspray1 <- qspray1
     PSspray2 <- PSPexpression(qspray2)
   } else {
