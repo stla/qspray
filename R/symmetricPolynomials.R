@@ -113,7 +113,16 @@ CSHFpoly <- function(m, lambda) {
 #' qspray <- PSFpoly(4, c(3, 1)) + ESFpoly(4, c(2, 2)) + 4L
 #' MSPcombination(qspray)
 MSPcombination <- function(qspray, check = TRUE) {
-  constantTerm <- getCoefficient(qspray, integer(0L))
+  constantTerm <- getConstantTerm(qspray)
+  if(isConstant(qspray)) {
+    if(isQzero(qspray)) {
+      return(list())
+    } else {
+      return(
+        list(list("coeff" = constantTerm, "lambda" = integer(0L)))
+      )
+    }
+  }
   M <- powersMatrix(qspray - constantTerm)
   M <- M[lexorder(M), , drop = FALSE]
   lambdas <- unique(apply(M, 1L, function(expnts) { 
@@ -604,9 +613,15 @@ HallInnerProduct <- function(qspray1, qspray2, alpha = 1) {
       "Invalid `qspray` objects."
     )
   }
-  zeroQspray <- as(qzero(), cl)
+  zeroQspray <- qspray1 - qspray1 # instead of as(qzero(), cl), to keep the show options
   symbolic <- is.null(alpha)
   if(symbolic) {
+    if(cl == "qspray") {
+      showQsprayOption(zeroQspray, "x") <- "alpha"
+    } else {
+      showSymbolicQsprayOption(zeroQspray, "showMonomial") <- 
+        showMonomialXYZ("alpha")
+    }
     if(isQzero(qspray1) || isQzero(qspray2)) {
       return(zeroQspray)
     }

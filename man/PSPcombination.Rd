@@ -30,5 +30,5 @@ Reduce(`+`, lapply(pspCombo, function(term) {
 }))
 }
 \seealso{
-\code{\link{PSPexpression}}
+\code{\link{PSPexpression}}.
 }

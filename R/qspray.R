@@ -3,8 +3,13 @@
 #' @importFrom methods setMethod setClass new canCoerce as setGeneric
 #' @importFrom gmp as.bigq factorialZ asNumeric
 #' @importFrom purrr transpose
+#' @importFrom utils globalVariables
 #' @include qspray.R
 NULL
+
+if(getRversion() >= "2.15.1") {
+  globalVariables("showSymbolicQsprayOption")
+}
 
 setClass(
   "qspray",
