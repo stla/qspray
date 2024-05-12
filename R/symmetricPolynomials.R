@@ -365,6 +365,14 @@ E_lambda_mu_term <- function(mu, nus) {
 #' @importFrom partitions parts
 #' @noRd
 MSPinPSbasis <- function(mu) {
+  if(length(mu) == 0L) {
+    return(
+      list(
+        "coeff"  = as.bigq(1L),
+        "lambda" = integer(0L)
+      )
+    )
+  }
   mu <- as.integer(mu)
   partitions <- lapply(Columns(parts(sum(mu))), removeTrailingZeros)
   coeffs <- vector("list", length(partitions))
@@ -525,14 +533,13 @@ PSPexpression <- function(qspray) {
 #'   term[["coeff"]] * PSFpoly(4, term[["lambda"]])
 #' }))
 PSPcombination <- function(qspray) {
-  cl <- class(qspray)[1L]
   psPolysAsQspray <- orderedQspray(.PSPcombination(qspray))
   lambdas <- psPolysAsQspray@powers
-  if(cl == "qspray") {
-    coeffs <- as.bigq(psPolysAsQspray@coeffs)  
-  } else {
-    coeffs <- psPolysAsQspray@coeffs
-  }
+  # we extract the coefficients as follows to keep the show options 
+  # in case of a symbolic qspray, because they are lost if we do @coeffs:
+  coeffs <- lapply(lambda, function(exponents) {
+    getCoefficient(psPolysAsQspray, exponents)
+  })
   lambdaStrings <- vapply(lambdas, partitionAsString, character(1L))
   out <- mapply(
     function(x, y) `names<-`(list(x, y), c("coeff", "lambda")),
