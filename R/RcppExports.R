@@ -45,3 +45,7 @@ qspray_power <- function(Powers, coeffs, n) {
     .Call(`_qspray_qspray_power`, Powers, coeffs, n)
 }
 
+lexLeadingIndexCPP <- function(Powers) {
+    .Call(`_qspray_lexLeadingIndexCPP`, Powers)
+}
+

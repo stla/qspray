@@ -8,21 +8,24 @@
 #   )
 # }
 
-lexLeading <- function(M, i = 1L, b = seq_len(nrow(M))) {
-  if(nrow(M) == 1L || i > ncol(M)) {
-    b[1L]
-  } else {
-    col_i <- M[, i]
-    mx <- max(col_i) == col_i
-    lexLeading(M[mx, , drop = FALSE], i + 1L, b[mx])
-  }
-}
+# lexLeading <- function(M, i = 1L, b = seq_len(nrow(M))) {
+#   if(nrow(M) == 1L || i > ncol(M)) {
+#     b[1L]
+#   } else {
+#     col_i <- M[, i]
+#     mx <- max(col_i) == col_i
+#     lexLeading(M[mx, , drop = FALSE], i + 1L, b[mx])
+#   }
+# }
 
 leading <- function(qspray, d) {
+  # powers <- qspray@powers
+  # Mpowers <- do.call(rbind, lapply(powers, grow, n = d))
+  # i <- lexLeadingArma(Mpowers)
+  # list("powers" = Mpowers[i, ], "coeff" = qspray@coeffs[i])
   powers <- qspray@powers
-  Mpowers <- do.call(rbind, lapply(powers, grow, n = d))
-  i <- lexLeadingArma(Mpowers)
-  list("powers" = Mpowers[i, ], "coeff" = qspray@coeffs[i])
+  i <- lexLeadingIndexCPP(powers)
+  list("powers" = grow(powers[[i]], d), "coeff" = qspray@coeffs[i])
 }
 
 #' @title Leading term of a 'qspray' polynomial
@@ -36,14 +39,34 @@ leading <- function(qspray, d) {
 #'
 #' @return A list providing the exponents of the leading term in the field 
 #'   \code{powers}, an integer vector, and the coefficient of the leading term 
-#'   in the field  \code{coeff}, a \code{bigq} rational number.
+#'   in the field \code{coeff}, a \code{bigq} rational number.
 #' @export
 leadingTerm <- function(qspray, d) {
   if(isQzero(qspray)) {
     NULL
   } else {
-    l <- leading(qspray, d)
-    list("powers" = l[["powers"]], "coeff" = as.bigq(l[["coeff"]]))
+    # l <- leading(qspray, d)
+    # list("powers" = l[["powers"]], "coeff" = as.bigq(l[["coeff"]]))
+    powers <- qspray@powers
+    i <- lexLeadingIndexCPP(powers)
+    list("powers" = grow(powers[[i]], d), "coeff" = as.bigq(qspray@coeffs[i]))
+  }
+}
+
+#' @title Leading coefficient of a 'qspray' polynomial
+#' @description Returns the leading coefficient of a \code{qspray} polynomial.
+#' 
+#' @param qspray a \code{qspray} object
+#'
+#' @return The coefficient of the leading term of \code{qspray},
+#'   a \code{bigq} rational number.
+#' @export
+leadingCoefficient <- function(qspray) {
+  if(isQzero(qspray)) {
+    as.bigq(0L)
+  } else {
+    i <- lexLeadingIndexCPP(qspray@powers)
+    as.bigq(qspray@coeffs[i])
   }
 }
 
@@ -294,7 +317,7 @@ groebner <- function(G, minimal = TRUE, reduced = TRUE) {
     if(length(toRemove) > 0L) {
       G <- G[-toRemove]
       for(i in seq_along(G)) {
-        G[[i]] <- G[[i]] / leadingTerm(G[[i]], d)[["coeff"]]
+        G[[i]] <- G[[i]] / leadingCoefficient(G[[i]])
       }
     }
     # reduction

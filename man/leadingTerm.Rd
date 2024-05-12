@@ -17,7 +17,7 @@ output, and setting a smaller integer throws an error}
 \value{
 A list providing the exponents of the leading term in the field 
   \code{powers}, an integer vector, and the coefficient of the leading term 
-  in the field  \code{coeff}, a \code{bigq} rational number.
+  in the field \code{coeff}, a \code{bigq} rational number.
 }
 \description{
 Returns the leading term of a \code{qspray} polynomial.

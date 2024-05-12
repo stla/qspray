@@ -160,6 +160,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// lexLeadingIndexCPP
+int lexLeadingIndexCPP(const Rcpp::List& Powers);
+RcppExport SEXP _qspray_lexLeadingIndexCPP(SEXP PowersSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type Powers(PowersSEXP);
+    rcpp_result_gen = Rcpp::wrap(lexLeadingIndexCPP(Powers));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_qspray_lexLeadingArma", (DL_FUNC) &_qspray_lexLeadingArma, 1},
@@ -173,6 +184,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_qspray_qspray_mult", (DL_FUNC) &_qspray_qspray_mult, 4},
     {"_qspray_qspray_equality", (DL_FUNC) &_qspray_qspray_equality, 4},
     {"_qspray_qspray_power", (DL_FUNC) &_qspray_qspray_power, 3},
+    {"_qspray_lexLeadingIndexCPP", (DL_FUNC) &_qspray_lexLeadingIndexCPP, 1},
     {NULL, NULL, 0}
 };
 
