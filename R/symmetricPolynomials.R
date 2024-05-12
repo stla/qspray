@@ -458,6 +458,11 @@ PSPexpression <- function(qspray) {
 #' @noRd
 .PSPcombination <- function(qspray) {
   cl <- class(qspray)[1L]
+  if(!canCoerce(qzero(), cl)) {
+    stop(
+      "Invalid object `qspray`."
+    )
+  }
   mspAssocsList <- MSPcombination(qspray, check = FALSE)
   psPolysAsQspray <- as(qzero(), cl)
   if(cl == "qspray") {
@@ -474,7 +479,7 @@ PSPexpression <- function(qspray) {
     for(t in mspAssocsList) {
       pairs <- MSPinPSbasis(t[["lambda"]])
       coeffs <- mapply(
-        `*`, t[["coeff"]], c_bigq(lapply(pairs, `[[`, "coeff")),
+        `*`, t[["coeff"]], lapply(pairs, `[[`, "coeff"),
         SIMPLIFY = FALSE, USE.NAMES = FALSE
       )
       lambdas <- lapply(pairs, `[[`, "lambda")
@@ -512,11 +517,6 @@ PSPexpression <- function(qspray) {
 #' }))
 PSPcombination <- function(qspray) {
   cl <- class(qspray)[1L]
-  if(!canCoerce(qzero(), cl)) {
-    stop(
-      "Invalid object `qspray`."
-    )
-  }
   psPolysAsQspray <- orderedQspray(.PSPcombination(qspray))
   lambdas <- psPolysAsQspray@powers
   if(cl == "qspray") {
@@ -598,14 +598,27 @@ PSPcombination <- function(qspray) {
 #' @export
 #' @importFrom gmp as.bigq
 HallInnerProduct <- function(qspray1, qspray2, alpha = 1) {
+  cl <- class(qspray1)[1L]
+  if(!canCoerce(qzero(), cl) || !inherits(qspray2, cl)) {
+    stop(
+      "Invalid `qspray` objects."
+    )
+  }
+  zeroQspray <- as(qzero(), cl)
   symbolic <- is.null(alpha)
   if(symbolic) {
-    alpha <- qlone(1L)
+    if(isQzero(qspray1) || isQzero(qspray2)) {
+      return(zeroQspray)
+    }
+    alpha <- as(qlone(1L), cl)
   } else {
     stopifnot(length(alpha) == 1L)
     alpha <- as.bigq(alpha)
     if(is.na(alpha)) {
       stop("Invalid `alpha`.")
+    }
+    if(isQzero(qspray1) || isQzero(qspray2)) {
+      return(getConstantTerm(zeroQspray))
     }
   }
   # if(!symbolic && isTRUE(attr(qspray1, "PSPexpression"))) {
@@ -637,15 +650,23 @@ HallInnerProduct <- function(qspray1, qspray2, alpha = 1) {
   coeffs1 <- PSspray1@coeffs
   lambdas2 <- PSspray2@powers
   coeffs2 <- PSspray2@coeffs
+  if(cl == "qspray") {
+    coeffs1 <- as.bigq(coeffs1)
+    coeffs2 <- as.list(as.bigq(coeffs2)) # need list to set names
+  }
   lambdaStrings <- vapply(lambdas2, partitionAsString, character(1L))
   names(coeffs2) <- lambdaStrings
-  out <- as.bigq(0L)
+  if(symbolic) {
+    out <- zeroQspray
+  } else {
+    out <- getConstantTerm(zeroQspray)
+  }
   for(k in seq_along(lambdas1)) {
     lambda <- lambdas1[[k]]
     s <- partitionAsString(lambda) 
     if(s %in% lambdaStrings) {
-      coeff2 <- as.bigq(coeffs2[s])
-      out <- out + as.bigq(coeffs1[k]) * coeff2 * zlambda(lambda, alpha)
+      coeff2 <- coeffs2[[s]]
+      out <- out + coeffs1[[k]] * coeff2 * zlambda(lambda, alpha)
     }
   }
   out
