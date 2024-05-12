@@ -457,16 +457,32 @@ PSPexpression <- function(qspray) {
 #' polynomials
 #' @noRd
 .PSPcombination <- function(qspray) {
+  cl <- class(qspray)[1L]
   mspAssocsList <- MSPcombination(qspray, check = FALSE)
-  psPolysAsQspray <- qzero()
-  for(t in mspAssocsList) {
-    pairs <- MSPinPSbasis(t[["lambda"]])
-    coeffs <- t[["coeff"]] * c_bigq(lapply(pairs, `[[`, "coeff"))
-    lambdas <- lapply(pairs, `[[`, "lambda")
-    psPolysAsQspray <- psPolysAsQspray + 
-      new(
-        "qspray", powers = lambdas, coeffs = as.character(coeffs)
+  psPolysAsQspray <- as(qzero(), cl)
+  if(cl == "qspray") {
+    for(t in mspAssocsList) {
+      pairs <- MSPinPSbasis(t[["lambda"]])
+      coeffs <- t[["coeff"]] * c_bigq(lapply(pairs, `[[`, "coeff"))
+      lambdas <- lapply(pairs, `[[`, "lambda")
+      psPolysAsQspray <- psPolysAsQspray + 
+        new(
+          "qspray", powers = lambdas, coeffs = as.character(coeffs)
+        )
+    }
+  } else {
+    for(t in mspAssocsList) {
+      pairs <- MSPinPSbasis(t[["lambda"]])
+      coeffs <- mapply(
+        `*`, t[["coeff"]], c_bigq(lapply(pairs, `[[`, "coeff")),
+        SIMPLIFY = FALSE, USE.NAMES = FALSE
       )
+      lambdas <- lapply(pairs, `[[`, "lambda")
+      psPolysAsQspray <- psPolysAsQspray + 
+        new(
+          cl, powers = lambdas, coeffs = coeffs
+        )
+    }
   }
   psPolysAsQspray
 }
@@ -495,9 +511,19 @@ PSPexpression <- function(qspray) {
 #'   term[["coeff"]] * PSFpoly(4, term[["lambda"]])
 #' }))
 PSPcombination <- function(qspray) {
+  cl <- class(qspray)[1L]
+  if(!canCoerce(qzero(), cl)) {
+    stop(
+      "Invalid object `qspray`."
+    )
+  }
   psPolysAsQspray <- orderedQspray(.PSPcombination(qspray))
   lambdas <- psPolysAsQspray@powers
-  coeffs <- as.bigq(psPolysAsQspray@coeffs)
+  if(cl == "qspray") {
+    coeffs <- as.bigq(psPolysAsQspray@coeffs)  
+  } else {
+    coeffs <- psPolysAsQspray@coeffs
+  }
   lambdaStrings <- vapply(lambdas, partitionAsString, character(1L))
   out <- mapply(
     function(x, y) `names<-`(list(x, y), c("coeff", "lambda")),
