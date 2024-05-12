@@ -310,7 +310,7 @@ E_lambda_mu <- function(lambda, mu) {
   compos <- compositions(ell_lambda, ell_mu, include.zero = FALSE)
   compos <- Columns(compos)
   lambdas <- Permn(lambda)
-  L <- do.call(c, lapply(qspray:::Rows(lambdas), function(lambdaPerm) {
+  L <- do.call(c, lapply(Rows(lambdas), function(lambdaPerm) {
     Filter(Negate(is.null), lapply(compos, function(compo) {
       partitionSequences(lambdaPerm, mu, compo)
     }))
@@ -537,7 +537,7 @@ PSPcombination <- function(qspray) {
   lambdas <- psPolysAsQspray@powers
   # we extract the coefficients as follows to keep the show options 
   # in case of a symbolic qspray, because they are lost if we do @coeffs:
-  coeffs <- lapply(lambda, function(exponents) {
+  coeffs <- lapply(lambdas, function(exponents) {
     getCoefficient(psPolysAsQspray, exponents)
   })
   lambdaStrings <- vapply(lambdas, partitionAsString, character(1L))
