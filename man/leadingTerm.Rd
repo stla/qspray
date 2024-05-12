@@ -4,15 +4,10 @@
 \alias{leadingTerm}
 \title{Leading term of a 'qspray' polynomial}
 \usage{
-leadingTerm(qspray, d)
+leadingTerm(qspray)
 }
 \arguments{
 \item{qspray}{a \code{qspray} object}
-
-\item{d}{integer, the number of variables of \code{qspray}, in general 
-this is \code{numberOfVariables(qspray)}; setting a larger integer 
-just adds some trailing zeros to the vector of exponents given in the 
-output, and setting a smaller integer throws an error}
 }
 \value{
 A list providing the exponents of the leading term in the field 

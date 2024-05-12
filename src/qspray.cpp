@@ -117,7 +117,7 @@ int lexLeadingIndexCPP(const Rcpp::List& Powers) {
   }
   Rcpp::IntegerVector Exponents0 = Powers(0);
   powers pows0(Exponents0.begin(), Exponents0.end());
-  int out = 1;
+  int out = 0;
   for(int i = 1; i < n; i++) {
     Rcpp::IntegerVector Exponents = Powers(i);
     powers pows(Exponents.begin(), Exponents.end());
@@ -125,11 +125,9 @@ int lexLeadingIndexCPP(const Rcpp::List& Powers) {
       std::begin(pows0), std::end(pows0), std::begin(pows), std::end(pows)
     );
     if(ismax) {
-      out = i + 1;
+      out = i;
       pows0 = pows;
     }      
   }
-  return out;
+  return out + 1;
 }
-
-

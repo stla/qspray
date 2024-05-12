@@ -1,8 +1,9 @@
 #ifndef ___QSPRAY___
 #define ___QSPRAY___
 
-#undef Rcpp_hpp
-#include <RcppArmadillo.h>
+//#undef Rcpp_hpp
+//#include <RcppArmadillo.h>
+#include <Rcpp.h>
 #include <boost/multiprecision/gmp.hpp>
 //#include <complex.h>
 typedef std::vector<signed int>                             powers;

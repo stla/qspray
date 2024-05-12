@@ -32,25 +32,27 @@ leading <- function(qspray, d) {
 #' @description Returns the leading term of a \code{qspray} polynomial.
 #' 
 #' @param qspray a \code{qspray} object
-#' @param d integer, the number of variables of \code{qspray}, in general 
-#'   this is \code{numberOfVariables(qspray)}; setting a larger integer 
-#'   just adds some trailing zeros to the vector of exponents given in the 
-#'   output, and setting a smaller integer throws an error
 #'
 #' @return A list providing the exponents of the leading term in the field 
 #'   \code{powers}, an integer vector, and the coefficient of the leading term 
 #'   in the field \code{coeff}, a \code{bigq} rational number.
 #' @export
-leadingTerm <- function(qspray, d) {
+leadingTerm <- function(qspray) {
   if(isQzero(qspray)) {
     NULL
   } else {
-    # l <- leading(qspray, d)
-    # list("powers" = l[["powers"]], "coeff" = as.bigq(l[["coeff"]]))
     powers <- qspray@powers
     i <- lexLeadingIndexCPP(powers)
-    list("powers" = grow(powers[[i]], d), "coeff" = as.bigq(qspray@coeffs[i]))
+    list("powers" = powers[[i]], "coeff" = as.bigq(qspray@coeffs[i]))
   }
+}
+
+.leadingTerm <- function(qspray, d) {
+  # l <- leading(qspray, d)
+  # list("powers" = l[["powers"]], "coeff" = as.bigq(l[["coeff"]]))
+  powers <- qspray@powers
+  i <- lexLeadingIndexCPP(powers)
+  list("powers" = grow(powers[[i]], d), "coeff" = as.bigq(qspray@coeffs[i]))
 }
 
 #' @title Leading coefficient of a 'qspray' polynomial
@@ -164,7 +166,7 @@ qdivision <- function(qspray, divisors) {
   #   i <- 1L
   #   while(i <= ndivisors) {
   #     g <- divisors[[i]]
-  #     LT_g <- leadingTerm(g, d)
+  #     LT_g <- .leadingTerm(g, d)
   #     while(divides(LT_g, LT_cur)) {
   #       q <- quotient(LT_cur, LT_g)
   #       quotients <- append(quotients, q)
@@ -188,7 +190,7 @@ qdivision <- function(qspray, divisors) {
   #         }
   #         return(remainder)
   #       }
-  #       LT_cur <- leadingTerm(cur, d)
+  #       LT_cur <- .leadingTerm(cur, d)
   #     }
   #     i <- i + 1L
   #   }
@@ -304,10 +306,10 @@ groebner <- function(G, minimal = TRUE, reduced = TRUE) {
     indices <- seq_along(G)
     toRemove <- drop <- integer(0L)
     for(i in indices) {
-      LT_f <- leadingTerm(G[[i]], d)
+      LT_f <- .leadingTerm(G[[i]], d)
       drop <- c(toRemove, i)
       for(j in setdiff(indices, drop)) {
-        if(divides(leadingTerm(G[[j]], d), LT_f)) {
+        if(divides(.leadingTerm(G[[j]], d), LT_f)) {
           toRemove <- c(toRemove, i)
           break
         }

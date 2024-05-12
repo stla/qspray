@@ -1,5 +1,7 @@
 # qspray 3.0.0.9000
 
+- The package no longer depends on **RcppArmadillo**.
+
 - The functions `permuteVariables` and `swapVariables` generated an error for a constant `qspray` or a `qspray` having only one term.
 
 - New function `isHomogeneousQspray`, to check whether a `qspray` polynomial is homogeneous.
