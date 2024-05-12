@@ -262,6 +262,10 @@ composeQspray <- function(qspray, listOfQsprays) {
     }
     result <- result + coeffs[i] * term
   }
+  if(isNamedList(listOfQsprays)) {
+    showQsprayOption(result, "showQspray") <- 
+      showQsprayXYZ(names(listOfQsprays))
+  }
   result  
 }
 
@@ -285,7 +289,9 @@ setGeneric(
 #' @param x a \code{qspray} polynomial
 #' @param listOfQsprays a list containing at least \code{n} \code{qspray} 
 #'   objects, or objects coercible to \code{qspray} objects, where \code{n} 
-#'   is the number of variables of the polynomial given in the \code{x} argument
+#'   is the number of variables of the polynomial given in the \code{x} 
+#'   argument; if this list is named, then its names will be used in the
+#'   show options of the result
 #'
 #' @return The \code{qspray} polynomial obtained by replacing the variables of 
 #'   the polynomial given in the \code{x} argument with the polynomials given 
