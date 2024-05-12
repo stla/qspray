@@ -613,6 +613,7 @@ PSPcombination <- function(qspray) {
 #'   a univariate \code{qspray} polynomial.
 #' @export
 #' @importFrom gmp as.bigq
+#' @importFrom methods canCoerce as
 HallInnerProduct <- function(qspray1, qspray2, alpha = 1) {
   cl <- class(qspray1)[1L]
   if(!canCoerce(qzero(), cl) || !inherits(qspray2, cl)) {
@@ -681,7 +682,7 @@ HallInnerProduct <- function(qspray1, qspray2, alpha = 1) {
   if(symbolic) {
     out <- zeroQspray
   } else {
-    out <- getConstantTerm(zeroQspray)
+    out <- getConstantTerm(zeroQspray) # the zero ratioOfQsprays
   }
   for(k in seq_along(lambdas1)) {
     lambda <- lambdas1[[k]]
