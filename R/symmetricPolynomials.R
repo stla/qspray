@@ -451,6 +451,26 @@ PSPexpression <- function(qspray) {
   out
 }
 
+#' helper function for PSPcombination
+#' returns a qspray representing the linear combination of power sum 
+#' polynomials: the powers represent the integer partitions of the power sum 
+#' polynomials
+#' @noRd
+.PSPcombination <- function(qspray) {
+  mspAssocsList <- MSPcombination(qspray, check = FALSE)
+  psPolysAsQspray <- qzero()
+  for(t in mspAssocsList) {
+    pairs <- MSPinPSbasis(t[["lambda"]])
+    coeffs <- t[["coeff"]] * c_bigq(lapply(pairs, `[[`, "coeff"))
+    lambdas <- lapply(pairs, `[[`, "lambda")
+    psPolysAsQspray <- psPolysAsQspray + 
+      new(
+        "qspray", powers = lambdas, coeffs = as.character(coeffs)
+      )
+  }
+  psPolysAsQspray
+}
+
 #' @title Symmetric polynomial as a linear combination of some power sum 
 #'   polynomials
 #' @description Expression of a symmetric \code{qspray} polynomial as a 
@@ -463,7 +483,7 @@ PSPexpression <- function(qspray) {
 #'   partition, corresponding to a power sum polynomial.
 #' @export
 #' @importFrom gmp c_bigq
-#' @seealso \code{\link{PSPexpression}}
+#' @seealso \code{\link{PSPexpression}}.
 #' 
 #' @examples
 #' # take a symmetric polynomial
@@ -475,54 +495,64 @@ PSPexpression <- function(qspray) {
 #'   term[["coeff"]] * PSFpoly(4, term[["lambda"]])
 #' }))
 PSPcombination <- function(qspray) {
-  mspAssocsList <- MSPcombination(qspray, check = FALSE)
-  pspCombinations <- lapply(mspAssocsList, function(t) {
-    xs     <- MSPinPSbasis(t[["lambda"]])
-    coeffs <- t[["coeff"]] * c_bigq(lapply(xs, `[[`, "coeff"))
-    lambdas <- lapply(xs, `[[`, "lambda")
-    lambdaStrings <- vapply(lambdas, partitionAsString, character(1L))
-    out <- mapply(
-      function(x, y) `names<-`(list(x, y), c("coeff", "lambda")), 
-      coeffs, lambdas, SIMPLIFY = FALSE, USE.NAMES = FALSE
-    )
-    names(out) <- lambdaStrings
-    out
-  })
-  accum <- function(assocs1, assocs2) {
-    lambdas1 <- names(assocs1) 
-    lambdas2 <- names(assocs2)
-    intersection <- intersect(lambdas1, lambdas2)
-    merged <- mapply(
-      function(pair1, pair2) {
-        list(
-          "coeff" = pair1[["coeff"]] + pair2[["coeff"]],
-          "lambda" = pair1[["lambda"]]
-        )
-      },
-      assocs1[intersection], assocs2[intersection],
-      SIMPLIFY = FALSE, USE.NAMES = TRUE
-    )
-    c(
-      merged, 
-      assocs1[setdiff(lambdas1, intersection)], 
-      assocs2[setdiff(lambdas2, intersection)]
-    )
-  }
-  pspCombination <- Reduce(accum, x = pspCombinations)
-  pspCombination <- 
-    Filter(function(term) term[["coeff"]] != 0L, pspCombination)
-  if(length(pspCombination) <= 1L) {
-    return(pspCombination)
-  }
-  lambdas <- lapply(pspCombination, `[[`, "lambda")
-  n <- max(lengths(lambdas))
-  lambdasMatrix <- t(vapply(lambdas, function(lambda) {
-    grow(lambda, n)
-  }, integer(n)))
-  i_ <- do.call(
-    order, c(Columns(lambdasMatrix), decreasing = TRUE)
+  psPolysAsQspray <- orderedQspray(.PSPcombination(qspray))
+  lambdas <- psPolysAsQspray@powers
+  coeffs <- as.bigq(psPolysAsQspray@coeffs)
+  lambdaStrings <- vapply(lambdas, partitionAsString, character(1L))
+  out <- mapply(
+    function(x, y) `names<-`(list(x, y), c("coeff", "lambda")),
+    coeffs, lambdas, SIMPLIFY = FALSE, USE.NAMES = FALSE
   )
-  pspCombination[i_]
+  names(out) <- lambdaStrings
+  out
+  # mspAssocsList <- MSPcombination(qspray, check = FALSE)
+  # pspCombinations <- lapply(mspAssocsList, function(t) {
+  #   xs     <- MSPinPSbasis(t[["lambda"]])
+  #   coeffs <- t[["coeff"]] * c_bigq(lapply(xs, `[[`, "coeff"))
+  #   lambdas <- lapply(xs, `[[`, "lambda")
+  #   lambdaStrings <- vapply(lambdas, partitionAsString, character(1L))
+  #   out <- mapply(
+  #     function(x, y) `names<-`(list(x, y), c("coeff", "lambda")), 
+  #     coeffs, lambdas, SIMPLIFY = FALSE, USE.NAMES = FALSE
+  #   )
+  #   names(out) <- lambdaStrings
+  #   out
+  # })
+  # accum <- function(assocs1, assocs2) {
+  #   lambdas1 <- names(assocs1) 
+  #   lambdas2 <- names(assocs2)
+  #   intersection <- intersect(lambdas1, lambdas2)
+  #   merged <- mapply(
+  #     function(pair1, pair2) {
+  #       list(
+  #         "coeff" = pair1[["coeff"]] + pair2[["coeff"]],
+  #         "lambda" = pair1[["lambda"]]
+  #       )
+  #     },
+  #     assocs1[intersection], assocs2[intersection],
+  #     SIMPLIFY = FALSE, USE.NAMES = TRUE
+  #   )
+  #   c(
+  #     merged, 
+  #     assocs1[setdiff(lambdas1, intersection)], 
+  #     assocs2[setdiff(lambdas2, intersection)]
+  #   )
+  # }
+  # pspCombination <- Reduce(accum, x = pspCombinations)
+  # pspCombination <- 
+  #   Filter(function(term) term[["coeff"]] != 0L, pspCombination)
+  # if(length(pspCombination) <= 1L) {
+  #   return(pspCombination)
+  # }
+  # lambdas <- lapply(pspCombination, `[[`, "lambda")
+  # n <- max(lengths(lambdas))
+  # lambdasMatrix <- t(vapply(lambdas, function(lambda) {
+  #   grow(lambda, n)
+  # }, integer(n)))
+  # i_ <- do.call(
+  #   order, c(Columns(lambdasMatrix), decreasing = TRUE)
+  # )
+  # pspCombination[i_]
 }
 
 #' @title Hall inner product
@@ -552,26 +582,43 @@ HallInnerProduct <- function(qspray1, qspray2, alpha = 1) {
       stop("Invalid `alpha`.")
     }
   }
-  if(!symbolic && isTRUE(attr(qspray1, "PSPexpression"))) {
-    PSspray1 <- qspray1
-    PSspray2 <- PSPexpression(qspray2)
-  } else {
-    PSspray1 <- PSPexpression(qspray1)
-    if(qspray2 == qspray1) {
-      PSspray2 <- PSspray1
-    } else {
-      PSspray2 <- PSPexpression(qspray2)
-    }
-  }
-  powers1 <- PSspray1@powers
+  # if(!symbolic && isTRUE(attr(qspray1, "PSPexpression"))) {
+  #   PSspray1 <- qspray1
+  #   PSspray2 <- PSPexpression(qspray2)
+  # } else {
+  #   PSspray1 <- PSPexpression(qspray1)
+  #   if(qspray2 == qspray1) {
+  #     PSspray2 <- PSspray1
+  #   } else {
+  #     PSspray2 <- PSPexpression(qspray2)
+  #   }
+  # }
+  # powers1 <- PSspray1@powers
+  # coeffs1 <- PSspray1@coeffs
+  # out <- as.bigq(0L)
+  # for(k in seq_along(powers1)) {
+  #   pows <- powers1[[k]]
+  #   coeff2 <- getCoefficient(PSspray2, pows)
+  #   if(coeff2 != 0L) {
+  #     lambda <- 
+  #       unlist(lapply(rev(seq_along(pows)), function(i) rep(i, pows[i])))
+  #     out <- out + as.bigq(coeffs1[k]) * coeff2 * zlambda(lambda, alpha)
+  #   }
+  # }
+  PSspray1 <- .PSPcombination(qspray1)
+  PSspray2 <- .PSPcombination(qspray2)
+  lambdas1 <- PSspray1@powers
   coeffs1 <- PSspray1@coeffs
+  lambdas2 <- PSspray2@powers
+  coeffs2 <- PSspray2@coeffs
+  lambdaStrings <- vapply(lambdas2, partitionAsString, character(1L))
+  names(coeffs2) <- lambdaStrings
   out <- as.bigq(0L)
-  for(k in seq_along(powers1)) {
-    pows <- powers1[[k]]
-    coeff2 <- getCoefficient(PSspray2, pows)
-    if(coeff2 != 0L) {
-      lambda <- 
-        unlist(lapply(rev(seq_along(pows)), function(i) rep(i, pows[i])))
+  for(k in seq_along(lambdas1)) {
+    lambda <- lambdas1[[k]]
+    s <- partitionAsString(lambda) 
+    if(s %in% lambdaStrings) {
+      coeff2 <- as.bigq(coeffs2[s])
       out <- out + as.bigq(coeffs1[k]) * coeff2 * zlambda(lambda, alpha)
     }
   }
