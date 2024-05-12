@@ -35,4 +35,6 @@ test_that("Symbolic Hall inner product", {
     SIMPLIFY = TRUE
   )
   expect_true(all(tests))
+  # check the show option
+  expect_equal(Print(h2), "3*alpha^2 ")
 })

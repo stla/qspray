@@ -488,7 +488,7 @@ PSPexpression <- function(qspray) {
     for(t in mspAssocsList) {
       pairs <- MSPinPSbasis(t[["lambda"]])
       coeffs <- mapply(
-        `*`, t[["coeff"]], lapply(pairs, `[[`, "coeff"),
+        `*`, list(t[["coeff"]]), lapply(pairs, `[[`, "coeff"),
         SIMPLIFY = FALSE, USE.NAMES = FALSE
       )
       lambdas <- lapply(pairs, `[[`, "lambda")
