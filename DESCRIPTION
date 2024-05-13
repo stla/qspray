@@ -11,7 +11,9 @@ Maintainer: Stéphane Laurent <laurent_step@outlook.fr>
 Description: Symbolic calculation and evaluation of multivariate
     polynomials with rational coefficients. This package is strongly
     inspired by the 'spray' package. It provides a function to 
-    compute Gröbner bases (reference <doi:10.1007/978-3-319-16721-3>).
+    compute Gröbner bases (reference <doi:10.1007/978-3-319-16721-3>). It 
+    also includes some features for symmetric polynomials, such as the Hall
+    inner product.
     The header file of the C++ code can be used by other packages. It 
     provides the templated class 'Qspray' that can be used to represent and 
     to deal with multivariate polynomials with another type of coefficients.
