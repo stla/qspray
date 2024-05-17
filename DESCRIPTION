@@ -29,6 +29,7 @@ Imports:
     RationalMatrix,
     Rcpp (>= 1.0.9),
     Ryacas,
+    syt,
     utils
 LinkingTo: 
     BH,

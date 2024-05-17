@@ -123,21 +123,24 @@ MSPcombination <- function(qspray, check = TRUE) {
       )
     }
   }
-  M <- powersMatrix(qspray - constantTerm)
-  M <- M[lexorder(M), , drop = FALSE]
-  lambdas <- unique(apply(M, 1L, function(expnts) { 
-    toString(sort(expnts[expnts != 0L], decreasing = TRUE))
-  }))
+  # M <- powersMatrix(qspray - constantTerm)
+  # M <- M[lexorder(M), , drop = FALSE]
+  # # plutôt filtrer:
+  # lambdas <- unique(apply(M, 1L, function(expnts) { 
+  #   toString(sort(expnts[expnts != 0L], decreasing = TRUE))
+  # }))
+  lambdas <- Filter(isDecreasing, orderedQspray(qspray - constantTerm)@powers)
   out <- lapply(lambdas, function(lambda) {
-    lambda <- fromString(lambda)
+    # lambda <- fromString(lambda)
     list(
       "coeff"  = getCoefficient(qspray, lambda),
       "lambda" = lambda 
     )
   })
+  names(out) <- vapply(lambdas, partitionAsString, character(1L))
   if(constantTerm != 0L) {
     out <- c(
-      out, list(list("coeff" = constantTerm, "lambda" = integer(0L)))
+      out, list("[]" = list("coeff" = constantTerm, "lambda" = integer(0L)))
     )
   }
   if(check) {
@@ -164,6 +167,75 @@ checkSymmetry <- function(qspray, mspCombination) {
     check  <- check + coeff * as(MSFpoly(n, lambda), cl)
   }
   check == qspray
+}
+
+#' @title Symmetric polynomial in terms of the Schur polynomials
+#' @description Expression of a symmetric polynomial as a linear combination 
+#'   of the Schur polynomials.
+#'
+#' @param qspray a \code{qspray} object defining a symmetric polynomial 
+#' @param check Boolean, whether to check the symmetry
+#'
+#' @return A list defining the combination. Each element of this list is a 
+#'   list with two elements: \code{coeff}, a \code{bigq} number, and 
+#'   \code{lambda}, an integer partition; then this list corresponds to the 
+#'   term \code{coeff * SchurPol(n, lambda)}, where \code{n} is the number of 
+#'   variables in the symmetric polynomial, and \code{SchurPol(n, lambda)} is 
+#'   the Schur polynomial in \code{n} variables of \code{lambda}. This function 
+#'   \code{SchurPol} is available in the \strong{jack} package.
+#' @export
+#' @importFrom syt KostkaNumber
+#' @importFrom partitions parts
+#' @importFrom gmp as.bigq
+#'
+#' @examples
+#' qspray <- PSFpoly(4, c(3, 1)) + ESFpoly(4, c(2, 2)) + 4L
+#' SCHURcombination(qspray)
+SCHURcombination <- function(qspray, check = TRUE) {
+  n <- numberOfVariables(qspray)
+  lambdas <- parts(n)
+  nparts <- ncol(lambdas)
+  KostkaMatrix <- matrix(0L, nrow = nparts, ncol = nparts)
+  for(i in seq_len(nparts)) {
+    for(j in i:nparts) {
+      KostkaMatrix[i, j] <- KostkaNumber(lambdas[, i], lambdas[, j])
+    }
+  }
+  invKostkaMatrix <- backsolve(KostkaMatrix, diag(nparts))
+  storage.mode(invKostkaMatrix) <- "integer"
+  lambdas <- lapply(Columns(lambdas), removeTrailingZeros)
+  lambdasAsStrings <- 
+    vapply(lambdas, partitionAsString, character(1L))
+  rownames(invKostkaMatrix) <- lambdasAsStrings
+  combo <- MSPcombination(qspray, check = check)
+  spray <- qzero()
+  for(lambda in names(combo)) {
+    invKostkaNumbers <- invKostkaMatrix[lambda, ]
+    for(j in seq_along(lambdas)) {
+      ikn <- invKostkaNumbers[j]
+      if(ikn != 0L) {
+        spray <- spray + 
+          new(
+            "qspray", 
+            powers = list(lambdas[[j]]), 
+            coeffs = as.character(ikn * combo[[lambda]][["coeff"]])
+          )
+      }
+    }
+  }
+  spray <- orderedQspray(spray)
+  lambdas <- spray@powers
+  combo <- mapply(
+    function(lambda, coeff) {
+      list("lambda" = lambda, "coeff" = as.bigq(coeff))
+    },
+    lambdas, spray@coeffs,
+    SIMPLIFY = FALSE,
+    USE.NAMES = FALSE
+  )
+  names(combo) <- 
+    vapply(lambdas, partitionAsString, character(1L))
+  combo
 }
 
 setGeneric(

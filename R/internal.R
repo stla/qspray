@@ -94,10 +94,14 @@ isCoeffs <- function(x) {
   all(vapply(as.character(x), isFraction, FUN.VALUE = logical(1L)))
 }
 
+isDecreasing <- function(x) {
+  all(diff(x) <= 0)
+}
+
 isPartition <- function(lambda){
   length(lambda) == 0L || 
     all(vapply(lambda, isPositiveInteger, FUN.VALUE = logical(1L))) && 
-    all(diff(lambda) <= 0)
+    isDecreasing(lambda)
 }
 
 arity <- function(qspray) {
