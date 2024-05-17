@@ -192,26 +192,35 @@ checkSymmetry <- function(qspray, mspCombination) {
 #' qspray <- PSFpoly(4, c(3, 1)) + ESFpoly(4, c(2, 2)) + 4L
 #' SCHURcombination(qspray)
 SCHURcombination <- function(qspray, check = TRUE) {
-  n <- numberOfVariables(qspray)
-  lambdas <- parts(n)
-  nparts <- ncol(lambdas)
-  KostkaMatrix <- matrix(0L, nrow = nparts, ncol = nparts)
-  for(i in seq_len(nparts)) {
-    for(j in i:nparts) {
-      KostkaMatrix[i, j] <- KostkaNumber(lambdas[, i], lambdas[, j])
-    }
-  }
-  invKostkaMatrix <- backsolve(KostkaMatrix, diag(nparts))
-  storage.mode(invKostkaMatrix) <- "integer"
-  lambdas <- lapply(Columns(lambdas), removeTrailingZeros)
-  lambdasAsStrings <- 
-    vapply(lambdas, partitionAsString, character(1L))
-  rownames(invKostkaMatrix) <- lambdasAsStrings
   constantTerm <- getConstantTerm(qspray)
   combo <- MSPcombination(qspray - constantTerm, check = check)
+  weights <- unique(vapply(combo, function(term) {
+    sum(term[["lambda"]])
+  }, integer(1L)))
+  invKostkaMatrices <- lapply(weights, function(n) {
+    lambdas <- parts(n)
+    nparts <- ncol(lambdas)
+    KostkaMatrix <- matrix(0L, nrow = nparts, ncol = nparts)
+    for(i in seq_len(nparts)) {
+      for(j in i:nparts) {
+        KostkaMatrix[i, j] <- KostkaNumber(lambdas[, i], lambdas[, j])
+      }
+    }
+    invKostkaMatrix <- backsolve(KostkaMatrix, diag(nparts))
+    storage.mode(invKostkaMatrix) <- "integer"
+    lambdas <- lapply(Columns(lambdas), removeTrailingZeros)
+    lambdasAsStrings <- 
+      vapply(lambdas, partitionAsString, character(1L))
+    rownames(invKostkaMatrix) <- lambdasAsStrings
+    list("matrix" = invKostkaMatrix, "lambdas" = lambdas)    
+  })
+  names(invKostkaMatrices) <- as.character(weights)
   spray <- qzero()
-  for(lambda in names(combo)) {
-    invKostkaNumbers <- invKostkaMatrix[lambda, ]
+  for(term in combo) {
+    lambda <- term[["lambda"]]
+    invKostkaMatrix <- invKostkaMatrices[[as.character(sum(lambda))]]
+    invKostkaNumbers <- invKostkaMatrix[["matrix"]][partitionAsString(lambda), ]
+    lambdas <- invKostkaMatrix[["lambdas"]]
     for(j in seq_along(lambdas)) {
       ikn <- invKostkaNumbers[j]
       if(ikn != 0L) {
@@ -219,7 +228,7 @@ SCHURcombination <- function(qspray, check = TRUE) {
           new(
             "qspray", 
             powers = list(lambdas[[j]]), 
-            coeffs = as.character(ikn * combo[[lambda]][["coeff"]])
+            coeffs = as.character(ikn * term[["coeff"]])
           )
       }
     }
