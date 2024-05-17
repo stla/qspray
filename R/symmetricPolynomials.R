@@ -207,7 +207,8 @@ SCHURcombination <- function(qspray, check = TRUE) {
   lambdasAsStrings <- 
     vapply(lambdas, partitionAsString, character(1L))
   rownames(invKostkaMatrix) <- lambdasAsStrings
-  combo <- MSPcombination(qspray, check = check)
+  constantTerm <- getConstantTerm(qspray)
+  combo <- MSPcombination(qspray - constantTerm, check = check)
   spray <- qzero()
   for(lambda in names(combo)) {
     invKostkaNumbers <- invKostkaMatrix[lambda, ]
@@ -223,7 +224,7 @@ SCHURcombination <- function(qspray, check = TRUE) {
       }
     }
   }
-  spray <- orderedQspray(spray)
+  spray <- orderedQspray(spray + constantTerm)
   lambdas <- spray@powers
   combo <- mapply(
     function(lambda, coeff) {
