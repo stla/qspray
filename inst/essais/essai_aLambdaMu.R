@@ -50,19 +50,19 @@ RationalMatrix::Qinverse(km)
 invTriMatrix <- function(A) {
   d <- nrow(A)
   if(d == 1L) {
-    return(A)
+    return(as.matrix(1/A[1,1]))
   } else {
     B <- invTriMatrix(A[1L:(d-1L), 1L:(d-1L)])
     newColumn <- as.bigq(integer(d-1L))
     for(i in 1L:(d-1L)) {
-      newColumn[i] <- -sum(c(B[i, i:(d-1L)]) * c(A[i:(d-1L), d]))
+      newColumn[i] <- -sum(c(B[i, i:(d-1L)]) * c(A[i:(d-1L), d])) / A[d,d]
     }
-    newRow <- integer(d)
-    newRow[d] <- 1L
-    B <- rbind(cbind(B, newColumn), as.bigq(newRow))
+    newRow <- as.bigq(integer(d))
+    newRow[d] <- 1/A[d,d]
+    B <- rbind(cbind(B, newColumn), newRow)
     return(B)
   }
 }
 km <- jack::KostkaNumbers(4, "2")
-invTriMatrix(as.bigq(km))
-RationalMatrix::Qinverse(km)
+invTriMatrix(as.bigq(km)*2)
+RationalMatrix::Qinverse(as.bigq(km)*2)
