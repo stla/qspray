@@ -8,9 +8,6 @@
 
 - The `HallInnerProduct` function has been greatly improved, and it is now possible to get the result of the Hall inner product with a symbolic parameter (this result is a univariate `qspray` whose variable represents the parameter).
 
-- New function `SCHURcombination`, to get a symmetric `qspray` polynomial as a linear combination of some Schur polynomials (the Schur polynomials can be 
-computed with the **jack** package). 
-
 
 # qspray 3.0.0
 
