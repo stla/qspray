@@ -21,7 +21,7 @@ PSFpoly <- function(m, lambda) {
     return(qone())
   }
   # if(any(lambda > m)) return(as.qspray(0L))
-  if(length(lambda) > m) return(qzero())
+  # if(length(lambda) > m) return(qzero())
   out <- 1L
   for(k in lambda) {
     powers <- lapply(1L:m, function(i) {
