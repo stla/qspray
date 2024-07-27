@@ -1,4 +1,4 @@
-# qspray 3.0.0.9000
+# qspray 3.1.0
 
 - The package no longer depends on **RcppArmadillo**.
 

@@ -1,8 +1,12 @@
-## Reverse dependencies
+## Impact on the reverse dependencies
 
-The changes do not cause any problem on the reverse dependencies.
+This update of the 'qspray' package has some impacts on some reverse dependencies:
 
+* the 'ratioOfQsprays' package
 
-## R CMD check results
+* the 'symbolicQspray' package
 
-OK.
+* the 'jack' package
+
+I'm going to submit these packages.
+
