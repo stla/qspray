@@ -41,10 +41,10 @@ evalQspray <- function(qspray, values_re, values_im = NULL) {
   }
   coeffs <- as.bigq(qspray@coeffs)
   values <- as.bigq(values_re)
-  out <- 0
+  out <- 0L
   for(i in seq_along(powers)) {
     exponents <- powers[[i]]
-    term <- 1
+    term <- 1L
     for(j in seq_along(exponents)) {
       term <- term * values[j]^exponents[j]
     }
