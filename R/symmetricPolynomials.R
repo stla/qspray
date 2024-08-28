@@ -86,7 +86,7 @@ MSFpoly <- function(m, lambda) {
 CSHFpoly <- function(m, lambda) {
   stopifnot(isNonnegativeInteger(m), isPartition(lambda))
   lambda <- removeTrailingZeros(lambda)
-  if(length(lambda) > m) return(qzero())
+  if(length(lambda) > m) return(qzero()) # wrong - fix: qzero if m=0
   if(length(lambda) == 0L) return(qone())
   qsprays <- lapply(lambda, function(k) {
     .CSHFpoly(m, k)
@@ -369,7 +369,7 @@ E_lambda_mu_term <- function(mu, nus) {
 #' @noRd
 MSPinPSbasis <- function(mu) {
   if(length(mu) == 0L) {
-    return(
+    return( # no! that should return the list made of this list 
       list(
         "coeff"  = as.bigq(1L),
         "lambda" = integer(0L)
@@ -377,7 +377,7 @@ MSPinPSbasis <- function(mu) {
     )
   }
   mu <- as.integer(mu)
-  partitions <- lapply(Columns(parts(sum(mu))), removeTrailingZeros)
+  partitions <- lapply(Columns(parts(sum(mu))), removeTrailingZeros) # can be improved
   coeffs <- vector("list", length(partitions))
   k <- 1L
   for(lambda in partitions) {

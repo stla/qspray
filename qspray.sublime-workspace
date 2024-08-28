@@ -1,0 +1,411 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"row",
+				"rowsIndices"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "R/symmetricPolynomials.R",
+			"settings":
+			{
+				"buffer_size": 21414,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "tests/testthat/test-HallInnerProduct.R",
+			"settings":
+			{
+				"buffer_size": 1263,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "tests/testthat/helper-00.R",
+			"settings":
+			{
+				"buffer_size": 254,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "R/internal.R",
+			"settings":
+			{
+				"buffer_size": 3744,
+				"line_ending": "Windows"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/D/Work/MyPackages/qspray",
+		"/D/Work/MyPackages/qspray/R",
+		"/D/Work/MyPackages/qspray/tests",
+		"/D/Work/MyPackages/qspray/tests/testthat"
+	],
+	"file_history":
+	[
+		"/D/Work/MyPackages/qspray/NEWS.md",
+		"/D/zTemp/shiny_DT_rowReorder_download01.R",
+		"/C/Users/User/AppData/Local/Temp/ScreenToGif/Recording/2024-08-08 22-42-21/Project.json",
+		"/C/sr/config.yaml",
+		"/D/Work/Haskell/jackpolynomials/stack.yaml",
+		"/D/Work/MyPackages/jackR/R/MacdonaldPolynomial.R",
+		"/D/Work/MyPackages/jackR/R/modifiedMacdonaldPolynomial.R",
+		"/D/Work/MyPackages/jackR/R/clambdamu.R",
+		"/D/Work/MyPackages/jackR/R/tSchurPolynomial.R",
+		"/D/Work/MyPackages/jackR/R/HallPolynomials.R",
+		"/D/Work/MyPackages/jackR/README.Rmd",
+		"/D/Work/MyPackages/jackR/.Rbuildignore",
+		"/D/Work/MyPackages/amVennDiagram5/DESCRIPTION",
+		"/D/zTemp/bslib00.R",
+		"/D/Work/MyPackages/resultant/DESCRIPTION",
+		"/D/Work/MyPackages/jackR/DESCRIPTION",
+		"/D/Work/MyPackages/jackR/NEWS.md",
+		"/D/Work/MyPackages/resultant/R/gcd.R",
+		"/D/Work/MyPackages/resultant/R/integralDivision.R",
+		"/D/Work/MyPackages/resultant/R/numberOfRealRoots.R",
+		"/D/Work/MyPackages/resultant/R/principalSturmHabicht.R",
+		"/D/Work/MyPackages/resultant/R/principalSubresultants.R",
+		"/D/Work/MyPackages/resultant/R/resultant.R",
+		"/D/Work/MyPackages/resultant/R/squareFreeFactorization.R",
+		"/D/Work/MyPackages/resultant/R/SturmHabicht.R",
+		"/D/Work/MyPackages/resultant/R/internal.R",
+		"/D/Work/MyPackages/resultant/R/subresultants.R",
+		"/D/Work/MyPackages/resultant/R/univariateDivision.R",
+		"/D/Work/MyPackages/resultant/R/aaa.R",
+		"/D/Work/MyPackages/resultant/cran-comments.md",
+		"/D/Work/MyPackages/resultant/src/Makevars.in",
+		"/D/Work/MyPackages/resultant/src/Makevars.win",
+		"/D/Work/MyPackages/jackR/tests/testthat/test-LR.R",
+		"/D/Work/MyPackages/jackR/tests/testthat/test-schur.R",
+		"/D/Work/MyPackages/jackR/tests/testthat/test-skewJackPol.R",
+		"/D/Work/MyPackages/qspray/cran-comments.md",
+		"/D/Work/MyPackages/symbolicQspray/DESCRIPTION",
+		"/D/Work/MyPackages/symbolicQspray/NEWS.md",
+		"/D/Work/MyPackages/ratioOfQsprays/cran-comments.md",
+		"/D/Work/MyPackages/ratioOfQsprays/NEWS.md",
+		"/D/Work/MyPackages/ratioOfQsprays/DESCRIPTION",
+		"/D/Work/MyPackages/qspray/DESCRIPTION",
+		"/D/Work/MyPackages/jackR/cran-comments.md",
+		"/D/Work/MyPackages/symbolicQspray/cran-comments.md",
+		"/D/Work/MyPackages/symbolicQspray/README.Rmd",
+		"/D/Work/MyPackages/symbolicQspray/README.md",
+		"/D/Work/MyPackages/symbolicQspray/.Rbuildignore",
+		"/D/Work/MyPackages/symbolicQspray/R/evaluation.R",
+		"/D/Work/MyPackages/symbolicQspray/man/substituteVariables.Rd",
+		"/D/Work/MyPackages/ratioOfQsprays/README.Rmd",
+		"/D/Work/MyPackages/ratioOfQsprays/README.md",
+		"/D/Work/MyPackages/HypergeoMat/tests/testthat/test-Jack.R",
+		"/D/Work/MyPackages/HypergeoMat/NEWS.md",
+		"/D/Work/MyPackages/HypergeoMat/cran-comments.md",
+		"/D/Work/MyPackages/HypergeoMat/DESCRIPTION",
+		"/D/Work/MyPackages/syt/R/RSK.R",
+		"/D/Work/MyPackages/syt/R/randomsyt.R",
+		"/D/Work/MyPackages/syt/R/plancherel.R",
+		"/D/Work/MyPackages/syt/NEWS.md",
+		"/D/Work/MyPackages/syt/R/Kostka.R",
+		"/D/Work/MyPackages/syt/R/isSYT.R",
+		"/D/Work/MyPackages/syt/R/tableaux.R",
+		"/D/Work/MyPackages/syt/R/skewKostkaNumbers.R",
+		"/D/Work/MyPackages/syt/R/skewGelfandTsetlin.R",
+		"/D/Work/MyPackages/syt/R/internal.R",
+		"/D/Work/MyPackages/syt/R/hooks.R",
+		"/D/Work/MyPackages/syt/R/GelfandTsetlin.R",
+		"/D/Work/MyPackages/syt/R/enumeration.R",
+		"/D/Work/MyPackages/syt/R/dualsyt.R",
+		"/D/Work/MyPackages/syt/DESCRIPTION",
+		"/D/Work/MyPackages/syt/R/skewTableaux.R",
+		"/D/Work/MyPackages/syt/R/ssyt.R",
+		"/D/Work/MyPackages/syt/R/syt2matrix.R",
+		"/D/Work/MyPackages/syt/R/syt2path.R",
+		"/D/Work/MyPackages/syt/cran-comments.md",
+		"/D/Work/MyPackages/syt/.Rbuildignore",
+		"/D/Work/MyPackages/syt/.git/config",
+		"/D/Work/MyPackages/syt/.gitignore"
+	],
+	"find":
+	{
+		"height": 27.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"ZonalQ(",
+			"Zonal(",
+			"Schur("
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"ZonalQR(",
+			"ZonalR(",
+			"SchurR("
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "R/symmetricPolynomials.R",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 21414,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								6742,
+								6742
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/R/R.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 4052.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "tests/testthat/test-HallInnerProduct.R",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1263,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								1263
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/R/R.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 204.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "tests/testthat/helper-00.R",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 254,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								54,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/R/R.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "R/internal.R",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3744,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1430,
+								1316
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/R/R.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 576.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 27.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "qspray.sublime-project",
+	"replace":
+	{
+		"height": 50.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 308.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
